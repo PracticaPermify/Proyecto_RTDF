@@ -169,7 +169,7 @@ class PreRegistro(models.Model):
     email = models.CharField(unique=True, max_length=100)
     password = models.CharField(max_length=120)
     numero_telefonico = models.CharField(max_length=20, blank=True, null=True)
-    validado = models.CharField(max_length=1)
+    validado = models.CharField(max_length=1, default=0)
     id_comuna = models.ForeignKey(Comuna, models.DO_NOTHING, db_column='id_comuna')
     id_tp_usuario = models.ForeignKey('TpUsuario', models.DO_NOTHING, db_column='id_tp_usuario')
     id_institucion = models.ForeignKey(Institucion, models.DO_NOTHING, db_column='id_institucion')
@@ -296,6 +296,30 @@ class TpUsuario(models.Model):
         db_table = 'tp_usuario'
 
 
+class UsuarioManager(BaseUserManager):
+    def create_user(self, numero_identificacion, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError('El campo "email" debe estar configurado')
+
+        email = self.normalize_email(email)
+        user = self.model(
+            numero_identificacion=numero_identificacion,
+            email=email,
+            **extra_fields
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, numero_identificacion, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        return self.create_user(numero_identificacion, email, password, **extra_fields)
+
+    def get_by_natural_key(self, email):
+        return self.get(email=email)
+
 class Usuario(AbstractBaseUser, PermissionsMixin):
     id_usuario = models.AutoField(primary_key=True)
     numero_identificacion = models.CharField(unique=True, max_length=100)
@@ -307,22 +331,24 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     email = models.CharField(unique=True, max_length=100)
     #password = models.CharField(max_length=20) #Generado Automaticamente por Django
     numero_telefonico = models.CharField(max_length=20, blank=True, null=True)
-    id_tp_usuario = models.ForeignKey(TpUsuario, models.DO_NOTHING, db_column='id_tp_usuario')
-    id_comuna = models.ForeignKey(Comuna, models.DO_NOTHING, db_column='id_comuna')
+    id_tp_usuario = models.ForeignKey(TpUsuario, models.DO_NOTHING, db_column='id_tp_usuario',default=1)
+    id_comuna = models.ForeignKey(Comuna, models.DO_NOTHING, db_column='id_comuna',default=2)
 
     # related_name único para grupos y permisos. Problema con nombres de la clases internas de Django
     groups = models.ManyToManyField(
         Group,
         verbose_name='groups',
         blank=True,
-        related_name='usuarios'  
+        related_name='usuarios'
     )
     user_permissions = models.ManyToManyField(
         Permission,
         verbose_name='user permissions',
         blank=True,
-        related_name='usuarios'  
+        related_name='usuarios'
     )
+
+    objects = UsuarioManager()
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
