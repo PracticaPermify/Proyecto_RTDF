@@ -2,21 +2,10 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Group, Permission
 
 
-# Create your models here.
-
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
-#   * Rearrange models' order
-#   * Make sure each model has one field with primary_key=True
-#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
-#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
-# Feel free to rename the models, but don't rename db_table values or field names.
-
-
 class Audio(models.Model):
     id_audio = models.AutoField(primary_key=True)
     url_audio = models.CharField(max_length=200)
-    timestamp = models.DateTimeField()
+    fecha_audio = models.DateTimeField()
     fk_origen_audio = models.ForeignKey('OrigenAudio', models.DO_NOTHING, db_column='fk_origen_audio')
     fk_pauta_terapeutica = models.ForeignKey('PautaTerapeutica', models.DO_NOTHING, db_column='fk_pauta_terapeutica')
 
@@ -27,7 +16,7 @@ class Audio(models.Model):
 class Audioscoeficientes(models.Model):
     id_audiocoeficientes = models.AutoField(primary_key=True)
     nombre_archivo = models.CharField(max_length=100)
-    timestamp = models.DateTimeField()
+    fecha_coeficiente = models.DateTimeField()
     f0 = models.CharField(max_length=100)
     f1 = models.CharField(max_length=100)
     f2 = models.CharField(max_length=100)
@@ -83,7 +72,7 @@ class FamiliarPaciente(models.Model):
 
 class Grbas(models.Model):
     id_informe = models.OneToOneField('Informe', models.DO_NOTHING, db_column='id_informe', primary_key=True)
-    grado_disfonia = models.CharField(max_length=30)
+    g_grado_disfonia = models.CharField(max_length=30)
     r_aspereza = models.CharField(max_length=30)
     b_soplo = models.CharField(max_length=30)
     a_debilidad = models.CharField(max_length=30)
@@ -175,10 +164,10 @@ class PreRegistro(models.Model):
     primer_nombre = models.CharField(max_length=30)
     segundo_nombre = models.CharField(max_length=30, blank=True, null=True)
     ap_paterno = models.CharField(max_length=30)
-    ap_materno = models.CharField(max_length=30)
-    fecha_nacimiento = models.DateTimeField()
+    ap_materno = models.CharField(max_length=30, blank=True, null=True)
+    fecha_nacimiento = models.DateField()
     email = models.CharField(unique=True, max_length=100)
-    password = models.CharField(max_length=20)
+    password = models.CharField(max_length=120)
     numero_telefonico = models.CharField(max_length=20, blank=True, null=True)
     validado = models.CharField(max_length=1)
     id_comuna = models.ForeignKey(Comuna, models.DO_NOTHING, db_column='id_comuna')
@@ -191,7 +180,7 @@ class PreRegistro(models.Model):
 
 class ProfesionalSalud(models.Model):
     id_profesional_salud = models.AutoField(primary_key=True)
-    profesional_salud = models.CharField(max_length=30, blank=True, null=True)
+    titulo_profesional = models.CharField(max_length=30, blank=True, null=True)
     id_institucion = models.ForeignKey(Institucion, models.DO_NOTHING, db_column='id_institucion')
     id_usuario = models.OneToOneField('Usuario', models.DO_NOTHING, db_column='id_usuario')
 
@@ -210,12 +199,12 @@ class Provincia(models.Model):
 
 class Rasati(models.Model):
     id_informe = models.OneToOneField(Informe, models.DO_NOTHING, db_column='id_informe', primary_key=True)
-    ronquedad = models.CharField(max_length=10)
-    aspereza = models.CharField(max_length=10)
-    soplo = models.CharField(max_length=10)
-    astenia = models.CharField(max_length=10)
-    tension = models.CharField(max_length=10)
-    inestabilidad = models.CharField(max_length=10)
+    r_ronquedad = models.CharField(max_length=10)
+    a_aspereza = models.CharField(max_length=10)
+    s_soplo = models.CharField(max_length=10)
+    a_astenia = models.CharField(max_length=10)
+    t_tension = models.CharField(max_length=10)
+    i_inestabilidad = models.CharField(max_length=10)
 
     class Meta:
         db_table = 'rasati'
@@ -313,26 +302,26 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     primer_nombre = models.CharField(max_length=30)
     segundo_nombre = models.CharField(max_length=30, blank=True, null=True)
     ap_paterno = models.CharField(max_length=30)
-    ap_materno = models.CharField(max_length=30)
-    fecha_nacimiento = models.DateTimeField()
+    ap_materno = models.CharField(max_length=30, blank=True, null=True)
+    fecha_nacimiento = models.DateField()
     email = models.CharField(unique=True, max_length=100)
-    password = models.CharField(max_length=20)
+    #password = models.CharField(max_length=20) #Generado Automaticamente por Django
     numero_telefonico = models.CharField(max_length=20, blank=True, null=True)
     id_tp_usuario = models.ForeignKey(TpUsuario, models.DO_NOTHING, db_column='id_tp_usuario')
     id_comuna = models.ForeignKey(Comuna, models.DO_NOTHING, db_column='id_comuna')
 
-    # Agregar related_name único para grupos y permisos
+    # related_name único para grupos y permisos. Problema con nombres de la clases internas de Django
     groups = models.ManyToManyField(
         Group,
         verbose_name='groups',
         blank=True,
-        related_name='usuarios'  # Puedes cambiar 'usuarios' a un nombre que prefieras
+        related_name='usuarios'  
     )
     user_permissions = models.ManyToManyField(
         Permission,
         verbose_name='user permissions',
         blank=True,
-        related_name='usuarios'  # Puedes cambiar 'usuarios' a un nombre que prefieras
+        related_name='usuarios'  
     )
 
     is_active = models.BooleanField(default=True)
