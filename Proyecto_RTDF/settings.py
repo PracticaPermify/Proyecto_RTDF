@@ -27,11 +27,11 @@ DEBUG = True
 
 
 #LOCAL
-#ALLOWED_HOSTS = []
+ALLOWED_HOSTS = []
 
 
-#ENTORNO PYTHONANYWHERE
-ALLOWED_HOSTS = ['farmaciadigital.pythonanywhere.com']
+# #ENTORNO PYTHONANYWHERE
+# ALLOWED_HOSTS = ['farmaciadigital.pythonanywhere.com']
 
 
 # Application definition
@@ -88,31 +88,31 @@ WSGI_APPLICATION = 'Proyecto_RTDF.wsgi.application'
 # }
 
 ##LOCAL DATABASE
-#DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'rtdf',
-#         'USER': 'root',
-#         'PASSWORD': 'practica',
-#         'HOST': 'localhost',
-#         'PORT': '3306',
-#         'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"},
-#     }
-# }
-
-
-##PYTHON ANYWHERE DATABASE
 DATABASES = {
      'default': {
          'ENGINE': 'django.db.backends.mysql',
-         'NAME': 'farmaciadigital$rtdf',
-         'USER': 'farmaciadigital',
-         'PASSWORD': 'rtdfdev2023',
-         'HOST': 'farmaciadigital.mysql.pythonanywhere-services.com',
+         'NAME': 'rtdf_data',
+         'USER': 'root',
+         'PASSWORD': 'nico123',
+         'HOST': 'localhost',
          'PORT': '3306',
          'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"},
      }
  }
+
+
+# ##PYTHON ANYWHERE DATABASE
+# DATABASES = {
+#      'default': {
+#          'ENGINE': 'django.db.backends.mysql',
+#          'NAME': 'farmaciadigital$rtdf',
+#          'USER': 'farmaciadigital',
+#          'PASSWORD': 'rtdfdev2023',
+#          'HOST': 'farmaciadigital.mysql.pythonanywhere-services.com',
+#          'PORT': '3306',
+#          'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"},
+#      }
+#  }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators

@@ -197,7 +197,7 @@ class Provincia(models.Model):
         db_table = 'provincia'
 
 
-class Rasati(models.Model):
+class Rasati(models.Model): 
     id_informe = models.OneToOneField(Informe, models.DO_NOTHING, db_column='id_informe', primary_key=True)
     r_ronquedad = models.CharField(max_length=10)
     a_aspereza = models.CharField(max_length=10)
@@ -210,7 +210,7 @@ class Rasati(models.Model):
         db_table = 'rasati'
 
 
-class Region(models.Model):
+class Region(models.Model): 
     id_region = models.AutoField(primary_key=True)
     region = models.CharField(max_length=50)
     id_pais = models.ForeignKey(Pais, models.DO_NOTHING, db_column='id_pais')
@@ -332,7 +332,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     #password = models.CharField(max_length=20) #Generado Automaticamente por Django
     numero_telefonico = models.CharField(max_length=20, blank=True, null=True)
     id_tp_usuario = models.ForeignKey(TpUsuario, models.DO_NOTHING, db_column='id_tp_usuario',default=1)
-    id_comuna = models.ForeignKey(Comuna, models.DO_NOTHING, db_column='id_comuna',default=2)
+    id_comuna = models.ForeignKey(Comuna, models.DO_NOTHING, db_column='id_comuna',default=1)
 
     # related_name único para grupos y permisos. Problema con nombres de la clases internas de Django
     groups = models.ManyToManyField(
