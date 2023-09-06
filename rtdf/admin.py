@@ -154,4 +154,4 @@ admin.site.register(TpLlenado, TpLlenadoAdmin)
 admin.site.register(TpTerapia, TpTerapiaAdmin)
 admin.site.register(Validacion, ValidacionAdmin)
 admin.site.register(Vocalizacion, VocalizacionAdmin)
-
+admin.site.register(TpUsuario, TpUsuarioAdmin)

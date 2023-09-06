@@ -1,0 +1,56 @@
+{% extends 'rtdf/base.html' %}
+
+<html>
+	<head>
+		<title>RTDF</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+        {% load static %}
+		<link rel="stylesheet" href="{% static 'app/css/main.css' %}"/>
+        <link rel="stylesheet" href="{% static 'app/css/fontawesome-all.min.css' %}">
+	</head>
+	<body class="is-preload">
+		
+        {% block content %}
+        <div id="content">
+            <div class="inner">
+            
+                <!-- Post -->
+                    <article class="box post post-excerpt">
+                    {% if user.is_authenticated %}
+                        <p>Bienvenido {{ user.primer_nombre }}</p>
+                    {% else %}
+                        <p>Bienvenido a nuestra aplicación</p>
+                    {% endif %}
+                    
+                        <a href="#" class="image featured"><img src="images/pic01.jpg" alt="" /></a>
+                        <p>
+                            Aquí podrás descubrir una valiosa fuente de información y recursos diseñados específicamente para brindar apoyo en el cuidado vocal 
+                            y en el tratamiento de las condiciones relacionadas con la comunicación.
+                        </p>
+                        <p>
+                            Nuestra misión es proporcionarte un lugar donde aprender y participar en ejercicios interactivos que 
+                            complementen tu tratamiento. Además, encontrarás recetas terapéuticas diseñadas para mejorar la salud 
+                            vocal y estrategias prácticas de cuidado.
+                        </p>
+                    </article>
+
+                <!-- Post -->
+                    <article class="box post post-excerpt">
+                        <header>
+                            <h2><a href="#">Lorem ipsum dolor sit amet</a></h2>
+                            <p>Feugiat interdum sed commodo ipsum consequat dolor nullam metus</p>
+                        </header>
+                        <a href="#" class="image featured"><img src="images/pic02.jpg" alt="" /></a>
+                        <p>
+                            Quisque vel sapien sit amet tellus elementum ultricies. Nunc vel orci turpis. Donec id malesuada metus.
+                            Nunc nulla velit, fermentum quis interdum quis, tate etiam commodo lorem ipsum dolor sit amet dolore.
+                            Quisque vel sapien sit amet tellus elementum ultricies. Nunc vel orci turpis. Donec id malesuada metus.
+                            Nunc nulla velit, fermentum quis interdum quis, convallis eu sapien. Integer sed ipsum ante.
+                        </p>
+                    </article>
+            </div>
+        </div>
+        {% endblock %}
+	</body>
+</html>

@@ -1,6 +1,40 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Group, Permission
+from django.utils import timezone
 
+####Funcionalidades####
+
+TIPO_USUARIO = [
+        ('Admin', 'Admin'),
+        ('Paciente', 'Paciente'),
+        ('Fonoaudiologo', 'Fonoaudiologo'),
+        ('Familiar', 'Familiar'),
+        ('Enfermera', 'Enfermera'),
+        ('Neurologo', 'Neurologo'),
+    ]
+
+class CustomUserManager(BaseUserManager):
+    def create_user(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError('El correo electrónico es obligatorio.')
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Los superusuarios deben tener is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Los superusuarios deben tener is_superuser=True.')
+
+        return self.create_user(email, password, **extra_fields)
+    
+###Tablas del modelamiento creado
 
 class Audio(models.Model):
     id_audio = models.AutoField(primary_key=True)
@@ -290,11 +324,13 @@ class TpTerapia(models.Model):
 
 class TpUsuario(models.Model):
     id_tp_usuario = models.AutoField(primary_key=True)
-    tipo_usuario = models.CharField(max_length=30)
-
+    tipo_usuario = models.CharField(max_length=30,choices=TIPO_USUARIO)
+    
     class Meta:
         db_table = 'tp_usuario'
 
+    def str(self):
+        return self.tipo_usuario
 
 class UsuarioManager(BaseUserManager):
     def create_user(self, numero_identificacion, email, password=None, **extra_fields):
@@ -333,6 +369,9 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     numero_telefonico = models.CharField(max_length=20, blank=True, null=True)
     id_tp_usuario = models.ForeignKey(TpUsuario, models.DO_NOTHING, db_column='id_tp_usuario',default=1)
     id_comuna = models.ForeignKey(Comuna, models.DO_NOTHING, db_column='id_comuna',default=1)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    date_joined = models.DateTimeField(default=timezone.now)
 
     # related_name único para grupos y permisos. Problema con nombres de la clases internas de Django
     groups = models.ManyToManyField(
@@ -350,8 +389,6 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
 
     objects = UsuarioManager()
 
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['numero_identificacion', 'primer_nombre', 'ap_paterno', 'ap_materno', 'fecha_nacimiento']
