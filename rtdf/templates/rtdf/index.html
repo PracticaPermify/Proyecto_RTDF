@@ -14,13 +14,12 @@
         {% block content %}
         <div id="content">
             <div class="inner">
-            
                 <!-- Post -->
                     <article class="box post post-excerpt">
                     {% if user.is_authenticated %}
-                        <p>Bienvenido {{ user.primer_nombre }}</p>
+                    <h2><p>Bienvenido {{ user.primer_nombre }}</p></h2>
                     {% else %}
-                        <p>Bienvenido a nuestra aplicación</p>
+                    <h2><p>Bienvenido a nuestra aplicación</p></h2>
                     {% endif %}
                     
                         <a href="#" class="image featured"><img src="images/pic01.jpg" alt="" /></a>
