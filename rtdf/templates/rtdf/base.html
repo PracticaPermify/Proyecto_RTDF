@@ -29,6 +29,11 @@
 							<li class="current"><a href={% url 'login' %}>Iniciar sesión</a></li>
 							<li><a href={% url 'registro' %}>Registrarse</li>
 							{% endif %}
+							{% if tipo_usuario %}
+								{% if tipo_usuario == 'Fonoaudiologo' %}
+								<li>AQUI VA BOTON DE LISTADO</li>
+								{% endif %}
+							{% endif %}
 							<li><a href="#">Nosotros</a></li>
 							<li><a href="#">Contactanos</a></li>
 

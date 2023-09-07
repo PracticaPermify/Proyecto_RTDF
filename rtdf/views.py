@@ -5,9 +5,22 @@ from .models import TpUsuario
 
 # Create your views here.
 def index(request):
-    return render(request, 'rtdf/index.html')
+    tipo_usuario = None 
 
-##Registro de usuario
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+
+    return render(request, 'rtdf/index.html', {'tipo_usuario': tipo_usuario})
+
+##ESTE APARTADO SOLO SERA PARA MODIFICAR LOS BOTONES DEL NAV
+
+def base(request):
+    tipo_usuario = None 
+
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+
+    return render(request, 'rtdf/base.html', {'tipo_usuario': tipo_usuario})
 
 
 def registro(request):
@@ -46,6 +59,11 @@ def login_view(request):
             return render(request, 'registro/login.html', {'error_message': error_message})
 
     return render(request, 'registro/login.html')
+
+##LISTADO DE LOS PACIENTES
+
+def listado_pacientes(request):
+    return render(request, 'rtdf/listado_pacientes.html')
 
 ##Cierre de sesion
 
