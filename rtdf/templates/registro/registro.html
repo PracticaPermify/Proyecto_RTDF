@@ -11,7 +11,17 @@
 <body class="is-preload">
     <form method="post">
         {% csrf_token %}
-        {{ registro_form.as_p }}
+        {% comment %} {{ registro_form.as_p }} {% endcomment %}
+        {{ registro_form.numero_identificacion.label_tag }} {{ registro_form.numero_identificacion }}<br>
+        {{ registro_form.primer_nombre.label_tag }} {{ registro_form.primer_nombre }}<br>
+        {{ registro_form.segundo_nombre.label_tag }} {{ registro_form.segundo_nombre }}<br>
+        {{ registro_form.ap_paterno.label_tag }} {{ registro_form.ap_paterno }}<br>
+        {{ registro_form.ap_materno.label_tag }} {{ registro_form.ap_materno }}<br>
+        {{ registro_form.fecha_nacimiento.label_tag }} {{ registro_form.fecha_nacimiento }}<br>
+        {{ registro_form.email.label_tag }} {{ registro_form.email }}<br>
+        {{ registro_form.numero_telefonico.label_tag }} {{ registro_form.numero_telefonico }}<br>
+        {{ registro_form.password.label_tag }} {{ registro_form.password }}<br>
+        {{ registro_form.tipo_usuario.label_tag }} {{ registro_form.tipo_usuario }}<br>
         <button type="submit" class="btn btn-primary btn-block">Registrarse</button>
     </form>
 <body>

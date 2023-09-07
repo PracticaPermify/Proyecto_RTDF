@@ -329,7 +329,7 @@ class TpUsuario(models.Model):
     class Meta:
         db_table = 'tp_usuario'
 
-    def str(self):
+    def __str__(self):
         return self.tipo_usuario
 
 class UsuarioManager(BaseUserManager):
@@ -367,7 +367,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     email = models.CharField(unique=True, max_length=100)
     #password = models.CharField(max_length=20) #Generado Automaticamente por Django
     numero_telefonico = models.CharField(max_length=20, blank=True, null=True)
-    id_tp_usuario = models.ForeignKey(TpUsuario, models.DO_NOTHING, db_column='id_tp_usuario',default=1)
+    id_tp_usuario = models.ForeignKey(TpUsuario, on_delete=models.CASCADE, db_column='id_tp_usuario',default=1)
     id_comuna = models.ForeignKey(Comuna, models.DO_NOTHING, db_column='id_comuna',default=1)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

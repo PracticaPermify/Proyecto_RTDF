@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from .forms import RegistroForm
 from django.contrib.auth import authenticate, login, logout
+from .models import TpUsuario
 
 # Create your views here.
 def index(request):
@@ -16,15 +17,16 @@ def registro(request):
         if registro_form.is_valid():
             usuario = registro_form.save(commit=False)
             usuario.set_password(usuario.password)
+            
+            tipo_usuario = registro_form.cleaned_data['tipo_usuario']
+            usuario.id_tp_usuario = tipo_usuario
 
             usuario.save()
-
-            # Puedes agregar más lógica aquí, como redireccionar al usuario a una página de inicio de sesión.
 
             return redirect('login')
 
     else:
-        registro_form = RegistroForm()
+        registro_form = RegistroForm(initial={'tipo_usuario': TpUsuario.objects.get(pk=2)})
 
     return render(request, 'registro/registro.html', {'registro_form': registro_form})
 
