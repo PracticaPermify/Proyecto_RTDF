@@ -64,10 +64,40 @@
                                     Aquí podrás acceder a historias clínicas, informes de pacientes, registros de tratamientos y comunicarte eficazmente con otros miembros del equipo de atención médica.
                                     Valoramos tu dedicación en la mejora de la salud vocal y la calidad de vida de nuestros pacientes. Si en algún momento requieres asistencia técnica o tienes consultas, 
                                     nuestro equipo de soporte estará a tu disposición.
-                            </p>
-                            {% else %}
-                                
-                        {% endif %}
+                                </p>               
+                                {% elif tipo_usuario == 'Admin' %}
+                                <h2><p>Bienvenido, {{ user.primer_nombre }}.</p></h2>
+                                <p>
+                                    Como administrador de nuestra plataforma, tienes el control total sobre el sistema. 
+                                    Tu papel es esencial para garantizar que todo funcione sin problemas y para brindar soporte a otros usuarios.
+                                    Aquí puedes realizar tareas como la gestión de usuarios, la supervisión de la plataforma y la resolución de problemas.
+                                    Siempre estamos aquí para ayudarte en caso de que necesites asistencia. ¡Gracias por tu dedicación!
+                                </p>
+
+                                <table class="table">
+                                    <thead class="thead-dark">
+                                      <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Nombre</th>
+                                        <th scope="col">Apellido</th>
+                                        <th scope="col">Tipo usuario</th>
+                                        <th scope="col">Correo electronico</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      <tr>
+                                        {% for usuario in usuario %}
+                                        <th scope="row">{{ usuario.id_usuario }}</th>
+                                        <td>{{ usuario.primer_nombre }}</td>
+                                        <td>{{ usuario.ap_paterno }}</td>
+                                        <td>{{ usuario.id_tp_usuario }}</td>
+                                        <td>{{ usuario.email }}</td>
+                                      </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                  </table>
+
+                            {% endif %}
                         {% else %}
                         <article class="box post post-excerpt">
                             <header>

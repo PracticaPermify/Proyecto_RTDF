@@ -23,15 +23,16 @@
 				<!-- Nav -->
 					<nav id="nav">
 						<ul>
+							<li class="current"><a href={% url 'index' %}>Menu</a></li>
 							{% if user.is_authenticated %}</li>
     							<li><a href="{% url 'logout' %}">Cerrar Sesión</a>
 							{% else %}
-							<li class="current"><a href={% url 'login' %}>Iniciar sesión</a></li>
-							<li><a href={% url 'registro' %}>Registrarse</li>
+								<li class="current"><a href={% url 'login' %}>Iniciar sesión</a></li>
+								<li><a href={% url 'registro' %}>Registrarse</a></li>
 							{% endif %}
 							{% if tipo_usuario %}
 								{% if tipo_usuario == 'Fonoaudiologo' %}
-								<li>AQUI VA BOTON DE LISTADO</li>
+								<li><a href={% url 'listado_pacientes' %}>Listado de pacientes</a></li>
 								{% endif %}
 							{% endif %}
 							<li><a href="#">Nosotros</a></li>

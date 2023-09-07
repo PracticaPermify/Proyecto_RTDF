@@ -1,16 +1,16 @@
 from django.shortcuts import render, redirect
 from .forms import RegistroForm
 from django.contrib.auth import authenticate, login, logout
-from .models import TpUsuario
+from .models import TpUsuario, Usuario
 
 # Create your views here.
 def index(request):
     tipo_usuario = None 
-
+    usuarios = Usuario.objects.all()
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
 
-    return render(request, 'rtdf/index.html', {'tipo_usuario': tipo_usuario})
+    return render(request, 'rtdf/index.html', {'tipo_usuario': tipo_usuario, 'usuario': usuarios})
 
 ##ESTE APARTADO SOLO SERA PARA MODIFICAR LOS BOTONES DEL NAV
 
