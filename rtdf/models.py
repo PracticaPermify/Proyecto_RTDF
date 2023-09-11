@@ -132,7 +132,7 @@ class Informe(models.Model):
 
 class Institucion(models.Model):
     id_institucion = models.AutoField(primary_key=True)
-    nombre_institucion = models.CharField(max_length=20)
+    nombre_institucion = models.CharField(max_length=50)
     id_comuna = models.ForeignKey(Comuna, models.DO_NOTHING, db_column='id_comuna')
 
     class Meta:
@@ -289,6 +289,9 @@ class TipoDiabetes(models.Model):
     class Meta:
         db_table = 'tipo_diabetes'
 
+    def __str__(self):
+        return self.tipo_diabetes
+
 
 class TipoHipertension(models.Model):
     id_tipo_hipertension = models.AutoField(primary_key=True)
@@ -296,6 +299,9 @@ class TipoHipertension(models.Model):
 
     class Meta:
         db_table = 'tipo_hipertension'
+
+    def __str__(self):
+        return self.tipo_hipertension
 
 
 class TpInforme(models.Model):

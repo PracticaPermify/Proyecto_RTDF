@@ -1,0 +1,28 @@
+{% extends 'rtdf/base.html' %}
+
+<html>
+	<head>
+		<title>RTDF</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+        {% load static %}
+		<link rel="stylesheet" href="{% static 'app/css/main.css' %}"/>
+        <link rel="stylesheet" href="{% static 'app/css/fontawesome-all.min.css' %}">
+	</head>
+	<body class="is-preload">
+		
+        {% block content %}
+        <div id="content">
+            <div class="inner">
+                <!-- Post -->
+                    <article class="box post post-excerpt"> 
+                            <a href="#" class="image featured"><img src="images/pic01.jpg" alt="" /></a>
+                            <h2><p>Intensidad,{{ user.primer_nombre }} preparece para sus ejercicios.</p></h2>
+                            <p>
+                                Ejercicios.
+                            </p>
+            </div>
+        </div>
+        {% endblock %}
+	</body>
+</html>

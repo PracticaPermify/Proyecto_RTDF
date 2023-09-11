@@ -98,9 +98,9 @@ AUTH_USER_MODEL = 'rtdf.Usuario'  # Reemplaza 'tu_app' con el nombre de tu aplic
 DATABASES = {
      'default': {
          'ENGINE': 'django.db.backends.mysql',
-         'NAME': 'rtdf_data',
+         'NAME': 'rtdf',
          'USER': 'root',
-         'PASSWORD': 'nico123',
+         'PASSWORD': 'practica',
          'HOST': 'localhost',
          'PORT': '3306',
          'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"},
@@ -156,14 +156,18 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = '/static/'
+#STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-AUTH_USER_MODEL = 'rtdf.Usuario'
 
 LOGIN_REDIRECT_URL='/'
 LOGOUT_REDIRECT_URL = '/'
