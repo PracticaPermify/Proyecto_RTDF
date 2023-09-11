@@ -4,8 +4,8 @@ from .models import *
 # Register your models here.
 
 class UsuarioAdmin(admin.ModelAdmin):
-    list_display = ['numero_identificacion','primer_nombre','email']
-    search_fields = ['numero_identificacion','primer_nombre','email']
+    list_display = ['numero_identificacion','primer_nombre','ap_paterno','email', 'id_tp_usuario']
+    search_fields = ['numero_identificacion','primer_nombre','ap_paterno','email','id_tp_usuario']
     ##list_filter = ['estado']
 
 class AudioAdmin(admin.ModelAdmin):

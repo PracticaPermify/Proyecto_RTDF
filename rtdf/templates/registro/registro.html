@@ -3,7 +3,7 @@
 {% block css%}
 
     {% load static %}
-	<link rel="stylesheet" href="{% static 'app\css\main.css' %}"/>
+	<link rel="stylesheet" href="{% static 'app/css/main.css' %}"/>
 
 {% endblock %}
 
@@ -21,6 +21,16 @@
         {{ registro_form.email.label_tag }} {{ registro_form.email }}<br>
         {{ registro_form.numero_telefonico.label_tag }} {{ registro_form.numero_telefonico }}<br>
         {{ registro_form.password.label_tag }} {{ registro_form.password }}<br>
+        <p><small>*La contraseña debe contener al menos una letra mayúscula.</small></p>
+        <br>
+        <p><small>*La contraseña debe contener al menos una letra minúscula</small></p>
+        <br>
+        <p>*<small>La contraseña debe contener al menos un número</small></p>
+        <br>
+        <p><small>*La contraseña debe contener al menos un carácter especial.</small></p>
+        <br>
+        <p><small>*La contraseña debe tener al menos 8 caracteres.</small></p>
+        <br>
         {{ registro_form.tipo_usuario.label_tag }} {{ registro_form.tipo_usuario }}<br>
         <button type="submit" class="btn btn-primary btn-block">Registrarse</button>
     </form>
