@@ -8,7 +8,7 @@
                     <article class="box post post-excerpt"> 
                             <a href="#" class="image featured"><img src="images/pic01.jpg" alt="" /></a>
                         {% if tipo_usuario %}
-                            {% if tipo_usuario == 'paciente' %}
+                            {% if tipo_usuario == 'Paciente' %}
                                 <h2><p>Bienvenido, {{ user.primer_nombre }}.</p></h2>
                                 <p> 
                                     Gracias por utilizar nuestra plataforma de atención en línea. Estamos aquí para brindarte el mejor servicio y cuidado de tu salud vocal.
@@ -16,7 +16,7 @@
                                     fonoaudiólogo si tienes alguna pregunta o necesitas asistencia adicional.¡Tu salud vocal es nuestra prioridad! 
                                     ¡Esperamos que tengas una experiencia positiva en nuestra plataforma!
                                 </p>
-                            {% elif tipo_usuario == 'fonoaudiologo' %}
+                            {% elif tipo_usuario == 'Fonoaudiologo' %}
                                 <h2><p>Bienvenido, {{ user.primer_nombre }}.</p></h2>
                                 <p>
                                     Te damos la bienvenida a nuestra plataforma de atención en línea diseñada para mejorar la salud vocal de tus pacientes.
@@ -55,7 +55,7 @@
                                     Valoramos tu dedicación en la mejora de la salud vocal y la calidad de vida de nuestros pacientes. Si en algún momento requieres asistencia técnica o tienes consultas, 
                                     nuestro equipo de soporte estará a tu disposición.
                                 </p>               
-                                {% elif tipo_usuario == 'admin' %}
+                                {% elif tipo_usuario == 'Admin' %}
                                 <h2><p>Bienvenido, {{ user.primer_nombre }}.</p></h2>
                                 <p>
                                     Como administrador de nuestra plataforma, tienes el control total sobre el sistema. 

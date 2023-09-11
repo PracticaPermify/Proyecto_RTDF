@@ -98,9 +98,9 @@ AUTH_USER_MODEL = 'rtdf.Usuario'  # Reemplaza 'tu_app' con el nombre de tu aplic
 DATABASES = {
      'default': {
          'ENGINE': 'django.db.backends.mysql',
-         'NAME': 'rtdf',
+         'NAME': 'rtdf_data',
          'USER': 'root',
-         'PASSWORD': 'practica',
+         'PASSWORD': 'nico123',
          'HOST': 'localhost',
          'PORT': '3306',
          'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"},

@@ -120,3 +120,25 @@ def intensidad(request):
 def logout_view(request):
     logout(request)
     return redirect('index')  
+
+##LISTADO DE LOS PACIENTES PARA ADMINSITRADOR
+
+def list_paci_admin(request):
+    pacientes = Usuario.objects.filter(id_tp_usuario__tipo_usuario='Paciente')
+    tipo_usuario = None
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+    return render(request, 'vista_admin/list_paci_admin.html',{'tipo_usuario': tipo_usuario, 'pacientes': pacientes})
+
+
+##LISTADO DE LOS FONOAUDIOLOGOS PARA ADMINSITRADOR
+
+def list_fono_admin(request):
+
+    fonoaudiologo_list = Usuario.objects.filter(id_tp_usuario__tipo_usuario='Fonoaudiologo')
+    tipo_usuario = None
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+    return render(request, 'vista_admin/list_fono_admin.html',{'tipo_usuario': tipo_usuario, 'fonoaudiologo_list':fonoaudiologo_list})
+
+##Cierre de sesion

@@ -11,6 +11,8 @@ urlpatterns = [
     path('listado_pacientes/', views.listado_pacientes, name='listado_pacientes'),
     path('vocalizacion/',views.vocalizacion, name="vocalizacion"),
     path('intensidad/',views.intensidad, name="intensidad"),
+    path('list_paci_admin/', views.list_paci_admin, name='list_paci_admin'), 
+    path('list_fono_admin/', views.list_fono_admin, name='list_fono_admin'),
 ]
 
 ##urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
