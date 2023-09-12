@@ -24,12 +24,6 @@
 					<nav id="nav">
 						<ul>
 							<li class="current"><a href={% url 'index' %}>Menu</a></li>
-							{% if user.is_authenticated %}</li>
-    							<li><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
-							{% else %}
-								<li><a href={% url 'login' %}>Iniciar sesión</a></li>
-								<li><a href={% url 'registro' %}>Registrarse</a></li>
-							{% endif %}
 							{% if tipo_usuario %}
 								{% if tipo_usuario == 'Fonoaudiologo' %}
 								<li><a href={% url 'listado_pacientes' %}>Listado de pacientes</a></li>
@@ -43,12 +37,17 @@
 								{% endif %}
 								{% if tipo_usuario == 'Admin' %}
 										<li><a href={% url 'list_fono_admin' %}>Fonoaudiologos</a></li>
-										<li><a href={% url 'list_paci_admin' %}>pacientes</a></li>
+										<li><a href={% url 'list_paci_admin' %}>Pacientes</a></li>
 								{% endif %}
 							{% endif %}
 							<li><a href="#">Nosotros</a></li>
 							<li><a href="#">Contactanos</a></li>
-
+							{% if user.is_authenticated %}</li>
+							<li><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
+							{% else %}
+								<li><a href={% url 'login' %}>Iniciar sesión</a></li>
+								<li><a href={% url 'registro' %}>Registrarse</a></li>
+							{% endif %}
 						</ul>
 					</nav>
 

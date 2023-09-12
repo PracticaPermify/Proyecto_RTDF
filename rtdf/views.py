@@ -1,7 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .forms import RegistroForm
 from django.contrib.auth import authenticate, login, logout
-from .models import TpUsuario, Usuario, RelacionPaPro, ProfesionalSalud, Paciente
+from .models import *
 from django.http import HttpResponseForbidden
 
 # Create your views here.
@@ -63,25 +63,39 @@ def login_view(request):
 
 ##LISTADO DE LOS PACIENTES
 
+##LISTADO DE LOS PACIENTES
+
 def listado_pacientes(request):
 
     tipo_usuario = None 
     usuarios = Usuario.objects.all()
+
     # se verifica que el usuario este registrado como profesional salud
-    if request.user.groups.filter(name='ProfesionalesSalud').exists() or request.user.has_perm('nombre_permiso'):
+    if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
 
-        #se obtiene el identificador del fonoaudiologo
-        profesional_salud = request.user.profesionalsalud
+        # se obtiene el identificador de la fk usuario relacionado al fonoaudiologo
+        id_usuario = request.user.id_usuario
 
-        # se filtra los pacientes vinculados
-        pacientes_relacionados = RelacionPaPro.objects.filter(fk_profesional_salud=profesional_salud)
+        try:
+            # se obtiene el fonoaudiologo relacionado
+            profesional_salud = ProfesionalSalud.objects.get(id_usuario=id_usuario)
+        except ProfesionalSalud.DoesNotExist:
+            profesional_salud = None
 
-        # lista de pacientes con datos de usuario y paciente
+        # lista para almacenar los pacientes relacionados
+        pacientes_relacionados = []
+
+        # filtrado de los pacientes relacionados
+        if profesional_salud:
+            pacientes_relacionados = RelacionPaPro.objects.filter(fk_profesional_salud=profesional_salud)
+
+        # lista de los pacientes con datos de usuario y paciente
         pacientes = []
 
+        # se cargan los datos en variables 
         for relacion in pacientes_relacionados:
-            paciente_dict = {
+            paciente_dicc = {
                 'id_paciente': relacion.id_paciente.id_paciente,
                 'primer_nombre': relacion.id_paciente.id_usuario.primer_nombre,
                 'ap_paterno': relacion.id_paciente.id_usuario.ap_paterno,
@@ -92,12 +106,9 @@ def listado_pacientes(request):
                 'tipo_diabetes': relacion.id_paciente.fk_tipo_diabetes,
                 'tipo_hipertension': relacion.id_paciente.fk_tipo_hipertension,
             }
-            pacientes.append(paciente_dict)
+            pacientes.append(paciente_dicc)
 
-        return render(request, 'rtdf/listado_pacientes.html', {'tipo_usuario': tipo_usuario, 'usuario': usuarios, 'pacientes': pacientes})
-    else:
-        return HttpResponseForbidden("De momento se debe configurar el usuario como profesional de salud directamente desde el administrador de django")
-
+    return render(request, 'rtdf/listado_pacientes.html', {'tipo_usuario': tipo_usuario, 'usuario': usuarios, 'pacientes': pacientes})
 
 def vocalizacion(request):
 
@@ -130,15 +141,30 @@ def list_paci_admin(request):
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
     return render(request, 'vista_admin/list_paci_admin.html',{'tipo_usuario': tipo_usuario, 'pacientes': pacientes})
 
+def detalle_paciente(request, paciente_id):
+    paciente = get_object_or_404(Usuario, id_usuario=paciente_id, id_tp_usuario__tipo_usuario='Paciente')
+    paciente_info = paciente.paciente
+
+    tipo_usuario = None
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+    return render(request, 'vista_admin/detalle_paciente.html', {'paciente': paciente, 'tipo_usuario': tipo_usuario ,'paciente_info': paciente_info})
 
 ##LISTADO DE LOS FONOAUDIOLOGOS PARA ADMINSITRADOR
 
 def list_fono_admin(request):
-
-    fonoaudiologo_list = Usuario.objects.filter(id_tp_usuario__tipo_usuario='Fonoaudiologo')
+    fonoaudiologos = Usuario.objects.filter(id_tp_usuario__tipo_usuario='Fonoaudiologo')
     tipo_usuario = None
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
-    return render(request, 'vista_admin/list_fono_admin.html',{'tipo_usuario': tipo_usuario, 'fonoaudiologo_list':fonoaudiologo_list})
+    return render(request, 'vista_admin/list_fono_admin.html', {'tipo_usuario': tipo_usuario, 'fonoaudiologos': fonoaudiologos})
+
+def detalle_fonoaudiologo(request, fonoaudiologo_id):
+    fonoaudiologo = get_object_or_404(Usuario, id_usuario=fonoaudiologo_id, id_tp_usuario__tipo_usuario='Fonoaudiólogo')
+    # Aquí puedes pasar el fonoaudiologo a tu plantilla para mostrar los detalles
+    tipo_usuario = None
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+    return render(request, 'vista_admin/detalle_fonoaudiologo.html', {'fonoaudiologo': fonoaudiologo, 'tipo_usuario': tipo_usuario})
 
 ##Cierre de sesion

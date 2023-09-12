@@ -10,11 +10,16 @@
         <div class="global-container">
             <div class="card login-form">
                 <div class="card-body">
-                    <h1 class="card-title text-center">Listado de pacientes</h1>
+                    <h1 class="card-title text-center">Listado de fonoaudiologos</h1>
                     <div class="card-text">
                         <ul>
-                        {% for fonoaudiologo_list in fonoaudiologo_list %}
-                            <li>{{ fonoaudiologo_list.primer_nombre }} {{ fonoaudiologo_list.ap_paterno }}</li>
+                        {% for fonoaudiologo in fonoaudiologos %}
+                                <li>
+                                <a href="{% url 'detalle_fonoaudiologo' fonoaudiologo.id_usuario %}">
+                                    {{ fonoaudiologo.primer_nombre }} {{ fonoaudiologo.segundo_nombre }} 
+                                    {{ fonoaudiologo.ap_paterno }} {{ fonoaudiologo.ap_materno }}
+                                </a>
+                                </li>
                         {% endfor %}
                         </ul>
                     </div>
