@@ -1,5 +1,5 @@
 from django import forms
-from .models import Usuario, TpUsuario
+from .models import *
 from django.core.validators import EmailValidator
 from django.core.exceptions import ValidationError
 import re
@@ -97,6 +97,16 @@ class RegistroForm(forms.ModelForm):
         widget=forms.Select(attrs={'class': 'form-control form-control-sm'})
     )
 
+    id_comuna = forms.ModelChoiceField(
+        queryset=Comuna.objects.all(),
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-control form-control-sm'}),
+        label='Comuna'
+    )
+
+
     class Meta:
         model = Usuario
-        fields = ['numero_identificacion', 'primer_nombre', 'segundo_nombre', 'ap_paterno', 'ap_materno', 'fecha_nacimiento', 'email', 'numero_telefonico', 'password', 'tipo_usuario']
+        fields = ['numero_identificacion', 'primer_nombre', 'segundo_nombre', 'ap_paterno', 'ap_materno', 'fecha_nacimiento', 
+                  'email', 'numero_telefonico', 'id_comuna' ,'password','tipo_usuario']
+

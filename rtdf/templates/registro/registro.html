@@ -2,8 +2,9 @@
 
 {% block css%}
 
-    {% load static %}
-	<link rel="stylesheet" href="{% static 'app/css/main.css' %}"/>
+{% load static %}
+<link rel="stylesheet" href="{% static 'app/css/main.css' %}"/>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 {% endblock %}
 
@@ -20,6 +21,7 @@
         {{ registro_form.fecha_nacimiento.label_tag }} {{ registro_form.fecha_nacimiento }}<br>
         {{ registro_form.email.label_tag }} {{ registro_form.email }}<br>
         {{ registro_form.numero_telefonico.label_tag }} {{ registro_form.numero_telefonico }}<br>
+        {{ registro_form.id_comuna.label_tag }}{{ registro_form.id_comuna }}<br>
         {{ registro_form.password.label_tag }} {{ registro_form.password }}<br>
         <p><small>*La contraseña debe contener al menos una letra mayúscula.</small></p>
         <br>
@@ -34,5 +36,6 @@
         {{ registro_form.tipo_usuario.label_tag }} {{ registro_form.tipo_usuario }}<br>
         <button type="submit" class="btn btn-primary btn-block">Registrarse</button>
     </form>
+    
 <body>
 {% endblock %}

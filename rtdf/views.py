@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from .models import *
 from django.http import HttpResponseForbidden
 
+
 # Create your views here.
 def index(request):
     tipo_usuario = None 
@@ -43,6 +44,7 @@ def registro(request):
         registro_form = RegistroForm(initial={'tipo_usuario': TpUsuario.objects.get(pk=2)})
 
     return render(request, 'registro/registro.html', {'registro_form': registro_form})
+
 
 ##Login para el usuario
 

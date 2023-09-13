@@ -12,16 +12,30 @@
                 <div class="card-body">
                     <h1 class="card-title text-center">Listado de fonoaudiologos</h1>
                     <div class="card-text">
-                        <ul>
-                        {% for fonoaudiologo in fonoaudiologos %}
-                                <li>
+                        <table class="table">
+                            <thead class="thead-dark">
+                              <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Nombre completo</th>
+                                <th scope="col">Tipo de usuario</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                {% for fonoaudiologo in fonoaudiologos %}
+                                <th scope="row">{{ fonoaudiologo.id_usuario }}</th>
+                                <td>
                                 <a href="{% url 'detalle_fonoaudiologo' fonoaudiologo.id_usuario %}">
-                                    {{ fonoaudiologo.primer_nombre }} {{ fonoaudiologo.segundo_nombre }} 
-                                    {{ fonoaudiologo.ap_paterno }} {{ fonoaudiologo.ap_materno }}
+                                {{ fonoaudiologo.primer_nombre }} {{ fonoaudiologo.segundo_nombre }} 
+                                {{ fonoaudiologo.ap_paterno }} {{ fonoaudiologo.ap_materno }}
                                 </a>
-                                </li>
-                        {% endfor %}
-                        </ul>
+                                </td>
+                                <td>{{ fonoaudiologo.id_tp_usuario }}</td>
+                              </tr>
+                              {% endfor %}
+                            </tbody>
+                          </table>    
+
                     </div>
                 </div>
             </div>

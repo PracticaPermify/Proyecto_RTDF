@@ -83,6 +83,8 @@ class Comuna(models.Model):
     class Meta:
         db_table = 'comuna'
 
+    def __str__(self):
+        return self.comuna
 
 class Esv(models.Model):
     id_informe = models.OneToOneField('Informe', models.DO_NOTHING, db_column='id_informe', primary_key=True)
@@ -176,6 +178,9 @@ class Pais(models.Model):
     class Meta:
         db_table = 'pais'
 
+    def __str__(self):
+        return self.pais
+
 
 class PautaTerapeutica(models.Model):
     id_pauta_terapeutica = models.AutoField(primary_key=True)
@@ -230,6 +235,9 @@ class Provincia(models.Model):
     class Meta:
         db_table = 'provincia'
 
+    def __str__(self):
+        return self.provincia
+
 
 class Rasati(models.Model): 
     id_informe = models.OneToOneField(Informe, models.DO_NOTHING, db_column='id_informe', primary_key=True)
@@ -252,6 +260,8 @@ class Region(models.Model):
     class Meta:
         db_table = 'region'
 
+    def __str__(self):
+        return self.region
 
 class Registros(models.Model):
     id_registros = models.AutoField(primary_key=True)

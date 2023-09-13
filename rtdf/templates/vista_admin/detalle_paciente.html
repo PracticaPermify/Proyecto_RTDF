@@ -5,14 +5,50 @@
         <a href="{% url 'list_paci_admin' %}">Volver a la lista de pacientes</a>
     </div>   
     </br>
+    </br>
     <div class="container">
         <h1>Detalles del paciente {{ paciente.primer_nombre }} {{ paciente.ap_paterno }}</h1>
-        </br>
-        <p><strong>Rut:</strong>  {{ paciente.numero_identificacion }}</p>
-        <p><strong>correo electronico:</strong>  {{ paciente.email }}</p>
-        <p><strong>numero de contacto:</strong>  {{ paciente.numero_telefonico }}</p>
-        <p><strong>Telegram (nombre de usuario):</strong>  {{ paciente_info.telegram }}</p>
-        <p><strong>Diabetes:</strong>  {{ paciente_info.fk_tipo_diabetes }}</p>
-        <p><strong>hipertension:</strong>  {{ paciente_info.fk_tipo_hipertension }}</p>
+      </br>
+    <table class="table">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">Rut</th>
+            <th scope="col">Correo electronico</th>
+            <th scope="col">Region</th>
+            <th scope="col">Comuna</th>
+            <th scope="col">Numero de contacto</th>
+            <th scope="col">telegram</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">{{ paciente.numero_identificacion }}</th>
+            <td>{{ paciente.email }}</td>
+            <td>Aqui va region</td>
+            <td>{{ paciente.id_comuna }}</td>
+            <td>{{ paciente.numero_telefonico }}</td>
+            <td>{{ paciente_info.telegram }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </br>
+    </br>
+    <h2><strong>Enfermedades del paciente</strong></h2>
+    </br>
+
+    <table class="table">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">Diabetes</th>
+            <th scope="col">Hipertension</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ paciente_info.fk_tipo_diabetes }}</td>
+            <td>{{ paciente_info.fk_tipo_hipertension }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 {% endblock %}

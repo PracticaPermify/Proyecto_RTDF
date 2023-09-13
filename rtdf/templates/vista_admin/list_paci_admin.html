@@ -12,16 +12,29 @@
                 <div class="card-body">
                     <h1 class="card-title text-center">Listado de pacientes</h1>
                     <div class="card-text">
-                        <ul>
-                            {% for paciente in pacientes %}
-                                <li>
+                        <table class="table">
+                            <thead class="thead-dark">
+                              <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Nombre completo</th>
+                                <th scope="col">Tipo de usuario</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                {% for paciente in pacientes %}
+                                <th scope="row">{{ paciente.id_usuario }}</th>
+                                <td>
                                 <a href="{% url 'detalle_paciente' paciente.id_usuario %}">
-                                    {{ paciente.primer_nombre }} {{ paciente.segundo_nombre }} 
-                                    {{ paciente.ap_paterno }} {{ paciente.ap_materno }}
+                                {{ paciente.primer_nombre }} {{ paciente.segundo_nombre }} 
+                                {{ paciente.ap_paterno }} {{ paciente.ap_materno }}
                                 </a>
-                                </li>
-                            {% endfor %}
-                        </ul>
+                                </td>
+                                <td>{{ paciente.id_tp_usuario }}</td>
+                              </tr>
+                              {% endfor %}
+                            </tbody>
+                          </table>
                     </div>
                 </div>
             </div>

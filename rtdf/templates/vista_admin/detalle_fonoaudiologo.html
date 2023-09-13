@@ -8,8 +8,23 @@
         <div class="container">
             <h1>Detalles del fonoaudiologo {{ fonoaudiologo.primer_nombre }} {{ fonoaudiologo.ap_paterno }}</h1>
         </br>
-            <p><strong>Rut:</strong>  {{ fonoaudiologo.numero_identificacion }}</p>
-            <p><strong>correo electronico:</strong>  {{ fonoaudiologo.email }}</p>
-            <p><strong>numero de contacto</strong>  {{ fonoaudiologo.numero_telefonico }}</p>
         </div>
+
+        <table class="table">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">Rut</th>
+                <th scope="col">Correo electronico</th>
+                <th scope="col">Numero de contacto</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">{{ fonoaudiologo.numero_identificacion }}</th>
+                <td>{{ fonoaudiologo.email }}</td>
+                <td>{{ fonoaudiologo.numero_telefonico }}</td>
+              </tr>
+            </tbody>
+          </table>
+          
 {% endblock %}
