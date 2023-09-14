@@ -63,9 +63,7 @@ def login_view(request):
 
     return render(request, 'registro/login.html')
 
-##LISTADO DE LOS PACIENTES
-
-##LISTADO DE LOS PACIENTES
+##LISTADO DE LOS PACIENTES------------------------------------------
 
 def listado_pacientes(request):
 
@@ -110,7 +108,53 @@ def listado_pacientes(request):
             }
             pacientes.append(paciente_dicc)
 
-    return render(request, 'rtdf/listado_pacientes.html', {'tipo_usuario': tipo_usuario, 'usuario': usuarios, 'pacientes': pacientes})
+    return render(request, 'vista_profe/listado_pacientes.html', {'tipo_usuario': tipo_usuario, 'usuario': usuarios, 'pacientes': pacientes})
+
+##Listado para los familiares--------------------------------------
+
+def lista_familiar(request):
+
+    tipo_usuario = None
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+
+        # se obtiene el identificador de la fk usuario relacionado al fonoaudiologo
+        id_usuario = request.user.id_usuario
+
+        try:
+            # se obtiene el fonoaudiologo relacionado
+            familiar = FamiliarPaciente.objects.get(id_usuario=id_usuario)
+        except FamiliarPaciente.DoesNotExist:
+            familiar = None
+
+        # lista para almacenar los pacientes relacionados
+        pacientes_relacionados = []
+
+        # filtrado de los pacientes relacionados
+        if familiar:
+            pacientes_relacionados = RelacionFp.objects.filter(fk_familiar_paciente=familiar)
+
+        # lista de los pacientes con datos de usuario y paciente
+        pacientes = []
+
+        # se cargan los datos en variables 
+        for relacion in pacientes_relacionados:
+            paciente_dicc = {
+                'id_paciente': relacion.id_paciente.id_paciente,
+                'primer_nombre': relacion.id_paciente.id_usuario.primer_nombre,
+                'ap_paterno': relacion.id_paciente.id_usuario.ap_paterno,
+                'email': relacion.id_paciente.id_usuario.email,
+                'numero_telefonico': relacion.id_paciente.id_usuario.numero_telefonico,
+                'telegram': relacion.id_paciente.telegram,
+                'fecha_nacimiento': relacion.id_paciente.id_usuario.fecha_nacimiento,
+                'tipo_diabetes': relacion.id_paciente.fk_tipo_diabetes,
+                'tipo_hipertension': relacion.id_paciente.fk_tipo_hipertension,
+            }
+            pacientes.append(paciente_dicc)
+
+    return render(request,'vista_familiar/lista_familiar.html', {'tipo_usuario': tipo_usuario, 'pacientes': pacientes})
+
+##Ejercicios de vocalización-----------------------------------
 
 def vocalizacion(request):
 
@@ -147,11 +191,16 @@ def detalle_paciente(request, paciente_id):
     paciente = get_object_or_404(Usuario, id_usuario=paciente_id, id_tp_usuario__tipo_usuario='Paciente')
     paciente_info = paciente.paciente
 
+    fonoaudiologos_asociados = ProfesionalSalud.objects.filter(relacionpapro__id_paciente=paciente_info.id_paciente)
+
     tipo_usuario = None
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
-    return render(request, 'vista_admin/detalle_paciente.html', {'paciente': paciente, 'tipo_usuario': tipo_usuario ,'paciente_info': paciente_info})
-
+    return render(request, 'vista_admin/detalle_paciente.html', {'paciente': paciente, 
+                                                                 'tipo_usuario': tipo_usuario,
+                                                                 'paciente_info': paciente_info,
+                                                                 'fonoaudiologos_asociados': fonoaudiologos_asociados
+                                                                 })
 ##LISTADO DE LOS FONOAUDIOLOGOS PARA ADMINSITRADOR
 
 def list_fono_admin(request):
@@ -162,11 +211,22 @@ def list_fono_admin(request):
     return render(request, 'vista_admin/list_fono_admin.html', {'tipo_usuario': tipo_usuario, 'fonoaudiologos': fonoaudiologos})
 
 def detalle_fonoaudiologo(request, fonoaudiologo_id):
+
     fonoaudiologo = get_object_or_404(Usuario, id_usuario=fonoaudiologo_id, id_tp_usuario__tipo_usuario='Fonoaudiólogo')
-    # Aquí puedes pasar el fonoaudiologo a tu plantilla para mostrar los detalles
+
+    profesional_salud = ProfesionalSalud.objects.get(id_usuario=fonoaudiologo)
+
+    institucion = ProfesionalSalud.objects.get(id_usuario=fonoaudiologo).id_institucion
+
+    relaciones = RelacionPaPro.objects.filter(fk_profesional_salud=profesional_salud)
+
+    pacientes_asociados = [relacion.id_paciente for relacion in relaciones]
+
     tipo_usuario = None
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
-    return render(request, 'vista_admin/detalle_fonoaudiologo.html', {'fonoaudiologo': fonoaudiologo, 'tipo_usuario': tipo_usuario})
-
-##Cierre de sesion
+    return render(request, 'vista_admin/detalle_fonoaudiologo.html', {'fonoaudiologo': fonoaudiologo, 
+                                                                      'tipo_usuario': tipo_usuario,
+                                                                      'pacientes_asociados': pacientes_asociados,
+                                                                      'profesional_salud': profesional_salud,
+                                                                      'institucion': institucion})

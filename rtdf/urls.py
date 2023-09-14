@@ -14,7 +14,8 @@ urlpatterns = [
     path('list_paci_admin/', views.list_paci_admin, name='list_paci_admin'), 
     path('list_fono_admin/', views.list_fono_admin, name='list_fono_admin'),
     path('detalle_paciente/<int:paciente_id>/', views.detalle_paciente, name='detalle_paciente'),
-    path('detalle_fonoaudiologo/<int:fonoaudiologo_id>/', views.detalle_fonoaudiologo, name='detalle_fonoaudiologo')
+    path('detalle_fonoaudiologo/<int:fonoaudiologo_id>/', views.detalle_fonoaudiologo, name='detalle_fonoaudiologo'),
+    path('lista_familiar/', views.lista_familiar, name='lista_familiar'),
 
 ]
 
