@@ -1,0 +1,43 @@
+{% extends 'rtdf/base.html' %}
+
+{% block css %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'app/css/main.css' %}" />
+{% endblock %}
+
+{% block content %}
+    <body class="is-preload">
+        <div class="global-container">
+            <div class="card login-form">
+                <div class="card-body">
+                    <h1 class="card-title text-center">Listado de familiares</h1>
+                    <div class="card-text">
+                        <table class="table">
+                            <thead class="thead-dark">
+                              <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Nombre completo</th>
+                                <th scope="col">Tipo de usuario</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                            {% for familiar in familiar %}
+                                <th scope="row">{{ familiar.id_usuario }}</th>
+                                <td>
+                                <a href="{% url 'detalle_familiar_admin' familiar.id_usuario %}">
+                                {{ familiar.primer_nombre }} {{ familiar.segundo_nombre }} 
+                                {{ familiar.ap_paterno }} {{ familiar.ap_materno }}
+                                </a>
+                                </td>
+                                <td>{{ familiar.id_tp_usuario }}</td>
+                              </tr>
+                            {% endfor %}
+                            </tbody>
+                          </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+{% endblock %}

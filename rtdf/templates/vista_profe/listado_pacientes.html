@@ -8,7 +8,7 @@
                         <a href="#" class="image featured"><img src="images/pic01.jpg" alt="" /></a>
                     {% if tipo_usuario %}
                         {% if tipo_usuario == 'Fonoaudiologo' %}
-                            <h2><p>Pacientes de: {{ user.primer_nombre }}.</p></h2>
+                            <h2><p>Pacientes del fonoaudiólogo <b>{{ user.primer_nombre }} {{ user.ap_paterno }}</b></p></h2>
                             <p>
                                 Listado de mis pacientes:
                             </p>
@@ -31,7 +31,10 @@
                                     {% for paciente in pacientes %}
                                     <tr>
                                         <td>{{ paciente.id_paciente }}</td>
-                                        <td>{{ paciente.primer_nombre }}</td>
+                                        <td><a href="{% url 'detalle_prof_paci' paciente.id_usuario %}">
+
+                                            {{ paciente.primer_nombre }} {{ paciente.ap_paterno }}
+                                            </a></td>
                                         <td>{{ paciente.email }}</td>
                                         <td>{{ paciente.numero_telefonico }}</td>
                                         <td>{{ paciente.telegram }}</td>
@@ -46,37 +49,45 @@
                                     {% endfor %}
                                 </tbody>
                             </table>
-            
-                            {% elif tipo_usuario == 'Admin' %}
-                            <h2><p>Bienvenido, {{ user.primer_nombre }}.</p></h2>
-                            <p>
-                                Como administrador de nuestra plataforma, tienes el control total sobre el sistema. 
-                                Tu papel es esencial para garantizar que todo funcione sin problemas y para brindar soporte a otros usuarios.
-                                Aquí puedes realizar tareas como la gestión de usuarios, la supervisión de la plataforma y la resolución de problemas.
-                                Siempre estamos aquí para ayudarte en caso de que necesites asistencia. ¡Gracias por tu dedicación!
-                            </p>
 
+                            {% elif tipo_usuario == 'Neurologo' %}
+                            <h2><p>Pacientes del neurologo <b>{{ user.primer_nombre }} {{ user.ap_paterno }}</b></p></h2>
+                            <p>
+                                Listado de mis pacientes:
+                            </p>
+                            <!-- Listado de pacientes del fonoaudiologo-->
                             <table class="table">
                                 <thead class="thead-dark">
                                 <tr>
                                     <th scope="col">ID</th>
                                     <th scope="col">Nombre</th>
-                                    <th scope="col">Apellido</th>
-                                    <th scope="col">Numero de contacto</th>
-                                    <th scope="col">Tipo usuario</th>
                                     <th scope="col">Correo electronico</th>
+                                    <th scope="col">Numero de contacto</th>
+                                    <th scope="col">Telegram</th>
+                                    <!-- <th scope="col">Fecha nacimiento</th> -->
+                                    <th scope="col">Tipo diabetes</th>
+                                    <th scope="col">Tipo Hipertensión</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    {% for usuario in usuario %}
-                                    <th scope="row">{{ usuario.id_usuario }}</th>
-                                    <td>{{ usuario.primer_nombre }}</td>
-                                    <td>{{ usuario.ap_paterno }}</td>
-                                    <td>{{ usuario.numero_telefonico }}</td>
-                                    <td>{{ usuario.id_tp_usuario }}</td>
-                                    <td>{{ usuario.email }}</td>
-                                </tr>
+                                
+                                    {% for paciente in pacientes %}
+                                    <tr>
+                                        <td>{{ paciente.id_paciente }}</td>
+                                        <td><a href="{% url 'detalle_prof_paci' paciente.id_usuario %}">
+                                            {{ paciente.primer_nombre }} {{ paciente.ap_paterno }}
+                                            </a></td>
+                                        <td>{{ paciente.email }}</td>
+                                        <td>{{ paciente.numero_telefonico }}</td>
+                                        <td>{{ paciente.telegram }}</td>
+                                        <!-- <td>{{ paciente.fecha_nacimiento }}</td> -->
+                                        <td>{{ paciente.tipo_diabetes }}</td>
+                                        <td>{{ paciente.tipo_hipertension }}</td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="2">No hay pacientes vinculados.</td>
+                                    </tr>
                                     {% endfor %}
                                 </tbody>
                             </table>

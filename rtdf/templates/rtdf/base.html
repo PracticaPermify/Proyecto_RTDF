@@ -26,21 +26,26 @@
 							<li class="current"><a href={% url 'index' %}>Menu</a></li>
 							{% if tipo_usuario %}
 								{% if tipo_usuario == 'Fonoaudiologo' %}
-								<li><a href={% url 'listado_pacientes' %}>Listado de pacientes</a></li>
+									<li><a href={% url 'listado_pacientes' %}>Listado de pacientes</a></li>
 								{% endif %}
 								{% if tipo_usuario == 'Paciente' %}
                 						<li><a href={% url 'vocalizacion' %}>Vocalizacion</a></li>
                 						<li><a href={% url 'intensidad' %}>Intensidad</a></li> 
-								
+										<li><a href={% url 'mi_fonoaudiologo' %}>Fonoaudiologo</a></li> 
 								{% comment %} <li><a href={% url 'vocalizacion' %}>Vocalizacion</a></li> {% endcomment %}
 								{% comment %} <li><a href={% url 'intensidad' %}>Intensidad</a></li> {% endcomment %}
 								{% endif %}
 								{% if tipo_usuario == 'Admin' %}
 										<li><a href={% url 'list_fono_admin' %}>Fonoaudiologos</a></li>
+										<li><a href={% url 'list_neur_admin' %}>Neurologos</a></li>
 										<li><a href={% url 'list_paci_admin' %}>Pacientes</a></li>
+										<li><a href={% url 'list_fami_admin' %}>Familiares</a></li>
 								{% endif %}
 								{% if tipo_usuario == 'Familiar' %}
 										<li><a href={% url 'lista_familiar' %}>Familiar de</a></li>
+								{% endif %}
+								{% if tipo_usuario == 'Neurologo' %}
+									<li><a href={% url 'listado_pacientes' %}>Listado de pacientes</a></li>
 								{% endif %}
 							{% endif %}
 							<li><a href="#">Nosotros</a></li>

@@ -8,7 +8,7 @@
                         <a href="#" class="image featured"><img src="images/pic01.jpg" alt="" /></a>
                     {% if tipo_usuario %}
                         {% if tipo_usuario == 'Familiar' %}
-                            <h2><p>Bienvenido Familiar: {{ user.primer_nombre }}.</p></h2>
+                            <h2><p>Bienvenido familiar <b>{{ user.primer_nombre }} {{ user.ap_paterno }}</b></p></h2>
                             <p>
                                 Familiar del paciente:
                             </p>
@@ -31,7 +31,9 @@
                                     {% for paciente in pacientes %}
                                     <tr>
                                         <td>{{ paciente.id_paciente }}</td>
-                                        <td>{{ paciente.primer_nombre }}</td>
+                                        <td><a href="{% url 'detalle_familiar' paciente.id_usuario %}">
+                                            {{ paciente.primer_nombre }} {{ paciente.ap_paterno }}
+                                            </a></td>
                                         <td>{{ paciente.email }}</td>
                                         <td>{{ paciente.numero_telefonico }}</td>
                                         <td>{{ paciente.telegram }}</td>

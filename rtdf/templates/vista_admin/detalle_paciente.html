@@ -62,23 +62,32 @@
         </tr>
       </thead>
       <tbody>
-        {% for fonoaudiologo in fonoaudiologos_asociados %}
+        {% for profesional in fonoaudiologos_asociados %}
         <tr>
           <td >
-            {{ fonoaudiologo.id_usuario.id_usuario }}
+            {{ profesional.id_usuario.id_usuario }}
             </a>
           </td>
           <td>
-            <a href="{% url 'detalle_fonoaudiologo' fonoaudiologo_id=fonoaudiologo.id_usuario.id_usuario %}">
-            {{ fonoaudiologo.id_usuario.primer_nombre }} 
-              {{ fonoaudiologo.id_usuario.segundo_nombre }}
-              {{ fonoaudiologo.id_usuario.ap_paterno }} 
-              {{ fonoaudiologo.id_usuario.ap_materno }}
+            {% if profesional.id_usuario.id_tp_usuario.tipo_usuario == 'Fonoaudiologo' %}
+            <a href="{% url 'detalle_fonoaudiologo' fonoaudiologo_id=profesional.id_usuario.id_usuario %}">
+                {{ profesional.id_usuario.primer_nombre }} 
+                {{ profesional.id_usuario.segundo_nombre }}
+                {{ profesional.id_usuario.ap_paterno }} 
+                {{ profesional.id_usuario.ap_materno }}
             </a>
+        {% elif profesional.id_usuario.id_tp_usuario.tipo_usuario == 'Neurologo' %}
+            <a href="{% url 'detalle_neurologo' neurologo_id=profesional.id_usuario.id_usuario %}">
+                {{ profesional.id_usuario.primer_nombre }} 
+                {{ profesional.id_usuario.segundo_nombre }}
+                {{ profesional.id_usuario.ap_paterno }} 
+                {{ profesional.id_usuario.ap_materno }}
+            </a>
+        {% endif %}
           </td>
-          <td>{{ fonoaudiologo.id_usuario.email }} 
+          <td>{{ profesional.id_usuario.email }} 
           </td>
-          <td>{{ fonoaudiologo.id_usuario.id_tp_usuario }} 
+          <td>{{ profesional.id_usuario.id_tp_usuario }} 
         </td>
         </tr>
         {% endfor %}

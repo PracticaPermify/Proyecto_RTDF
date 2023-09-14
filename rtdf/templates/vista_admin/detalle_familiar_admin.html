@@ -1,0 +1,42 @@
+{% extends 'rtdf/base.html' %}
+
+{% block content %}
+    <div>
+        <a href="{% url 'list_fami_admin' %}">Volver a la lista de familiares</a>
+    </div>
+    </br>
+        <div class="container">
+            <h1>Detalles del familiar {{ familiar.primer_nombre }} {{ familiar.ap_paterno }}</h1>
+        </br>
+        </div>
+
+        <table class="table">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">Rut</th>
+                <th scope="col">Correo electronico</th>
+                <th scope="col">Numero de contacto</th>
+                <th scope="col">Paciente asociado</th>
+                <th scope="col">Parentesco con el paciente</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">{{ familiar.numero_identificacion }}</th>
+                <td>{{ familiar.email }}</td>
+                <td>{{ familiar.numero_telefonico }}</td>
+                <td>
+                    <a href="{% url 'detalle_paciente' paciente_id=paciente_asociado.id_usuario.id_usuario %}">
+                    {{ paciente_asociado.id_usuario.primer_nombre }} 
+                    {{ paciente_asociado.id_usuario.segundo_nombre }}
+                    {{ paciente_asociado.id_usuario.ap_paterno }} 
+                    {{ paciente_asociado.id_usuario.ap_materno }}
+                    </a>
+                </td>
+                <td>{{ parentesco }}</td>
+              </tr>
+            </tbody>
+          </table>
+      </div>
+
+{% endblock %}

@@ -140,6 +140,9 @@ class Institucion(models.Model):
     class Meta:
         db_table = 'institucion'
 
+    def __str__(self):
+        return self.nombre_institucion
+
 
 class Intensidad(models.Model):
     id_pauta_terapeutica = models.OneToOneField('PautaTerapeutica', models.DO_NOTHING, db_column='id_pauta_terapeutica', primary_key=True)
