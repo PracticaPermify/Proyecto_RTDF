@@ -162,7 +162,7 @@ def vocalizacion(request):
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
 
-    return render(request,'rtdf/vocalizacion.html', {'tipo_usuario': tipo_usuario})
+    return render(request,'vista_paciente/vocalizacion.html', {'tipo_usuario': tipo_usuario})
 
 def intensidad(request):
 
@@ -170,7 +170,7 @@ def intensidad(request):
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
 
-    return render(request,'rtdf/intensidad.html', {'tipo_usuario': tipo_usuario})
+    return render(request,'vista_paciente/intensidad.html', {'tipo_usuario': tipo_usuario})
 
 ##Cierre de sesion
 
