@@ -1,41 +1,127 @@
 {% extends 'rtdf/base.html' %}
 
-{% block css%}
-
+{% block css %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'app/css/main.css' %}"/>
+<link rel="stylesheet" href="{% static 'app/css/main.css' %}" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 {% endblock %}
 
 {% block content %}
 <body class="is-preload">
     <form method="post">
+
         {% csrf_token %}
-        {% comment %} {{ registro_form.as_p }} {% endcomment %}
-        {{ registro_form.numero_identificacion.label_tag }} {{ registro_form.numero_identificacion }}<br>
-        {{ registro_form.primer_nombre.label_tag }} {{ registro_form.primer_nombre }}<br>
-        {{ registro_form.segundo_nombre.label_tag }} {{ registro_form.segundo_nombre }}<br>
-        {{ registro_form.ap_paterno.label_tag }} {{ registro_form.ap_paterno }}<br>
-        {{ registro_form.ap_materno.label_tag }} {{ registro_form.ap_materno }}<br>
-        {{ registro_form.fecha_nacimiento.label_tag }} {{ registro_form.fecha_nacimiento }}<br>
-        {{ registro_form.email.label_tag }} {{ registro_form.email }}<br>
-        {{ registro_form.numero_telefonico.label_tag }} {{ registro_form.numero_telefonico }}<br>
-        {{ registro_form.id_comuna.label_tag }}{{ registro_form.id_comuna }}<br>
-        {{ registro_form.password.label_tag }} {{ registro_form.password }}<br>
-        <p><small>*La contraseña debe contener al menos una letra mayúscula.</small></p>
-        <br>
-        <p><small>*La contraseña debe contener al menos una letra minúscula</small></p>
-        <br>
-        <p>*<small>La contraseña debe contener al menos un número</small></p>
-        <br>
-        <p><small>*La contraseña debe contener al menos un carácter especial.</small></p>
-        <br>
-        <p><small>*La contraseña debe tener al menos 8 caracteres.</small></p>
-        <br>
-        {{ registro_form.tipo_usuario.label_tag }} {{ registro_form.tipo_usuario }}<br>
-        <button type="submit" class="btn btn-primary btn-block">Registrarse</button>
-    </form>
+
+    <h1>Registro de usuario</h1>
+    </br>
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <label for="{{ registro_form.numero_identificacion.id_for_label }}">{{ registro_form.numero_identificacion.label_tag }}</label>
+                {{ registro_form.numero_identificacion }}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <label for="{{ registro_form.primer_nombre.id_for_label }}">{{ registro_form.primer_nombre.label_tag }}</label>
+                {{ registro_form.primer_nombre }}
+            </div>
+            <div class="form-group col-md-3">
+                <label for="{{ registro_form.segundo_nombre.id_for_label }}">{{ registro_form.segundo_nombre.label_tag }}</label>
+                {{ registro_form.segundo_nombre }}
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <label for="{{ registro_form.ap_paterno.id_for_label }}">{{ registro_form.ap_paterno.label_tag }}</label>
+                {{ registro_form.ap_paterno }}
+            </div>
+            <div class="form-group col-md-3">
+                <label for="{{ registro_form.ap_materno.id_for_label }}">{{ registro_form.ap_materno.label_tag }}</label>
+                {{ registro_form.ap_materno }}
+            </div>
+        </div>
     
-<body>
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <label for="{{ registro_form.fecha_nacimiento.id_for_label }}">{{ registro_form.fecha_nacimiento.label_tag }}</label>
+                {{ registro_form.fecha_nacimiento }}
+            </div>
+        </div>        
+
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="{{ registro_form.email.id_for_label }}">{{ registro_form.email.label_tag }}</label>
+                {{ registro_form.email }}
+            </div>
+        </div>  
+
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="{{ registro_form.numero_telefonico.id_for_label }}">{{ registro_form.numero_telefonico.label_tag }}</label>
+                {{ registro_form.numero_telefonico }}
+            </div>
+        </div>  
+
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="region">Región</label>
+                <select id="region" name="region">
+                    <option value="" selected>Selecciona una región</option>
+                    {% for region in regiones %}
+                        <option value="{{ region.id_region }}">{{ region.region }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>  
+
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="provincia">Provincia</label>
+                <select id="provincia" name="provincia" disabled>
+                    <option value="" selected>Selecciona una provincia</option>
+                </select>
+            </div>
+        </div>  
+
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="comuna">Comuna</label>
+                <select id="comuna" name="id_comuna" disabled>
+                    <option value="" selected>Selecciona una comuna</option>
+                </select>
+            </div>
+        </div>
+    
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="{{ registro_form.password.id_for_label }}">{{ registro_form.password.label_tag }}</label>
+                {{ registro_form.password }}
+                <small id="passwordHelpBlock" class="form-text text-muted">
+                <p>*La contraseña debe tener al menos 8 caracteres, al menos una letra mayúscula, 
+                    una minúscula, un número y un carácter especial.</p>
+                </small>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="{{ registro_form.tipo_usuario.id_for_label }}">{{ registro_form.tipo_usuario.label_tag }}</label>
+                {{ registro_form.tipo_usuario }}
+            </div>
+        </div>
+        
+        
+{% comment %} Aqui va los campos por usuario {% endcomment %}
+
+
+{% comment %} Aqui termina los campos por usuario {% endcomment %}
+
+        <button type="submit" class="btn btn-primary btn-block">Registrar</button>
+    </form>
+
+<script src="{% static 'app/js/selector_ubicacion.js' %}"></script>
+
+</body>
 {% endblock %}

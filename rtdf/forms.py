@@ -62,7 +62,8 @@ class RegistroForm(forms.ModelForm):
         validators=[es_rut_valido],
         required=True,
         widget=forms.TextInput(attrs={'placeholder': '12345678-9'}),
-        help_text='Ingrese su RUT válido (Ejemplo: 12345678-9)'
+        help_text='Ingrese su RUT válido (Ejemplo: 12345678-9)',
+        label='Rut'
     )
 
     fecha_nacimiento = forms.DateField(
@@ -92,9 +93,10 @@ class RegistroForm(forms.ModelForm):
     )
 
     tipo_usuario = forms.ModelChoiceField(
-        queryset=TpUsuario.objects.all(),
+        queryset=TpUsuario.objects.filter(tipo_usuario__in=['Paciente', 'Familiar']),
         empty_label=None,
-        widget=forms.Select(attrs={'class': 'form-control form-control-sm'})
+        widget=forms.Select(attrs={'class': 'form-control form-control-sm'}),
+        label='Tipo de usuario'
     )
 
     id_comuna = forms.ModelChoiceField(
@@ -104,9 +106,22 @@ class RegistroForm(forms.ModelForm):
         label='Comuna'
     )
 
-
     class Meta:
         model = Usuario
-        fields = ['numero_identificacion', 'primer_nombre', 'segundo_nombre', 'ap_paterno', 'ap_materno', 'fecha_nacimiento', 
-                  'email', 'numero_telefonico', 'id_comuna' ,'password','tipo_usuario']
+        fields = ['numero_identificacion', 
+                  'primer_nombre', 
+                  'segundo_nombre', 
+                  'ap_paterno', 
+                  'ap_materno', 
+                  'fecha_nacimiento', 
+                  'email', 
+                  'numero_telefonico', 
+                  'id_comuna',
+                  'password',
+                  'tipo_usuario',]
 
+
+class PacienteForm(forms.ModelForm):
+    class Meta:
+        model = Paciente
+        fields = ['telegram', 'fk_tipo_hipertension', 'fk_tipo_diabetes']

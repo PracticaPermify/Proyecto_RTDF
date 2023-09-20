@@ -4,15 +4,6 @@ from django.utils import timezone
 
 ####Funcionalidades####
 
-TIPO_USUARIO = [
-        ('Admin', 'Admin'),
-        ('Paciente', 'Paciente'),
-        ('Fonoaudiologo', 'Fonoaudiologo'),
-        ('Familiar', 'Familiar'),
-        ('Enfermera', 'Enfermera'),
-        ('Neurologo', 'Neurologo'),
-    ]
-
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
@@ -343,7 +334,7 @@ class TpTerapia(models.Model):
 
 class TpUsuario(models.Model):
     id_tp_usuario = models.AutoField(primary_key=True)
-    tipo_usuario = models.CharField(max_length=30,choices=TIPO_USUARIO)
+    tipo_usuario = models.CharField(max_length=30)
     
     class Meta:
         db_table = 'tp_usuario'

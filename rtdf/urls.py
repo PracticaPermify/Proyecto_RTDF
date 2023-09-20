@@ -22,7 +22,9 @@ urlpatterns = [
     path('lista_familiar/', views.lista_familiar, name='lista_familiar'),
     path('detalle_prof_paci/<int:paciente_id>/', views.detalle_prof_paci, name='detalle_prof_paci'),
     path('detalle_familiar/<int:paciente_id>/', views.detalle_familiar, name='detalle_familiar'),
-    path('mi_fonoaudiologo/',views.mi_fonoaudiologo,name='mi_fonoaudiologo')
+    path('mi_fonoaudiologo/',views.mi_fonoaudiologo,name='mi_fonoaudiologo'),
+    path('obtener_provincias/', views.obtener_provincias, name='obtener_provincias'),
+    path('obtener_comunas/', views.obtener_comunas, name='obtener_comunas'),
 ]
 
 ##urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

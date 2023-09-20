@@ -3,6 +3,7 @@ from .forms import RegistroForm
 from django.contrib.auth import authenticate, login, logout
 from .models import *
 from django.http import HttpResponseForbidden
+from django.http import JsonResponse
 
 
 # Create your views here.
@@ -26,6 +27,7 @@ def base(request):
 
 
 def registro(request):
+    regiones = Region.objects.all()
     if request.method == 'POST':
         registro_form = RegistroForm(request.POST)
 
@@ -43,7 +45,18 @@ def registro(request):
     else:
         registro_form = RegistroForm(initial={'tipo_usuario': TpUsuario.objects.get(pk=2)})
 
-    return render(request, 'registro/registro.html', {'registro_form': registro_form})
+    return render(request, 'registro/registro.html', {'registro_form': registro_form,
+                                                      'regiones': regiones})
+
+def obtener_provincias(request):
+    region_id = request.GET.get('region_id')
+    provincias = Provincia.objects.filter(id_region=region_id).values('id_provincia', 'provincia')
+    return JsonResponse(list(provincias), safe=False)
+
+def obtener_comunas(request):
+    provincia_id = request.GET.get('provincia_id')
+    comunas = Comuna.objects.filter(id_provincia=provincia_id).values('id_comuna', 'comuna')
+    return JsonResponse(list(comunas), safe=False)
 
 
 ##Login para el usuario

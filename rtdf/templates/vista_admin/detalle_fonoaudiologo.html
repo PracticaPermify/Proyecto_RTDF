@@ -5,11 +5,11 @@
         <a href="{% url 'list_fono_admin' %}">Volver a la lista de fonoaudiologos</a>
     </div>
     </br>
-        <div class="container">
+<div class="container">
             <h1>Detalles del fonoaudiologo {{ fonoaudiologo.primer_nombre }} {{ fonoaudiologo.ap_paterno }}</h1>
         </br>
         </div>
-
+      <div class="table-responsive">
         <table class="table">
             <thead class="thead-dark">
               <tr>
@@ -28,12 +28,14 @@
               </tr>
             </tbody>
           </table>
+        </div>
 
         </br>
       </br>
       <h2><strong>Pacientes asignados</strong></h2>
       </br>
-  
+    
+    <div class="table-responsive">
       <table class="table">
           <thead class="thead-dark">
             <tr>
@@ -62,6 +64,8 @@
             {% endfor %}
           </tbody>
         </table>
-      </div>
+    </div>
+      
+</div>
 
 {% endblock %}
