@@ -3,7 +3,6 @@
 {% block css %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'app/css/main.css' %}" />
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -107,21 +106,47 @@
 
         <div class="form-row">
             <div class="form-group col-md-4">
-                <label for="{{ registro_form.tipo_usuario.id_for_label }}">{{ registro_form.tipo_usuario.label_tag }}</label>
-                {{ registro_form.tipo_usuario }}
+                <label for="tipo_usuario">{{ registro_form.tipo_usuario.label_tag }}</label>
+                <select id="tipo_usuario" name="{{ registro_form.tipo_usuario.name }}" class="form-control form-control-sm">
+                    <option value="" selected>Selecciona un tipo de usuario</option>
+                    {% for choice in registro_form.tipo_usuario.field.choices %}
+                        <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                    {% endfor %}
+                </select>
             </div>
         </div>
         
-        
 {% comment %} Aqui va los campos por usuario {% endcomment %}
 
+<div class="form-row campos-paciente" style="display: none;">
+    <div class="form-group col-md-4">
+        <label for="telegram">Telegram</label>
+        {{ registro_form.telegram }}
+    </div>
+</div>
+
+<div class="form-row campos-paciente" style="display: none;">
+    <div class="form-group col-md-4">
+        <label for="fk_tipo_hipertension">Tipo de Hipertensión</label>
+        {{ registro_form.fk_tipo_hipertension }}
+    </div>
+</div>
+
+<div class="form-row campos-paciente" style="display: none;">
+    <div class="form-group col-md-4">
+        <label for="fk_tipo_diabetes">Tipo de Diabetes</label>
+        {{ registro_form.fk_tipo_diabetes }}
+    </div>
+</div>
 
 {% comment %} Aqui termina los campos por usuario {% endcomment %}
 
-        <button type="submit" class="btn btn-primary btn-block">Registrar</button>
-    </form>
+<button type="submit" class="btn btn-primary btn-block">Registrar</button>
+
+</form>
 
 <script src="{% static 'app/js/selector_ubicacion.js' %}"></script>
+<script src="{% static 'app/js/prueba.js' %}"></script>
 
 </body>
 {% endblock %}

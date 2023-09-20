@@ -38,7 +38,16 @@ def registro(request):
             tipo_usuario = registro_form.cleaned_data['tipo_usuario']
             usuario.id_tp_usuario = tipo_usuario
 
-            usuario.save()
+            usuario.save()  # Primero guardamos el usuario
+
+            if tipo_usuario.tipo_usuario == 'Paciente':
+                paciente = Paciente(
+                    telegram=registro_form.cleaned_data['telegram'],
+                    fk_tipo_hipertension=registro_form.cleaned_data['fk_tipo_hipertension'],
+                    fk_tipo_diabetes=registro_form.cleaned_data['fk_tipo_diabetes'],
+                    id_usuario=usuario
+                )
+                paciente.save()  # Solo guardamos el paciente si el tipo de usuario es "Paciente"
 
             return redirect('login')
 
@@ -57,7 +66,6 @@ def obtener_comunas(request):
     provincia_id = request.GET.get('provincia_id')
     comunas = Comuna.objects.filter(id_provincia=provincia_id).values('id_comuna', 'comuna')
     return JsonResponse(list(comunas), safe=False)
-
 
 ##Login para el usuario
 

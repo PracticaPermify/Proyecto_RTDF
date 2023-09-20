@@ -95,7 +95,7 @@ class RegistroForm(forms.ModelForm):
     tipo_usuario = forms.ModelChoiceField(
         queryset=TpUsuario.objects.filter(tipo_usuario__in=['Paciente', 'Familiar']),
         empty_label=None,
-        widget=forms.Select(attrs={'class': 'form-control form-control-sm'}),
+        widget=forms.Select(attrs={'class': 'form-control form-control-sm', 'id': 'tipo_usuario'}),
         label='Tipo de usuario'
     )
 
@@ -104,6 +104,27 @@ class RegistroForm(forms.ModelForm):
         required=True,
         widget=forms.Select(attrs={'class': 'form-control form-control-sm'}),
         label='Comuna'
+    )
+
+    telegram = forms.CharField(
+        max_length=30,
+        required=False,
+        widget=forms.TextInput(attrs={'placeholder': 'Telegram'}),
+        help_text='Ingrese su usuario de Telegram (opcional)'
+    )
+
+    fk_tipo_hipertension = forms.ModelChoiceField(
+        queryset=TipoHipertension.objects.all(),
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-control form-control-sm'}),
+        label='Tipo de Hipertensión'
+    )
+
+    fk_tipo_diabetes = forms.ModelChoiceField(
+        queryset=TipoDiabetes.objects.all(),
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-control form-control-sm'}),
+        label='Tipo de Diabetes'
     )
 
     class Meta:
@@ -118,10 +139,9 @@ class RegistroForm(forms.ModelForm):
                   'numero_telefonico', 
                   'id_comuna',
                   'password',
-                  'tipo_usuario',]
+                  'tipo_usuario',
+                  'telegram',  # Campo para Paciente
+                  'fk_tipo_hipertension',  # Campo para Paciente
+                  'fk_tipo_diabetes'  # Campo para Paciente
+                  ]
 
-
-class PacienteForm(forms.ModelForm):
-    class Meta:
-        model = Paciente
-        fields = ['telegram', 'fk_tipo_hipertension', 'fk_tipo_diabetes']
