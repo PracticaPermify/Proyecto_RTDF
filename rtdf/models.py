@@ -90,8 +90,9 @@ class Esv(models.Model):
 
 class FamiliarPaciente(models.Model):
     id_familiar_paciente = models.AutoField(primary_key=True)
-    parentesco = models.CharField(max_length=20)
+    ##parentesco = models.CharField(max_length=20)
     id_usuario = models.OneToOneField('Usuario', models.DO_NOTHING, db_column='id_usuario')
+    fk_tipo_familiar = models.ForeignKey('TpFamiliar', models.DO_NOTHING, db_column='fk_tipo_familiar',default=1)
 
     class Meta:
         db_table = 'familiar_paciente'
@@ -295,7 +296,16 @@ class TipoDiabetes(models.Model):
 
     def __str__(self):
         return self.tipo_diabetes
+    
+class TpFamiliar(models.Model):
+    id_tipo_familiar = models.AutoField(primary_key=True)
+    tipo_familiar = models.CharField(max_length=40)
 
+    class Meta:
+        db_table = 'tp_familiar'
+
+    def __str__(self):
+        return self.tipo_familiar
 
 class TipoHipertension(models.Model):
     id_tipo_hipertension = models.AutoField(primary_key=True)

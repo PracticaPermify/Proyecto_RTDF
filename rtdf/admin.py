@@ -27,8 +27,8 @@ class EsvAdmin(admin.ModelAdmin):
     search_fields = ['id_informe','total_esv','limitacion','emocional','fisico']
 
 class FamiliarPacienteAdmin(admin.ModelAdmin):
-    list_display = ['id_familiar_paciente','parentesco']
-    search_fields = ['id_familiar_paciente','parentesco']
+    list_display = ['id_familiar_paciente','fk_tipo_familiar']
+    search_fields = ['id_familiar_paciente','fk_tipo_familiar']
 
 class GrbasAdmin(admin.ModelAdmin):
     list_display = ['id_informe','g_grado_disfonia','r_aspereza', 'b_soplo', 'a_debilidad', 's_tension']
@@ -98,6 +98,10 @@ class TipoDiabetesAdmin(admin.ModelAdmin):
     list_display = ['id_tipo_diabetes','tipo_diabetes']
     search_fields = ['id_tipo_diabetes','tipo_diabetes']
 
+class TpFamiliarAdmin(admin.ModelAdmin):
+    list_display = ['id_tipo_familiar','tipo_familiar']
+    search_fields = ['id_tipo_familiar','tipo_familiar']
+
 class TipoHipertensionAdmin(admin.ModelAdmin):
     list_display = ['id_tipo_hipertension','tipo_hipertension']
     search_fields = ['id_tipo_hipertension','tipo_hipertension']
@@ -155,3 +159,4 @@ admin.site.register(TpTerapia, TpTerapiaAdmin)
 admin.site.register(Validacion, ValidacionAdmin)
 admin.site.register(Vocalizacion, VocalizacionAdmin)
 admin.site.register(TpUsuario, TpUsuarioAdmin)
+admin.site.register(TpFamiliar, TpFamiliarAdmin)
