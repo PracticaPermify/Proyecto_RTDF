@@ -116,7 +116,7 @@
             </div>
         </div>
         
-{% comment %} Aqui va los campos por usuario {% endcomment %}
+{% comment %} Aqui va los campos por usuario Paciente{% endcomment %}
 
 <div class="form-row campos-paciente" style="display: none;">
     <div class="form-group col-md-4">
@@ -139,14 +139,33 @@
     </div>
 </div>
 
-{% comment %} Aqui termina los campos por usuario {% endcomment %}
+{% comment %} Aqui termina los campos por usuario Paciente {% endcomment %}
+
+{% comment %} Aqui comienza los campos por usuario Familiar  {% endcomment %}
+
+<div class="form-row campos-familiar" style="display: none;">
+    <div class="form-group col-md-4">
+        <label for="fk_tipo_familiar">Parentesco con paciente</label>
+        {{ registro_form.fk_tipo_familiar }}
+    </div>
+</div>
+
+<div class="form-row campos-familiar">
+    <div class="form-group col-md-4">
+        <label for="rut_paciente">Ingresar RUT del paciente para vincular:</label>
+        <input type="text" id="rut_paciente" name="rut_paciente" class="form-control">
+    </div>
+</div>
+
+{% comment %} Aqui termina los campos por usuario Familiar {% endcomment %}
+
 
 <button type="submit" class="btn btn-primary btn-block">Registrar</button>
 
 </form>
 
 <script src="{% static 'app/js/selector_ubicacion.js' %}"></script>
-<script src="{% static 'app/js/prueba.js' %}"></script>
+<script src="{% static 'app/js/registro_final.js' %}"></script>
 
 </body>
 {% endblock %}

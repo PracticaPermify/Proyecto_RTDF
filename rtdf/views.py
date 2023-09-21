@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from .models import *
 from django.http import HttpResponseForbidden
 from django.http import JsonResponse
-
+from django.contrib import messages
 
 # Create your views here.
 def index(request):
@@ -38,8 +38,6 @@ def registro(request):
             tipo_usuario = registro_form.cleaned_data['tipo_usuario']
             usuario.id_tp_usuario = tipo_usuario
 
-            usuario.save()  # Primero guardamos el usuario
-
             if tipo_usuario.tipo_usuario == 'Paciente':
                 paciente = Paciente(
                     telegram=registro_form.cleaned_data['telegram'],
@@ -48,7 +46,37 @@ def registro(request):
                     id_usuario=usuario
                 )
                 paciente.save()  # Solo guardamos el paciente si el tipo de usuario es "Paciente"
+            
+            elif tipo_usuario.tipo_usuario == 'Familiar':
+                rut_paciente = registro_form.cleaned_data.get('rut_paciente')
+                
+                try:
+                    # Buscamos al paciente por el rut ingresado
+                    paciente = Usuario.objects.get(numero_identificacion=rut_paciente)
 
+                    if not hasattr(paciente, 'paciente'):
+                        messages.error(request, 'El paciente con el Rut ingresado no existe.')
+                        return redirect('registro')
+                    
+                    usuario.save()  # Guardamos el usuario antes de crear objetos relacionados
+                    
+                    familiar = FamiliarPaciente(
+                        fk_tipo_familiar=registro_form.cleaned_data['fk_tipo_familiar'],
+                        id_usuario=usuario
+                    )
+                    familiar.save()
+                    
+                    if hasattr(paciente, 'paciente'):
+                        relacion = RelacionFp(
+                            id_paciente=paciente.paciente,
+                            fk_familiar_paciente=familiar
+                        )
+                        relacion.save()
+                    
+                except Usuario.DoesNotExist:
+                    messages.error(request, 'El paciente con el Rut ingresado no existe.')
+                    return redirect('registro')
+                
             return redirect('login')
 
     else:
@@ -309,6 +337,20 @@ def detalle_paciente(request, paciente_id):
 
     fonoaudiologos_asociados = ProfesionalSalud.objects.filter(relacionpapro__id_paciente=paciente_info.id_paciente)
 
+    obtener_rasati = Informe.objects.filter(
+        fk_relacion_pa_pro__id_paciente=paciente_info,
+        tp_informe__tipo_informe='Rasati'
+    ).values_list('id_informe')
+
+    obtener_grbas = Informe.objects.filter(
+        fk_relacion_pa_pro__id_paciente=paciente_info,
+        tp_informe__tipo_informe='Grbas'
+    ).values_list('id_informe')
+
+    # Obtener informes Rasati y Grbas por IDs
+    informes_rasati = Rasati.objects.filter(id_informe__in=obtener_rasati).order_by('-id_informe__fecha')
+    informes_grbas = Grbas.objects.filter(id_informe__in=obtener_grbas).order_by('-id_informe__fecha')
+
     tipo_usuario = None
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
@@ -318,6 +360,8 @@ def detalle_paciente(request, paciente_id):
                                                                 'tipo_usuario': tipo_usuario,
                                                                 'paciente_info': paciente_info,
                                                                 'fonoaudiologos_asociados': fonoaudiologos_asociados,
+                                                                'informes_rasati': informes_rasati,
+                                                                'informes_grbas': informes_grbas
                                                             })
 ##LISTADO DE LOS FONOAUDIOLOGOS PARA ADMINSITRADOR
 
@@ -404,7 +448,7 @@ def detalle_familiar_admin(request, familiar_id):
     familiar = get_object_or_404(Usuario, id_usuario=familiar_id, id_tp_usuario__tipo_usuario='Familiar')
 
     familiar_paciente = FamiliarPaciente.objects.get(id_usuario=familiar)
-    parentesco = familiar_paciente.parentesco
+    parentesco = familiar_paciente.fk_tipo_familiar
 
     relacion_fp = RelacionFp.objects.filter(fk_familiar_paciente=familiar_paciente).first()
     paciente_asociado = relacion_fp.id_paciente if relacion_fp else None

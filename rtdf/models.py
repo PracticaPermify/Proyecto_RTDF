@@ -97,6 +97,8 @@ class FamiliarPaciente(models.Model):
     class Meta:
         db_table = 'familiar_paciente'
 
+    def __str__(self):
+        return self.fk_tipo_familiar
 
 class Grbas(models.Model):
     id_informe = models.OneToOneField('Informe', models.DO_NOTHING, db_column='id_informe', primary_key=True)

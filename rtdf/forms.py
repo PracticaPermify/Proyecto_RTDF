@@ -53,6 +53,13 @@ def es_password_valido(password):
 
     if len(password) < 8:
         raise ValidationError('La contraseña debe tener al menos 8 caracteres.')
+    
+def clean_rut_paciente(self):
+        rut = self.cleaned_data['rut_paciente']
+        # Realiza aquí las validaciones del RUT y devuelve el valor limpio o lanza ValidationError si es inválido
+        if not re.match(r'^\d{7,8}-[Kk\d]$', rut):
+            raise forms.ValidationError('El RUT ingresado no es válido.')
+        return rut
 
 ##Caracteres obligatorios para la contraseña
 
@@ -127,6 +134,21 @@ class RegistroForm(forms.ModelForm):
         label='Tipo de Diabetes'
     )
 
+    fk_tipo_familiar = forms.ModelChoiceField(
+        queryset=TpFamiliar.objects.all(),  # Ajusta esto según tus necesidades
+        required=False,  # Cambia esto a True si el campo es obligatorio para Familiares
+        widget=forms.Select(attrs={'class': 'form-control form-control-sm'}),
+        label='Parentesco con paciente'
+    )
+
+    rut_paciente = forms.CharField(
+        max_length=12,
+        required=False,
+        widget=forms.TextInput(attrs={'placeholder': '12345678-9'}),
+        help_text='Ingresa el RUT del paciente al que deseas vincularte (Ejemplo: 12345678-9)',
+        label='RUT del Paciente'
+    )
+
     class Meta:
         model = Usuario
         fields = ['numero_identificacion', 
@@ -142,6 +164,7 @@ class RegistroForm(forms.ModelForm):
                   'tipo_usuario',
                   'telegram',  # Campo para Paciente
                   'fk_tipo_hipertension',  # Campo para Paciente
-                  'fk_tipo_diabetes'  # Campo para Paciente
+                  'fk_tipo_diabetes',  # Campo para Paciente
+                  'fk_tipo_familiar' #Campo para familiar
                   ]
 
