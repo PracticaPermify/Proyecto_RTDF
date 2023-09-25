@@ -12,53 +12,54 @@
         {% csrf_token %}
 
     <h1>Registro de usuario</h1>
+
     </br>
         <div class="form-row">
             <div class="form-group col-md-3">
-                <label for="{{ registro_form.numero_identificacion.id_for_label }}">{{ registro_form.numero_identificacion.label_tag }}</label>
+                <label for="id_rut">Rut</label>
                 {{ registro_form.numero_identificacion }}
             </div>
         </div>
 
         <div class="form-row">
             <div class="form-group col-md-3">
-                <label for="{{ registro_form.primer_nombre.id_for_label }}">{{ registro_form.primer_nombre.label_tag }}</label>
+                <label for="id_primer_nombre">Primer nombre</label>
                 {{ registro_form.primer_nombre }}
             </div>
             <div class="form-group col-md-3">
-                <label for="{{ registro_form.segundo_nombre.id_for_label }}">{{ registro_form.segundo_nombre.label_tag }}</label>
+                <label for="id_segundo_nombre">Segundo nombre</label>
                 {{ registro_form.segundo_nombre }}
             </div>
         </div>
         
         <div class="form-row">
             <div class="form-group col-md-3">
-                <label for="{{ registro_form.ap_paterno.id_for_label }}">{{ registro_form.ap_paterno.label_tag }}</label>
+                <label for="id_ap_paterno">Apellido paterno</label>
                 {{ registro_form.ap_paterno }}
             </div>
             <div class="form-group col-md-3">
-                <label for="{{ registro_form.ap_materno.id_for_label }}">{{ registro_form.ap_materno.label_tag }}</label>
+                <label for="{{ registro_form.ap_materno.id_for_label }}">Apellido materno</label>
                 {{ registro_form.ap_materno }}
             </div>
         </div>
     
         <div class="form-row">
             <div class="form-group col-md-3">
-                <label for="{{ registro_form.fecha_nacimiento.id_for_label }}">{{ registro_form.fecha_nacimiento.label_tag }}</label>
+                <label for="id_fecha_nacimiento">Fecha nacimiento</label></br>
                 {{ registro_form.fecha_nacimiento }}
             </div>
         </div>        
 
         <div class="form-row">
             <div class="form-group col-md-4">
-                <label for="{{ registro_form.email.id_for_label }}">{{ registro_form.email.label_tag }}</label>
+                <label for="id_email">Correo electronico</label>
                 {{ registro_form.email }}
             </div>
         </div>  
 
         <div class="form-row">
             <div class="form-group col-md-4">
-                <label for="{{ registro_form.numero_telefonico.id_for_label }}">{{ registro_form.numero_telefonico.label_tag }}</label>
+                <label for="id_numero_telefonico">Numero de contacto</label>
                 {{ registro_form.numero_telefonico }}
             </div>
         </div>  
@@ -95,7 +96,7 @@
     
         <div class="form-row">
             <div class="form-group col-md-4">
-                <label for="{{ registro_form.password.id_for_label }}">{{ registro_form.password.label_tag }}</label>
+                <label for="id_passowrd">Contraseña</label>
                 {{ registro_form.password }}
                 <small id="passwordHelpBlock" class="form-text text-muted">
                 <p>*La contraseña debe tener al menos 8 caracteres, al menos una letra mayúscula, 
@@ -106,7 +107,7 @@
 
         <div class="form-row">
             <div class="form-group col-md-4">
-                <label for="tipo_usuario">{{ registro_form.tipo_usuario.label_tag }}</label>
+                <label for="tipo_usuario">Tipo de usuario</label>
                 <select id="tipo_usuario" name="{{ registro_form.tipo_usuario.name }}" class="form-control form-control-sm">
                     <option value="" selected>Selecciona un tipo de usuario</option>
                     {% for choice in registro_form.tipo_usuario.field.choices %}
@@ -150,10 +151,10 @@
     </div>
 </div>
 
-<div class="form-row campos-familiar">
+<div class="form-row campos-familiar" style="display: none;">
     <div class="form-group col-md-4">
-        <label for="rut_paciente">Ingresar RUT del paciente para vincular:</label>
-        <input type="text" id="rut_paciente" name="rut_paciente" class="form-control">
+        <label for="rut_paciente">Rut del paciente</label>
+        {{ registro_form.rut_paciente }}
     </div>
 </div>
 

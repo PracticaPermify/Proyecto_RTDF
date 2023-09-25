@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import RegistroForm
+from .forms import *
 from django.contrib.auth import authenticate, login, logout
 from .models import *
 from django.http import HttpResponseForbidden
 from django.http import JsonResponse
 from django.contrib import messages
+import re
+from django.contrib.auth.decorators import user_passes_test
 
 # Create your views here.
 def index(request):
@@ -25,6 +27,13 @@ def base(request):
 
     return render(request, 'rtdf/base.html', {'tipo_usuario': tipo_usuario})
 
+def validate(request):
+    if request.is_anonymous:
+        print(request)
+        return False
+    elif request:
+        print(request)
+        return True
 
 def registro(request):
     regiones = Region.objects.all()
@@ -34,10 +43,12 @@ def registro(request):
         if registro_form.is_valid():
             usuario = registro_form.save(commit=False)
             usuario.set_password(usuario.password)
-            
+
             tipo_usuario = registro_form.cleaned_data['tipo_usuario']
             usuario.id_tp_usuario = tipo_usuario
+            usuario.save()
 
+            # Si el tipo de usuario es "Paciente", crea un registro de Paciente
             if tipo_usuario.tipo_usuario == 'Paciente':
                 paciente = Paciente(
                     telegram=registro_form.cleaned_data['telegram'],
@@ -45,44 +56,38 @@ def registro(request):
                     fk_tipo_diabetes=registro_form.cleaned_data['fk_tipo_diabetes'],
                     id_usuario=usuario
                 )
-                paciente.save()  # Solo guardamos el paciente si el tipo de usuario es "Paciente"
-            
+                paciente.save()
+
             elif tipo_usuario.tipo_usuario == 'Familiar':
                 rut_paciente = registro_form.cleaned_data.get('rut_paciente')
-                
-                try:
-                    # Buscamos al paciente por el rut ingresado
-                    paciente = Usuario.objects.get(numero_identificacion=rut_paciente)
 
-                    if not hasattr(paciente, 'paciente'):
-                        messages.error(request, 'El paciente con el Rut ingresado no existe.')
-                        return redirect('registro')
-                    
-                    usuario.save()  # Guardamos el usuario antes de crear objetos relacionados
-                    
-                    familiar = FamiliarPaciente(
-                        fk_tipo_familiar=registro_form.cleaned_data['fk_tipo_familiar'],
-                        id_usuario=usuario
-                    )
-                    familiar.save()
-                    
-                    if hasattr(paciente, 'paciente'):
-                        relacion = RelacionFp(
-                            id_paciente=paciente.paciente,
-                            fk_familiar_paciente=familiar
-                        )
-                        relacion.save()
-                    
-                except Usuario.DoesNotExist:
-                    messages.error(request, 'El paciente con el Rut ingresado no existe.')
-                    return redirect('registro')
-                
+                # Verificar si el RUT del paciente existe en la base de datos
+                try:
+                    paciente_relacionado = Paciente.objects.get(id_usuario__numero_identificacion=rut_paciente)
+                except Paciente.DoesNotExist:
+                    mensaje_error = 'El paciente con el RUT proporcionado no se encuentra en la base de datos.'
+                    return render(request, 'registro/registro.html', {'registro_form': registro_form, 
+                                                                      'regiones': regiones,
+                                                                      'mensaje_error': mensaje_error})
+
+                familiar = FamiliarPaciente(
+                    fk_tipo_familiar=registro_form.cleaned_data['fk_tipo_familiar'],
+                    id_usuario=usuario
+                )
+                familiar.save()
+
+                relacion_fp = RelacionFp(
+                    id_paciente=paciente_relacionado,
+                    fk_familiar_paciente=familiar
+                )
+                relacion_fp.save()
+
             return redirect('login')
 
     else:
-        registro_form = RegistroForm(initial={'tipo_usuario': TpUsuario.objects.get(pk=2)})
+        registro_form = RegistroForm()
 
-    return render(request, 'registro/registro.html', {'registro_form': registro_form,
+    return render(request, 'registro/registro.html', {'registro_form': registro_form, 
                                                       'regiones': regiones})
 
 def obtener_provincias(request):
@@ -111,6 +116,12 @@ def login_view(request):
             return render(request, 'registro/login.html', {'error_message': error_message})
 
     return render(request, 'registro/login.html')
+
+##Cierre de sesion
+
+def logout_view(request):
+    logout(request)
+    return redirect('index')  
 
 ##LISTADO DE LOS PACIENTES------------------------------------------
 
@@ -247,7 +258,6 @@ def detalle_familiar(request, paciente_id):
                                                                  })
 
 ##Ejercicios de vocalización-----------------------------------
-
 def vocalizacion(request):
 
     tipo_usuario = None
@@ -316,14 +326,9 @@ def mi_fonoaudiologo(request):
     return render(request, 'vista_paciente/mi_fonoaudiologo.html', {'tipo_usuario': tipo_usuario, 'usuario': usuarios, 'pacientes': pacientes})
 
 
-##Cierre de sesion
-
-def logout_view(request):
-    logout(request)
-    return redirect('index')  
-
 ##LISTADO DE LOS PACIENTES PARA ADMINSITRADOR
 
+@user_passes_test(validate)
 def list_paci_admin(request):
     pacientes = Usuario.objects.filter(id_tp_usuario__tipo_usuario='Paciente')
     tipo_usuario = None
@@ -331,40 +336,35 @@ def list_paci_admin(request):
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
     return render(request, 'vista_admin/list_paci_admin.html',{'tipo_usuario': tipo_usuario, 'pacientes': pacientes})
 
+@user_passes_test(validate)
 def detalle_paciente(request, paciente_id):
     paciente = get_object_or_404(Usuario, id_usuario=paciente_id, id_tp_usuario__tipo_usuario='Paciente')
-    paciente_info = paciente.paciente
+    traer_paciente = paciente.paciente
 
-    fonoaudiologos_asociados = ProfesionalSalud.objects.filter(relacionpapro__id_paciente=paciente_info.id_paciente)
+    fonoaudiologos_asociados = ProfesionalSalud.objects.filter(relacionpapro__id_paciente=traer_paciente.id_paciente)
 
-    obtener_rasati = Informe.objects.filter(
-        fk_relacion_pa_pro__id_paciente=paciente_info,
-        tp_informe__tipo_informe='Rasati'
-    ).values_list('id_informe')
-
-    obtener_grbas = Informe.objects.filter(
-        fk_relacion_pa_pro__id_paciente=paciente_info,
-        tp_informe__tipo_informe='Grbas'
-    ).values_list('id_informe')
-
-    # Obtener informes Rasati y Grbas por IDs
-    informes_rasati = Rasati.objects.filter(id_informe__in=obtener_rasati).order_by('-id_informe__fecha')
-    informes_grbas = Grbas.objects.filter(id_informe__in=obtener_grbas).order_by('-id_informe__fecha')
+    obtener_rasati = Rasati.objects.filter(id_informe__fk_relacion_pa_pro__id_paciente=traer_paciente)
+    obtener_grbas = Grbas.objects.filter(id_informe__fk_relacion_pa_pro__id_paciente=traer_paciente)
 
     tipo_usuario = None
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
 
+    informes_rasati = obtener_rasati  # Variable declarada para los informes Rasati
+    informes_grbas = obtener_grbas    # Variable declarada para los informes Grbas
+
     return render(request, 'vista_admin/detalle_paciente.html', {
-                                                                'paciente': paciente, 
-                                                                'tipo_usuario': tipo_usuario,
-                                                                'paciente_info': paciente_info,
-                                                                'fonoaudiologos_asociados': fonoaudiologos_asociados,
-                                                                'informes_rasati': informes_rasati,
-                                                                'informes_grbas': informes_grbas
-                                                            })
+        'paciente': paciente,
+        'tipo_usuario': tipo_usuario,
+        'paciente_info': traer_paciente,
+        'fonoaudiologos_asociados': fonoaudiologos_asociados,
+        'informes_rasati': informes_rasati,
+        'informes_grbas': informes_grbas,
+    })
+
 ##LISTADO DE LOS FONOAUDIOLOGOS PARA ADMINSITRADOR
 
+@user_passes_test(validate)
 def list_fono_admin(request):
     fonoaudiologos = Usuario.objects.filter(id_tp_usuario__tipo_usuario='Fonoaudiologo')
     tipo_usuario = None
@@ -372,7 +372,7 @@ def list_fono_admin(request):
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
     return render(request, 'vista_admin/list_fono_admin.html', {'tipo_usuario': tipo_usuario, 'fonoaudiologos': fonoaudiologos})
 
-
+@user_passes_test(validate)
 def detalle_fonoaudiologo(request, fonoaudiologo_id):
 
     fonoaudiologo = get_object_or_404(Usuario, id_usuario=fonoaudiologo_id, id_tp_usuario__tipo_usuario='Fonoaudiólogo')
@@ -396,6 +396,7 @@ def detalle_fonoaudiologo(request, fonoaudiologo_id):
 
 ##LISTADO PARA NEUROLOGOS PARA ADMINSITRADOR
 
+@user_passes_test(validate)
 def list_neur_admin(request):
     neurologos = Usuario.objects.filter(id_tp_usuario__tipo_usuario='Neurologo')
     
@@ -408,6 +409,7 @@ def list_neur_admin(request):
                                                                 'usuario': usuarios,
                                                                 'neurologos': neurologos})
 
+@user_passes_test(validate)
 def detalle_neurologo(request, neurologo_id):
 
     neurologo = get_object_or_404(Usuario, id_usuario=neurologo_id, id_tp_usuario__tipo_usuario='Neurologo')
@@ -432,6 +434,7 @@ def detalle_neurologo(request, neurologo_id):
 
 ##LISTADO PARA FAMILIARES PARA VISTA DE ADMINISTRADOR
 
+@user_passes_test(validate)
 def list_fami_admin(request):
     familiar = Usuario.objects.filter(id_tp_usuario__tipo_usuario='Familiar')
     
@@ -444,6 +447,7 @@ def list_fami_admin(request):
                                                                 'usuario': usuarios,
                                                                 'familiar': familiar})
 
+@user_passes_test(validate)
 def detalle_familiar_admin(request, familiar_id):
     familiar = get_object_or_404(Usuario, id_usuario=familiar_id, id_tp_usuario__tipo_usuario='Familiar')
 
@@ -464,3 +468,49 @@ def detalle_familiar_admin(request, familiar_id):
                                                                 'parentesco': parentesco,
                                                                 'paciente_asociado': paciente_asociado
                                                             })
+##Ayuda pancho
+
+def ingresar_informes(request):
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+
+    if request.method == 'POST':
+        form = InformeForm(request.POST)
+        if form.is_valid():
+            informe = form.save()
+            return redirect('ingresar_informes')  # Redirige a la misma página después de guardar el informe
+    else:
+        form = InformeForm()
+
+    # Obtén la lista de tipos de informe
+    tp_informes = TpInforme.objects.all()
+
+    # Obtén la lista de pacientes asociados al Profesional de Salud actual
+    pacientes = RelacionPaPro.objects.filter(fk_profesional_salud=request.user.id_usuario)
+
+    return render(request, 'vista_profe/ingresar_informes.html', {
+        'form': form,
+        'tp_informes': tp_informes,
+        'pacientes': pacientes,
+        'tipo_usuario': tipo_usuario,
+    })
+
+
+def detalle_informe(request, informe_id):
+    informe = get_object_or_404(Informe, id_informe=informe_id)
+
+    try:
+        grbas = Grbas.objects.get(id_informe=informe)
+    except Grbas.DoesNotExist:
+        grbas = None
+
+    try:
+        rasati = Rasati.objects.get(id_informe=informe)
+    except Rasati.DoesNotExist:
+        rasati = None
+
+    return render(request, 'vista_admin/detalle_informe.html', {
+        'informe': informe,
+        'grbas': grbas,
+        'rasati': rasati,
+    })

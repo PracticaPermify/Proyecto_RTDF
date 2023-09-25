@@ -1,0 +1,86 @@
+{% extends 'rtdf/base.html' %}
+
+{% block content %}
+
+<div>
+    <a href="{% url 'list_paci_admin' %}">Volver a la lista de pacientes</a>
+</div>
+</br>
+</br>
+
+<div class="container">
+    <h1>Detalles del informe</h1>
+    </br>
+    <div class="table-responsive">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th>Titulo:</th>
+                    <td>{{ informe.titulo }}</td>
+                </tr>
+                <tr>
+                    <th>Descripción:</th>
+                    <td>{{ informe.descripcion }}</td>
+                </tr>
+                <tr>
+                    <th>Observación:</th>
+                    <td>{{ informe.observacion }}</td>
+                </tr>
+                <tr>
+                    <th>Fecha:</th>
+                    <td>{{ informe.fecha }}</td>
+                </tr>
+                {% if grbas %}
+                <tr>
+                    <th>Grado disfonía:</th>
+                    <td>{{ grbas.g_grado_disfonia }}</td>
+                </tr>
+                <tr>
+                    <th>Rugosidad de voz: </th>
+                    <td>{{ grbas.r_aspereza }}</td>
+                </tr>
+                <tr>
+                    <th>B (Respiración dificultosa):</th>
+                    <td> {{ grbas.b_soplo }}</td>
+                </tr>
+                <tr>
+                    <th>Astenia o grado de fatiga de voz</th>
+                    <td>{{ grbas.a_debilidad }}</td>
+                </tr>
+                <tr>
+                    <th>S (Grado de tensión vocal): </th>
+                    <td>{{ grbas.s_tension  }}</td>
+                </tr>
+                {% endif %}
+                {% if rasati %}
+                <tr>
+                    <th>Ronquera:</th>
+                    <td>{{ rasati.r_ronquedad }}</td>
+                </tr>
+                <tr>
+                    <th>Aspereza: </th>
+                    <td>{{ rasati.a_aspereza }}</td>
+                </tr>
+                <tr>
+                    <th>Soplosidad:</th>
+                    <td> {{ rasati.s_soplo }}</td>
+                </tr>
+                <tr>
+                    <th>Astenia:</th>
+                    <td>{{ rasati.a_astenia }}</td>
+                </tr>
+                <tr>
+                    <th>Tensión: </th>
+                    <td>{{ rasati.t_tension }}</td>
+                </tr>
+                <tr>
+                    <th>Inestabilidad: </th>
+                    <td>{{ rasati.i_inestabilidad }}</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

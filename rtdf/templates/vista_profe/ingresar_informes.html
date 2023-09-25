@@ -1,0 +1,51 @@
+{% extends 'rtdf/base.html' %}
+
+{% block css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'app/css/main.css' %}" />
+{% endblock %}
+
+{% block content %}
+<body class="is-preload">
+    <form method="post">
+        {% csrf_token %}
+        <h1>Ingresar Informe</h1>
+        <br>
+
+        <div class="form-group">
+            <label for="fk_relacion_pa_pro">Pacientes:</label>
+            {{ form.fk_relacion_pa_pro }}
+        </div>
+        
+        <div class="form-group">
+            <label for="titulo">Título:</label>
+            {{ form.titulo }}
+        </div>
+
+        <div class="form-group">
+            <label for="descripcion">Descripción:</label>
+            {{ form.descripcion }}
+        </div>
+
+        <div class="form-group">
+            <label for="fecha">Fecha:</label></br>
+            <input type="datetime-local" id="fecha" name="fecha" value="{{ form.fecha.value|date:'Y-m-d\TH:i' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="observacion">Observación:</label>
+            {{ form.observacion }}
+        </div>
+
+        <div class="form-group">
+            <label for="tp_informe">Tipo de Informe:</label>
+            {{ form.tp_informe }}
+        </div>
+      
+        <button type="submit" class="btn btn-primary btn-block">Registrar</button>
+    </form>
+
+<script src="{% static 'app/js/formulario_paci.js' %}"></script>
+
+</body>
+{% endblock %}

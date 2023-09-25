@@ -36,6 +36,10 @@ class Audio(models.Model):
 
     class Meta:
         db_table = 'audio'
+        verbose_name_plural = "audio"
+
+    def __str__(self):
+        return self.url_audio    
 
 
 class Audioscoeficientes(models.Model):
@@ -64,7 +68,10 @@ class Audioscoeficientes(models.Model):
 
     class Meta:
         db_table = 'audioscoeficientes'
+        verbose_name_plural = "audiocoeficiente"
 
+    def __str__(self):
+        return self.nombre_archivo    
 
 class Comuna(models.Model):
     id_comuna = models.AutoField(primary_key=True)
@@ -73,6 +80,7 @@ class Comuna(models.Model):
 
     class Meta:
         db_table = 'comuna'
+        verbose_name_plural = "comuna"
 
     def __str__(self):
         return self.comuna
@@ -86,7 +94,8 @@ class Esv(models.Model):
 
     class Meta:
         db_table = 'esv'
-
+        verbose_name_plural = "esv"
+ 
 
 class FamiliarPaciente(models.Model):
     id_familiar_paciente = models.AutoField(primary_key=True)
@@ -96,9 +105,14 @@ class FamiliarPaciente(models.Model):
 
     class Meta:
         db_table = 'familiar_paciente'
+        verbose_name_plural = "familiar paciente"
+
+    # NO AGREGAR DEBIDO A QUE CONVIERTE EL ID EN STR Y LAS TABLAS VINCULADAS DA ERROR
+    # def __str__(self):
+    #     return self.id_familiar_paciente    
 
     def __str__(self):
-        return self.fk_tipo_familiar
+        return f'{self.fk_tipo_familiar}: {self.id_usuario.primer_nombre} {self.id_usuario.ap_paterno}'
 
 class Grbas(models.Model):
     id_informe = models.OneToOneField('Informe', models.DO_NOTHING, db_column='id_informe', primary_key=True)
@@ -110,7 +124,10 @@ class Grbas(models.Model):
 
     class Meta:
         db_table = 'grbas'
+        verbose_name_plural = "grbas"
 
+    # def __str__(self):
+    #     return self.id_informe    
 
 class Informe(models.Model):
     id_informe = models.AutoField(primary_key=True)
@@ -124,6 +141,10 @@ class Informe(models.Model):
 
     class Meta:
         db_table = 'informe'
+        verbose_name_plural = "informe"
+    
+    def __str__(self):
+        return f'Informe: {self.id_informe}' 
 
 
 class Institucion(models.Model):
@@ -133,6 +154,7 @@ class Institucion(models.Model):
 
     class Meta:
         db_table = 'institucion'
+        verbose_name_plural = "institucion"        
 
     def __str__(self):
         return self.nombre_institucion
@@ -146,7 +168,10 @@ class Intensidad(models.Model):
 
     class Meta:
         db_table = 'intensidad'
+        verbose_name_plural = "intensidad"
 
+    # def __str__(self):
+    #     return self.id_pauta_terapeutica
 
 class OrigenAudio(models.Model):
     id_origen_audio = models.AutoField(primary_key=True)
@@ -155,6 +180,10 @@ class OrigenAudio(models.Model):
 
     class Meta:
         db_table = 'origen_audio'
+        verbose_name_plural = "origen audio"
+
+    def __str__(self):
+        return self.origen_audio
 
 
 class Paciente(models.Model):
@@ -166,7 +195,10 @@ class Paciente(models.Model):
 
     class Meta:
         db_table = 'paciente'
+        verbose_name_plural = "paciente"
 
+    def __str__(self):
+        return f'{self.id_usuario.primer_nombre} {self.id_usuario.ap_paterno}'
 
 class Pais(models.Model):
     id_pais = models.AutoField(primary_key=True)
@@ -174,6 +206,7 @@ class Pais(models.Model):
 
     class Meta:
         db_table = 'pais'
+        verbose_name_plural = "país"
 
     def __str__(self):
         return self.pais
@@ -192,7 +225,10 @@ class PautaTerapeutica(models.Model):
 
     class Meta:
         db_table = 'pauta_terapeutica'
+        verbose_name_plural = "Pauta terapéutica"
 
+    def __str__(self):
+        return f'Pauta: {self.id_pauta_terapeutica} | Paciente: {self.fk_relacion_pa_pro.id_paciente.id_usuario.primer_nombre} {self.fk_relacion_pa_pro.id_paciente.id_usuario.ap_paterno}'
 
 class PreRegistro(models.Model):
     id_pre_registro = models.AutoField(primary_key=True)
@@ -212,6 +248,10 @@ class PreRegistro(models.Model):
 
     class Meta:
         db_table = 'pre_registro'
+        verbose_name_plural = "pre registro"
+
+    def __str__(self):
+        return self.numero_identificacion
 
 
 class ProfesionalSalud(models.Model):
@@ -222,8 +262,11 @@ class ProfesionalSalud(models.Model):
 
     class Meta:
         db_table = 'profesional_salud'
+        verbose_name_plural = "profesional salud"
 
-
+    def __str__(self):
+        return f'{self.id_usuario.id_tp_usuario}: {self.id_usuario.primer_nombre} {self.id_usuario.ap_paterno}'
+    
 class Provincia(models.Model):
     id_provincia = models.AutoField(primary_key=True)
     provincia = models.CharField(max_length=50)
@@ -231,6 +274,7 @@ class Provincia(models.Model):
 
     class Meta:
         db_table = 'provincia'
+        verbose_name_plural = "provincia"
 
     def __str__(self):
         return self.provincia
@@ -247,6 +291,10 @@ class Rasati(models.Model):
 
     class Meta:
         db_table = 'rasati'
+        verbose_name_plural = "rasati"
+
+    # def __str__(self):
+    #     return self.id_informe    
 
 
 class Region(models.Model): 
@@ -256,6 +304,7 @@ class Region(models.Model):
 
     class Meta:
         db_table = 'region'
+        verbose_name_plural = "región"
 
     def __str__(self):
         return self.region
@@ -269,7 +318,10 @@ class Registros(models.Model):
 
     class Meta:
         db_table = 'registros'
+        verbose_name_plural = "registro"
 
+    def __str__(self):
+        return self.numero_identificacion
 
 class RelacionFp(models.Model):
     id_relacion_fp = models.AutoField(primary_key=True)
@@ -278,6 +330,7 @@ class RelacionFp(models.Model):
 
     class Meta:
         db_table = 'relacion_fp'
+        verbose_name_plural = 'relación familiar paciente'
 
 
 class RelacionPaPro(models.Model):
@@ -287,14 +340,18 @@ class RelacionPaPro(models.Model):
 
     class Meta:
         db_table = 'relacion_pa_pro'
+        verbose_name_plural = 'relación profesional paciente'
 
-
+    def __str__(self):
+        return f'Paciente: {self.id_paciente.id_usuario.primer_nombre} {self.id_paciente.id_usuario.ap_paterno}'
+    
 class TipoDiabetes(models.Model):
     id_tipo_diabetes = models.AutoField(primary_key=True)
     tipo_diabetes = models.CharField(max_length=10)
 
     class Meta:
         db_table = 'tipo_diabetes'
+        verbose_name_plural = 'tipo diabetes'
 
     def __str__(self):
         return self.tipo_diabetes
@@ -305,6 +362,7 @@ class TpFamiliar(models.Model):
 
     class Meta:
         db_table = 'tp_familiar'
+        verbose_name_plural = 'tipo familiar'
 
     def __str__(self):
         return self.tipo_familiar
@@ -315,6 +373,7 @@ class TipoHipertension(models.Model):
 
     class Meta:
         db_table = 'tipo_hipertension'
+        verbose_name_plural = 'tipo hipertensión'
 
     def __str__(self):
         return self.tipo_hipertension
@@ -326,15 +385,21 @@ class TpInforme(models.Model):
 
     class Meta:
         db_table = 'tp_informe'
+        verbose_name_plural = 'tipo informe'
 
-
+    def __str__(self):
+        return self.tipo_informe
+    
 class TpLlenado(models.Model):
     id_tipo_llenado = models.AutoField(primary_key=True)
     llenado = models.CharField(max_length=20)
 
     class Meta:
         db_table = 'tp_llenado'
+        verbose_name_plural = 'tipo llenado'
 
+    def __str__(self):
+        return self.llenado
 
 class TpTerapia(models.Model):
     id_tp_terapia = models.AutoField(primary_key=True)
@@ -342,14 +407,18 @@ class TpTerapia(models.Model):
 
     class Meta:
         db_table = 'tp_terapia'
+        verbose_name_plural = 'tipo terapia'
 
-
+    def __str__(self):
+        return self.tipo_terapia
+    
 class TpUsuario(models.Model):
     id_tp_usuario = models.AutoField(primary_key=True)
     tipo_usuario = models.CharField(max_length=30)
     
     class Meta:
         db_table = 'tp_usuario'
+        verbose_name_plural = 'tipo usuario'
 
     def __str__(self):
         return self.tipo_usuario
@@ -420,6 +489,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
 
     class Meta:
         db_table = 'usuario'
+        verbose_name_plural = 'usuario'
 
 
 class Validacion(models.Model):
@@ -430,7 +500,10 @@ class Validacion(models.Model):
 
     class Meta:
         db_table = 'validacion'
+        verbose_name_plural = 'validación'
 
+    # def __str__(self):
+    #     return self.id_validacion
 
 class Vocalizacion(models.Model):
     id_pauta_terapeutica = models.OneToOneField(PautaTerapeutica, models.DO_NOTHING, db_column='id_pauta_terapeutica', primary_key=True)
@@ -439,3 +512,7 @@ class Vocalizacion(models.Model):
 
     class Meta:
         db_table = 'vocalizacion'
+        verbose_name_plural = 'vocalización'
+
+    # def __str__(self):
+    #     return self.id_pauta_terapeutica

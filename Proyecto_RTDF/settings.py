@@ -111,7 +111,7 @@ AUTH_USER_MODEL = 'rtdf.Usuario'  # Reemplaza 'tu_app' con el nombre de tu aplic
 DATABASES = {
      'default': {
          'ENGINE': 'django.db.backends.mysql',
-         'NAME': 'rtdf_final',
+         'NAME': 'rtdf_data_final',
          'USER': 'root',
          'PASSWORD': 'nico123',
          'HOST': 'localhost',

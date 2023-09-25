@@ -3,32 +3,7 @@ from .models import *
 from django.core.validators import EmailValidator
 from django.core.exceptions import ValidationError
 import re
-
-##Campo de rut (errores para registrar con los caracteres correspondientes (CORREGIR))
-
-def es_rut_valido(rut):
-    rut = rut.replace(' ', '').replace('-', '')
-
-    if not rut.isdigit() or not 8 <= len(rut) <= 10:
-        return False
-
-    numero_identificacion, digito_verificador = rut[:-1], rut[-1]
-
-    try:
-        numero_identificacion = int(numero_identificacion)
-    except ValueError:
-        return False
-
-    suma = 0
-    multiplo = 2
-    for digito in reversed(str(numero_identificacion)):
-        suma += int(digito) * multiplo
-        multiplo = 2 if multiplo == 7 else multiplo + 1
-
-    resto = suma % 11
-    digito_esperado = 11 - resto if resto != 1 else 'K'
-
-    return str(digito_esperado) == digito_verificador.upper()
+from django.core import validators
 
 ##Numero de telefono
 
@@ -66,16 +41,21 @@ def clean_rut_paciente(self):
 class RegistroForm(forms.ModelForm):
 
     numero_identificacion = forms.CharField(
-        validators=[es_rut_valido],
         required=True,
         widget=forms.TextInput(attrs={'placeholder': '12345678-9'}),
         help_text='Ingrese su RUT válido (Ejemplo: 12345678-9)',
-        label='Rut'
+        label='Rut',
+        validators=[
+            validators.RegexValidator(
+                regex=r'^\d{7,8}-[Kk\d]$',  # Validador para RUTs en formato válido
+                message='Ingrese un RUT válido en formato 12345678-9.'
+            ),
+            validators.MinLengthValidator(limit_value=9, message='El rut debe contar con los caracteres especificados'),  
+        ]
     )
 
     fecha_nacimiento = forms.DateField(
-        widget=forms.DateInput(format='%d-%m-%Y', attrs={'placeholder': 'día-mes-año'}),
-        input_formats=['%d-%m-%Y', '%Y-%m-%d'],
+        widget=forms.DateInput(format='%d-%m-%Y', attrs={'type': 'date'}),
         required=True
     )
 
@@ -88,8 +68,8 @@ class RegistroForm(forms.ModelForm):
     numero_telefonico = forms.CharField(
         validators=[es_numero_telefonico_valido],
         required=False,
-        widget=forms.TextInput(attrs={'placeholder': '+56930304040'}),
-        help_text='Ingrese un número de teléfono válido (Ejemplo: +56930304040)'
+        widget=forms.TextInput(attrs={'placeholder': '+56912345678'}),
+        help_text='Ingrese un número de teléfono válido (Ejemplo: +56912345678)'
     )
 
     password = forms.CharField(
@@ -142,11 +122,18 @@ class RegistroForm(forms.ModelForm):
     )
 
     rut_paciente = forms.CharField(
-        max_length=12,
+        max_length=12,  # Ajusta la longitud máxima según tus necesidades
         required=False,
         widget=forms.TextInput(attrs={'placeholder': '12345678-9'}),
-        help_text='Ingresa el RUT del paciente al que deseas vincularte (Ejemplo: 12345678-9)',
-        label='RUT del Paciente'
+        help_text='Ingresa el RUT del paciente (Ejemplo: 12345678-9)',
+        label='Rut del paciente',
+        validators=[
+            validators.RegexValidator(
+                regex=r'^\d{7,8}-[Kk\d]$',  # Validador para RUTs en formato válido
+                message='Ingrese un RUT válido en formato 12345678-9.'
+            ),
+            validators.MinLengthValidator(limit_value=9, message='El rut debe contar con los caracteres especificados'),
+        ],
     )
 
     class Meta:
@@ -165,6 +152,52 @@ class RegistroForm(forms.ModelForm):
                   'telegram',  # Campo para Paciente
                   'fk_tipo_hipertension',  # Campo para Paciente
                   'fk_tipo_diabetes',  # Campo para Paciente
-                  'fk_tipo_familiar' #Campo para familiar
+                  'fk_tipo_familiar', #Campo para familiar
+                  'rut_paciente'
                   ]
 
+
+class InformeForm(forms.ModelForm):
+    fk_relacion_pa_pro = forms.ModelChoiceField(
+        queryset=RelacionPaPro.objects.all(),
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-control form-control-sm'}),
+        label='Relación con Paciente y Profesional de Salud'
+    )
+
+    titulo = forms.CharField(
+        required=True,
+        widget=forms.TextInput(attrs={'placeholder': 'Vocalización/Intensidad'}),
+        label='Título'
+    )
+
+    descripcion = forms.CharField(
+        required=True,
+        widget=forms.Textarea(attrs={'placeholder': 'Descripción'}),
+        label='Descripción'
+    )
+
+    fecha = forms.DateTimeField(
+        widget=forms.DateTimeInput(format='%d-%m-%Y', attrs={'placeholder': 'día-mes-año'}),
+        required=True
+    )
+
+    observacion = forms.CharField(
+        required=True,
+        widget=forms.Textarea(attrs={'placeholder': 'Añadir detalles de los síntomas.'}),
+        label='Observación'
+    )
+
+    tp_informe = forms.ModelChoiceField(
+        queryset=TpInforme.objects.all(),
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-control form-control-sm'}),
+        label='Tipo de Informe'
+    )
+
+    class Meta:
+        model = Informe  # Especifica el modelo que se utilizará en el formulario
+        fields = ['fk_relacion_pa_pro', 'titulo', 'descripcion', 'fecha', 'observacion', 'tp_informe']
+        widgets = {
+            'fecha': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        }

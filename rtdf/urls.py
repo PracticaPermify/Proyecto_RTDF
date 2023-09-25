@@ -25,6 +25,9 @@ urlpatterns = [
     path('mi_fonoaudiologo/',views.mi_fonoaudiologo,name='mi_fonoaudiologo'),
     path('obtener_provincias/', views.obtener_provincias, name='obtener_provincias'),
     path('obtener_comunas/', views.obtener_comunas, name='obtener_comunas'),
+    path('ingresar_informes/', views.ingresar_informes, name='ingresar_informes'),
+    path('detalle_informe/<int:informe_id>/', views.detalle_informe, name='detalle_informe')
+
 ]
 
 ##urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
