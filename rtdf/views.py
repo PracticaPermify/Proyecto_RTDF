@@ -47,8 +47,7 @@ def registro(request):
             tipo_usuario = registro_form.cleaned_data['tipo_usuario']
             usuario.id_tp_usuario = tipo_usuario
             usuario.save()
-
-            # Si el tipo de usuario es "Paciente", crea un registro de Paciente
+            
             if tipo_usuario.tipo_usuario == 'Paciente':
                 paciente = Paciente(
                     telegram=registro_form.cleaned_data['telegram'],
@@ -471,29 +470,49 @@ def detalle_familiar_admin(request, familiar_id):
 ##Ayuda pancho
 
 def ingresar_informes(request):
+    tipo_usuario = None
+
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+        
+        profesional_salud = request.user.profesionalsalud
+        relaciones_pacientes = RelacionPaPro.objects.filter(fk_profesional_salud=profesional_salud)
 
-    if request.method == 'POST':
-        form = InformeForm(request.POST)
-        if form.is_valid():
-            informe = form.save()
-            return redirect('ingresar_informes')  # Redirige a la misma página después de guardar el informe
+        if request.method == 'POST':
+            form = InformeForm(request.POST)
+            grbas_form = GrbasForm(request.POST)
+            rasati_form = RasatiForm(request.POST)
+
+            form.fields['fk_relacion_pa_pro'].queryset = relaciones_pacientes
+
+            if form.is_valid() and grbas_form.is_valid() and rasati_form.is_valid():
+                informe = form.save()
+
+                # Asociar el informe con GRBAS y RASATI
+                grbas = grbas_form.save(commit=False)
+                grbas.id_informe = informe
+                grbas.save()
+
+                rasati = rasati_form.save(commit=False)
+                rasati.id_informe = informe
+                rasati.save()
+
+                return redirect('listado_pacientes')
+        else:
+            form = InformeForm()
+            form.fields['fk_relacion_pa_pro'].queryset = relaciones_pacientes
+            grbas_form = GrbasForm()
+            rasati_form = RasatiForm()
+
+        return render(request, 'vista_profe/ingresar_informes.html', {
+            'form': form,
+            'grbas_form': grbas_form,
+            'rasati_form': rasati_form,
+            'tipo_usuario': tipo_usuario,
+        })
     else:
-        form = InformeForm()
+        return redirect('vista_profe/index.html')
 
-    # Obtén la lista de tipos de informe
-    tp_informes = TpInforme.objects.all()
-
-    # Obtén la lista de pacientes asociados al Profesional de Salud actual
-    pacientes = RelacionPaPro.objects.filter(fk_profesional_salud=request.user.id_usuario)
-
-    return render(request, 'vista_profe/ingresar_informes.html', {
-        'form': form,
-        'tp_informes': tp_informes,
-        'pacientes': pacientes,
-        'tipo_usuario': tipo_usuario,
-    })
 
 
 def detalle_informe(request, informe_id):

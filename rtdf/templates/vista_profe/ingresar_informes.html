@@ -13,10 +13,10 @@
         <br>
 
         <div class="form-group">
-            <label for="fk_relacion_pa_pro">Pacientes:</label>
+            <label for="fk_relacion_pa_pro">Paciente:</label>
             {{ form.fk_relacion_pa_pro }}
         </div>
-        
+
         <div class="form-group">
             <label for="titulo">Título:</label>
             {{ form.titulo }}
@@ -39,13 +39,136 @@
 
         <div class="form-group">
             <label for="tp_informe">Tipo de Informe:</label>
-            {{ form.tp_informe }}
+            <select id="tp_informe" name="{{ form.tp_informe.name }}" class="form-control form-control-sm">
+                <option value="" selected>Tipo de informe para diagnostico</option>
+                {% for choice in form.tp_informe.field.choices %}
+                    <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                {% endfor %}
+            </select>
         </div>
-      
-        <button type="submit" class="btn btn-primary btn-block">Registrar</button>
-    </form>
 
-<script src="{% static 'app/js/formulario_paci.js' %}"></script>
+    {% comment %}Aqui va campos para GRBAS{% endcomment %}
+
+    <div class="campos-grbas">
+
+        <div class="form-group">
+            <label for="{{ grbas_form.g_grado_disfonia.id_for_label }}">Grado de Disfonía:</label>
+            {{ grbas_form.g_grado_disfonia }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ grbas_form.r_aspereza.id_for_label }}">Rugosidad de la voz:</label>
+            {{ grbas_form.r_aspereza }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ grbas_form.b_soplo.id_for_label }}">(B) Respiracion dificultosa:</label>
+            {{ grbas_form.b_soplo }}
+        </div>        
+
+        <div class="form-group">
+            <label for="{{ grbas_form.a_debilidad.id_for_label }}">Astenia o grado de fatiga de voz:</label>
+            {{ grbas_form.a_debilidad }}
+        </div>        
+
+        <div class="form-group">
+            <label for="{{ grbas_form.s_tension.id_for_label }}">Grado de tension vocal:</label>
+            {{ grbas_form.s_tension }}
+        </div>   
+
+    </div>
+
+    {% comment %} Aca termina campos para GRBAS {% endcomment %}
+
+
+    {% comment %}Aqui va campos para RASATI{% endcomment %}
+
+    <div class="campos-rasati">
+        
+        <div class="form-group">
+            <label for="{{ rasati_form.r_ronquedad.id_for_label }}">Ronquedad:</label>
+            {{ rasati_form.r_ronquedad }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ rasati_form.a_aspereza.id_for_label }}">Aspereza:</label>
+            {{ rasati_form.a_aspereza }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ rasati_form.s_soplo.id_for_label }}">Soplo:</label>
+            {{ rasati_form.s_soplo }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ rasati_form.a_astenia.id_for_label }}">Astenia:</label>
+            {{ rasati_form.a_astenia }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ rasati_form.t_tension.id_for_label }}">Tension:</label>
+            {{ rasati_form.t_tension }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ rasati_form.i_inestabilidad.id_for_label }}">Inestabilidad:</label>
+            {{ rasati_form.i_inestabilidad }}
+        </div>
+
+        
+    </div>
+
+    {% comment %} Aca termina campos para RASATI {% endcomment %}
+
+        
+    <button type="submit" class="btn btn-primary btn-block">Registrar</button>
+</form>
+
+<script src="{% static 'app/js/formulario.js' %}"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let tpInformeSelect = document.getElementById('tp_informe');
+        let camposGrbas = document.querySelectorAll('.campos-grbas'); // Nuevos campos para "GRBAS"
+        let camposRasati = document.querySelectorAll('.campos-rasati'); // Nuevos campos para "RASATI"
+    
+        function toggleCampos() {
+            let selectedTipoInforme = tpInformeSelect.selectedOptions[0];
+    
+            // Lógica para mostrar u ocultar campos según el tipo de informe
+            if (selectedTipoInforme.textContent === 'GRBAS') {
+                camposGrbas.forEach(function (campo) {
+                    campo.style.display = 'block'; // Mostrar campos de "GRBAS"
+                });
+    
+                camposRasati.forEach(function (campo) {
+                    campo.style.display = 'none'; // Ocultar campos de "RASATI"
+                });
+            } else if (selectedTipoInforme.textContent === 'RASATI') {
+                camposGrbas.forEach(function (campo) {
+                    campo.style.display = 'none'; // Ocultar campos de "GRBAS"
+                });
+    
+                camposRasati.forEach(function (campo) {
+                    campo.style.display = 'block'; // Mostrar campos de "RASATI"
+                });
+            } else {
+                camposGrbas.forEach(function (campo) {
+                    campo.style.display = 'none';
+                });
+    
+                camposRasati.forEach(function (campo) {
+                    campo.style.display = 'none'; // Ocultar campos para otros valores de informe
+                });
+            }
+        }
+        tpInformeSelect.addEventListener('change', toggleCampos);
+    
+        // Llama a la función para configurar los campos según los valores iniciales
+        toggleCampos();
+    });
+</script>
+
 
 </body>
 {% endblock %}

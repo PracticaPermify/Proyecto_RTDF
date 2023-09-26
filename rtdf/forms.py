@@ -191,13 +191,100 @@ class InformeForm(forms.ModelForm):
     tp_informe = forms.ModelChoiceField(
         queryset=TpInforme.objects.all(),
         required=True,
-        widget=forms.Select(attrs={'class': 'form-control form-control-sm'}),
+        empty_label=None,
+        widget=forms.Select(attrs={'class': 'form-control form-control-sm','id': 'tp_informe'}),
         label='Tipo de Informe'
     )
 
     class Meta:
-        model = Informe  # Especifica el modelo que se utilizará en el formulario
-        fields = ['fk_relacion_pa_pro', 'titulo', 'descripcion', 'fecha', 'observacion', 'tp_informe']
+        model = Informe  
+        fields = [
+            'fk_relacion_pa_pro', 
+            'titulo', 
+            'descripcion', 
+            'fecha', 
+            'observacion', 
+            'tp_informe'
+        ]
+
         widgets = {
             'fecha': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
+
+class GrbasForm(InformeForm):
+    g_grado_disfonia = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'placeholder': 'Grado de disfonía'}),
+        label='Grado de disfonía',
+    )
+
+    r_aspereza = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'placeholder': 'Rugosidad de la voz'}),
+        label='Rugosidad de la voz',
+    )
+
+    b_soplo = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'placeholder': '(B) Respiracion dificultosa'}),
+        label='(B) Respiracion dificultosa',
+    )
+
+    a_debilidad = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'placeholder': 'Astenia o grado de fatiga de voz'}),
+        label='Astenia o grado de fatiga de voz',
+    )
+
+    s_tension = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'placeholder': 'Grado de tension vocal'}),
+        label='Grado de tension vocal',
+    )
+
+    class Meta:
+        model = Grbas
+        fields = InformeForm.Meta.fields + ['g_grado_disfonia', 'r_aspereza', 'b_soplo', 'a_debilidad', 's_tension']
+
+class RasatiForm(InformeForm):
+    r_ronquedad = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'placeholder': 'Ronquera'}),
+        label='Ronquera',
+    )
+
+    a_aspereza = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'placeholder': 'Aspereza'}),
+        label='Aspereza',
+    )
+
+    s_soplo = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'placeholder': 'Soplosidad'}),
+        label='Soplosidad',
+    )
+
+    a_astenia = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'placeholder': 'Astenia'}),
+        label='Astenia',
+    )
+
+    t_tension = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'placeholder': 'Tensión'}),
+        label='Tensión',
+    )
+    
+    i_inestabilidad = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'placeholder': 'Inestabilidad'}),
+        label='Inestabilidad',
+    )
+
+    class Meta:
+        model = Rasati
+        fields = InformeForm.Meta.fields + ['r_ronquedad', 'a_aspereza', 's_soplo', 'a_astenia', 't_tension', 'i_inestabilidad']            
+
+    

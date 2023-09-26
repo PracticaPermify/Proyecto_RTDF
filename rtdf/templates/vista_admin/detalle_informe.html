@@ -14,6 +14,11 @@
     <div class="table-responsive">
         <table class="table">
             <tbody>
+                {% if grbas %}
+                <tr>
+                    <th>Tipo de informe:</th>
+                    <td>GRBAS</td>
+                </tr>
                 <tr>
                     <th>Titulo:</th>
                     <td>{{ informe.titulo }}</td>
@@ -30,7 +35,6 @@
                     <th>Fecha:</th>
                     <td>{{ informe.fecha }}</td>
                 </tr>
-                {% if grbas %}
                 <tr>
                     <th>Grado disfonía:</th>
                     <td>{{ grbas.g_grado_disfonia }}</td>
@@ -53,6 +57,26 @@
                 </tr>
                 {% endif %}
                 {% if rasati %}
+                <tr>
+                    <th>Tipo de informe:</th>
+                    <td>RASATI</td>
+                </tr>
+                <tr>
+                    <th>Titulo:</th>
+                    <td>{{ informe.titulo }}</td>
+                </tr>
+                <tr>
+                    <th>Descripción:</th>
+                    <td>{{ informe.descripcion }}</td>
+                </tr>
+                <tr>
+                    <th>Observación:</th>
+                    <td>{{ informe.observacion }}</td>
+                </tr>
+                <tr>
+                    <th>Fecha:</th>
+                    <td>{{ informe.fecha }}</td>
+                </tr>
                 <tr>
                     <th>Ronquera:</th>
                     <td>{{ rasati.r_ronquedad }}</td>
