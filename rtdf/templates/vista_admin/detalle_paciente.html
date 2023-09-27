@@ -158,7 +158,7 @@
         <tbody>
           {% for informe in informes_rasati %}
           <tr>
-            <td><a href="{% url 'detalle_informe' informe.id_informe.id_informe %}">Informe {{ informe.id_informe.id_informe}}</a></td>
+            <td>Informe {{ informe.id_informe.id_informe}}</td>
             <td>{{ informe.id_informe.fecha }}</td>
             <td>{{ informe.r_ronquedad }}</td>
             <td>{{ informe.a_aspereza }}</td>

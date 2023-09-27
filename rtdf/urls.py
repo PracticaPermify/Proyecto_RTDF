@@ -26,7 +26,8 @@ urlpatterns = [
     path('obtener_provincias/', views.obtener_provincias, name='obtener_provincias'),
     path('obtener_comunas/', views.obtener_comunas, name='obtener_comunas'),
     path('ingresar_informes/', views.ingresar_informes, name='ingresar_informes'),
-    path('detalle_informe/<int:informe_id>/', views.detalle_informe, name='detalle_informe')
+    path('detalle_informe/<int:informe_id>/', views.detalle_informe, name='detalle_informe'),
+    path('detalle_prof_infor/<int:informe_id>/', views.detalle_prof_infor, name='detalle_prof_infor')
 
 ]
 

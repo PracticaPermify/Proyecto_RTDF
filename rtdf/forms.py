@@ -211,76 +211,90 @@ class InformeForm(forms.ModelForm):
             'fecha': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
 
+OPCIONES_GRBAS = [
+        (0, 'Normal'),
+        (1, 'Leve'),
+        (2, 'Moderado'),
+        (3, 'Alteración Severa'),
+    ]
+
 class GrbasForm(InformeForm):
-    g_grado_disfonia = forms.CharField(
-        required=False,
-        widget=forms.TextInput(attrs={'placeholder': 'Grado de disfonía'}),
-        label='Grado de disfonía',
+    g_grado_disfonia = forms.ChoiceField(
+        label='Grado de Disfonía',
+        choices=OPCIONES_GRBAS,
+        widget=forms.Select(attrs={'class': 'form-control'}),
     )
 
-    r_aspereza = forms.CharField(
-        required=False,
-        widget=forms.TextInput(attrs={'placeholder': 'Rugosidad de la voz'}),
-        label='Rugosidad de la voz',
+    r_aspereza = forms.ChoiceField(
+        label='r_aspereza',
+        choices=OPCIONES_GRBAS,
+        widget=forms.Select(attrs={'class': 'form-control'}),
     )
 
-    b_soplo = forms.CharField(
-        required=False,
-        widget=forms.TextInput(attrs={'placeholder': '(B) Respiracion dificultosa'}),
-        label='(B) Respiracion dificultosa',
+    b_soplo = forms.ChoiceField(
+        label='b_soplo',
+        choices=OPCIONES_GRBAS,
+        widget=forms.Select(attrs={'class': 'form-control'}),
     )
 
-    a_debilidad = forms.CharField(
-        required=False,
-        widget=forms.TextInput(attrs={'placeholder': 'Astenia o grado de fatiga de voz'}),
-        label='Astenia o grado de fatiga de voz',
+    a_debilidad = forms.ChoiceField(
+        label='a_debilidad',
+        choices=OPCIONES_GRBAS,
+        widget=forms.Select(attrs={'class': 'form-control'}),
     )
 
-    s_tension = forms.CharField(
-        required=False,
-        widget=forms.TextInput(attrs={'placeholder': 'Grado de tension vocal'}),
-        label='Grado de tension vocal',
+    s_tension = forms.ChoiceField(
+        label='s_tension',
+        choices=OPCIONES_GRBAS,
+        widget=forms.Select(attrs={'class': 'form-control'}),
     )
 
     class Meta:
         model = Grbas
         fields = InformeForm.Meta.fields + ['g_grado_disfonia', 'r_aspereza', 'b_soplo', 'a_debilidad', 's_tension']
 
+OPCIONES_RASATI = [
+        (0, 'Normal'),
+        (1, 'Alteración leve'),
+        (2, 'Alteración moderada'),
+        (3, 'Alteración severa'),
+    ]
+
 class RasatiForm(InformeForm):
-    r_ronquedad = forms.CharField(
-        required=False,
-        widget=forms.TextInput(attrs={'placeholder': 'Ronquera'}),
-        label='Ronquera',
+    r_ronquedad = forms.ChoiceField(
+        label='r_ronquedad',
+        choices=OPCIONES_RASATI,
+        widget=forms.Select(attrs={'class': 'form-control'}),
     )
 
-    a_aspereza = forms.CharField(
-        required=False,
-        widget=forms.TextInput(attrs={'placeholder': 'Aspereza'}),
-        label='Aspereza',
+    a_aspereza = forms.ChoiceField(
+        label='a_aspereza',
+        choices=OPCIONES_RASATI,
+        widget=forms.Select(attrs={'class': 'form-control'}),
     )
 
-    s_soplo = forms.CharField(
-        required=False,
-        widget=forms.TextInput(attrs={'placeholder': 'Soplosidad'}),
-        label='Soplosidad',
+    s_soplo = forms.ChoiceField(
+        label='s_soplo',
+        choices=OPCIONES_RASATI,
+        widget=forms.Select(attrs={'class': 'form-control'}),
     )
 
-    a_astenia = forms.CharField(
-        required=False,
-        widget=forms.TextInput(attrs={'placeholder': 'Astenia'}),
-        label='Astenia',
+    a_astenia = forms.ChoiceField(
+        label='a_astenia',
+        choices=OPCIONES_RASATI,
+        widget=forms.Select(attrs={'class': 'form-control'}),
     )
 
-    t_tension = forms.CharField(
-        required=False,
-        widget=forms.TextInput(attrs={'placeholder': 'Tensión'}),
-        label='Tensión',
+    t_tension = forms.ChoiceField(
+        label='t_tension',
+        choices=OPCIONES_RASATI,
+        widget=forms.Select(attrs={'class': 'form-control'}),
     )
     
-    i_inestabilidad = forms.CharField(
-        required=False,
-        widget=forms.TextInput(attrs={'placeholder': 'Inestabilidad'}),
-        label='Inestabilidad',
+    i_inestabilidad = forms.ChoiceField(
+        label='i_inestabilidad',
+        choices=OPCIONES_RASATI,
+        widget=forms.Select(attrs={'class': 'form-control'}),
     )
 
     class Meta:

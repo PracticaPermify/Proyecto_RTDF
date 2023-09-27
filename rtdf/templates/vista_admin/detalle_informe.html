@@ -3,18 +3,30 @@
 {% block content %}
 
 <div>
-    <a href="{% url 'list_paci_admin' %}">Volver a la lista de pacientes</a>
+    <a href="{% url 'detalle_paciente' paciente_relacionado.id_usuario.id_usuario %}">Volver a la información del paciente</a>
 </div>
 </br>
 </br>
 
 <div class="container">
-    <h1>Detalles del informe</h1>
+
+    <h1>Detalles del informe {{ informe.id_informe }}</h1>
     </br>
     <div class="table-responsive">
         <table class="table">
             <tbody>
                 {% if grbas %}
+
+                {% if paciente_relacionado %}</p>
+                <tr>
+                    <th>Rut del paciente:</th>
+                    <td>{{ paciente_relacionado.id_usuario.numero_identificacion }}</td>
+                </tr>
+                <tr>
+                    <th>Paciente:</th>
+                    <td>{{ paciente_relacionado.id_usuario.primer_nombre }} {{ paciente_relacionado.id_usuario.ap_paterno }}</td>
+                </tr>
+                {% endif %}
                 <tr>
                     <th>Tipo de informe:</th>
                     <td>GRBAS</td>
@@ -57,6 +69,16 @@
                 </tr>
                 {% endif %}
                 {% if rasati %}
+                {% if paciente_relacionado %}</p>
+                <tr>
+                    <th>Rut del paciente:</th>
+                    <td>{{ paciente_relacionado.id_usuario.numero_identificacion }}</td>
+                </tr>
+                <tr>
+                    <th>Paciente:</th>
+                    <td>{{ paciente_relacionado.id_usuario.primer_nombre }} {{ paciente_relacionado.id_usuario.ap_paterno }}</td>
+                </tr>
+                {% endif %}
                 <tr>
                     <th>Tipo de informe:</th>
                     <td>RASATI</td>

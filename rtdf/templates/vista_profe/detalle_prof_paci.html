@@ -50,4 +50,73 @@
       </table>
   </br>
 
+  <h2><strong>Informe GRBAS</strong></h2>
+  </br>
+
+  <div class="table-responsive">
+    <table class="table">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">ID informe</th>
+            <th scope="col">Fecha del informe</th>
+            <th scope="col">Grado disfonia</th>
+            <th scope="col">Rugosidad de voz</th>
+            <th scope="col">B (Respiracion dificultosa)</th>
+            <th scope="col">Astenia o grado de fatiga de voz</th>
+            <th scope="col">S (Grado de tension vocal)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for informe in informes_grbas %}
+          <tr>
+            <td><a href="{% url 'detalle_prof_infor' informe.id_informe.id_informe %}">
+              Informe {{ informe.id_informe.id_informe}}</a></td>
+            <td>{{ informe.id_informe.fecha }}</td>
+            <td>{{ informe.g_grado_disfonia }}</td>
+            <td>{{ informe.r_aspereza }}</td>
+            <td>{{ informe.b_soplo }}</td>
+            <td>{{ informe.a_debilidad }}</td>
+            <td>{{ informe.s_tension }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+  </br>
+  <h2><strong>Informe RASATI</strong></h2>
+  </br>
+
+  <div class="table-responsive">
+    <table class="table">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">ID informe</th>
+            <th scope="col">Fecha del informe</th>
+            <th scope="col">Ronquera</th>
+            <th scope="col">Aspereza</th>
+            <th scope="col">Soplosidad</th>
+            <th scope="col">Astenia</th>
+            <th scope="col">Tension</th>
+            <th scope="col">Inestabilidad</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for informe in informes_rasati %}
+          <tr>
+            <td><a href="{% url 'detalle_prof_infor' informe.id_informe.id_informe %}">
+              Informe {{ informe.id_informe.id_informe}}</a></td>
+            <td>{{ informe.id_informe.fecha }}</td>
+            <td>{{ informe.r_ronquedad }}</td>
+            <td>{{ informe.a_aspereza }}</td>
+            <td>{{ informe.s_soplo }}</td>
+            <td>{{ informe.a_astenia }}</td>
+            <td>{{ informe.t_tension }}</td>
+            <td>{{ informe.i_inestabilidad }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
 {% endblock %}

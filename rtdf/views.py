@@ -128,6 +128,7 @@ def logout_view(request):
 
 ##LISTADO DE LOS PACIENTES FONOAUDIOLOGOS------------------------------------------
 
+@user_passes_test(validate)
 def listado_pacientes(request):
 
     tipo_usuario = None 
@@ -172,10 +173,22 @@ def listado_pacientes(request):
             }
             pacientes.append(paciente_dicc)
 
-    return render(request, 'vista_profe/listado_pacientes.html', {'tipo_usuario': tipo_usuario, 'usuario': usuarios, 'pacientes': pacientes})
+    return render(request, 'vista_profe/listado_pacientes.html', {'tipo_usuario': tipo_usuario, 
+                                                                  'usuario': usuarios, 
+                                                                  'pacientes': pacientes,})
 
 ##Detalles por paciente de los fonoaudiologos
+@user_passes_test(validate)
 def detalle_prof_paci(request, paciente_id):
+
+    paciente = get_object_or_404(Usuario, id_usuario=paciente_id, id_tp_usuario__tipo_usuario='Paciente')
+    traer_paciente = paciente.paciente
+
+    obtener_rasati = Rasati.objects.filter(id_informe__fk_relacion_pa_pro__id_paciente=traer_paciente)
+    obtener_grbas = Grbas.objects.filter(id_informe__fk_relacion_pa_pro__id_paciente=traer_paciente)
+
+    informes_rasati = obtener_rasati 
+    informes_grbas = obtener_grbas    
 
     tipo_usuario = None
     if request.user.is_authenticated:
@@ -189,11 +202,46 @@ def detalle_prof_paci(request, paciente_id):
     return render(request, 'vista_profe/detalle_prof_paci.html', {'paciente': paciente, 
                                                                  'tipo_usuario': tipo_usuario,
                                                                  'paciente_info': paciente_info,
-                                                                 'fonoaudiologos_asociados': fonoaudiologos_asociados
+                                                                 'fonoaudiologos_asociados': fonoaudiologos_asociados,
+                                                                 'informes_rasati': informes_rasati,
+                                                                 'informes_grbas': informes_grbas,
                                                                  })
+
+@user_passes_test(validate)
+def detalle_prof_infor(request, informe_id):
+
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+    informe = get_object_or_404(Informe, id_informe=informe_id)
+
+    try:
+        grbas = Grbas.objects.get(id_informe=informe)
+    except Grbas.DoesNotExist:
+        grbas = None
+
+    try:
+        rasati = Rasati.objects.get(id_informe=informe)
+    except Rasati.DoesNotExist:
+        rasati = None
+
+    # Obtén el paciente relacionado con este informe
+    paciente_relacionado = informe.fk_relacion_pa_pro.id_paciente
+
+    tipo_usuario = None
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+
+    return render(request, 'vista_profe/detalle_prof_infor.html', {
+        'informe': informe,
+        'grbas': grbas,
+        'rasati': rasati,
+        'paciente_relacionado': paciente_relacionado,
+        'tipo_usuario': tipo_usuario  
+    })
 
 ##Listado para los familiares--------------------------------------
 
+@user_passes_test(validate)
 def lista_familiar(request):
 
     tipo_usuario = None
@@ -239,6 +287,7 @@ def lista_familiar(request):
 
 ## Detalles de los pacientes de un familiar
 
+@user_passes_test(validate)
 def detalle_familiar(request, paciente_id):
 
     tipo_usuario = None
@@ -257,6 +306,8 @@ def detalle_familiar(request, paciente_id):
                                                                  })
 
 ##Ejercicios de vocalización-----------------------------------
+
+@user_passes_test(validate)
 def vocalizacion(request):
 
     tipo_usuario = None
@@ -265,6 +316,7 @@ def vocalizacion(request):
 
     return render(request,'vista_paciente/vocalizacion.html', {'tipo_usuario': tipo_usuario})
 
+@user_passes_test(validate)
 def intensidad(request):
 
     tipo_usuario = None
@@ -273,6 +325,7 @@ def intensidad(request):
 
     return render(request,'vista_paciente/intensidad.html', {'tipo_usuario': tipo_usuario})
 
+@user_passes_test(validate)
 def mi_fonoaudiologo(request):
 
     tipo_usuario = None 
@@ -349,8 +402,8 @@ def detalle_paciente(request, paciente_id):
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
 
-    informes_rasati = obtener_rasati  # Variable declarada para los informes Rasati
-    informes_grbas = obtener_grbas    # Variable declarada para los informes Grbas
+    informes_rasati = obtener_rasati 
+    informes_grbas = obtener_grbas    
 
     return render(request, 'vista_admin/detalle_paciente.html', {
         'paciente': paciente,
@@ -469,6 +522,7 @@ def detalle_familiar_admin(request, familiar_id):
                                                             })
 ##Ayuda pancho
 
+@user_passes_test(validate)
 def ingresar_informes(request):
     tipo_usuario = None
 
@@ -521,7 +575,7 @@ def ingresar_informes(request):
         return redirect('vista_profe/index.html')
 
 
-
+@user_passes_test(validate)
 def detalle_informe(request, informe_id):
     informe = get_object_or_404(Informe, id_informe=informe_id)
 
@@ -535,8 +589,12 @@ def detalle_informe(request, informe_id):
     except Rasati.DoesNotExist:
         rasati = None
 
+    # Obtén el paciente relacionado con este informe
+    paciente_relacionado = informe.fk_relacion_pa_pro.id_paciente
+
     return render(request, 'vista_admin/detalle_informe.html', {
         'informe': informe,
         'grbas': grbas,
         'rasati': rasati,
+        'paciente_relacionado': paciente_relacionado,  
     })
