@@ -31,8 +31,8 @@ class Audio(models.Model):
     id_audio = models.AutoField(primary_key=True)
     url_audio = models.CharField(max_length=200)
     fecha_audio = models.DateTimeField()
-    fk_origen_audio = models.ForeignKey('OrigenAudio', models.DO_NOTHING, db_column='fk_origen_audio')
-    fk_pauta_terapeutica = models.ForeignKey('PautaTerapeutica', models.DO_NOTHING, db_column='fk_pauta_terapeutica')
+    fk_origen_audio = models.ForeignKey('OrigenAudio', on_delete=models.PROTECT, db_column='fk_origen_audio')
+    fk_pauta_terapeutica = models.ForeignKey('PautaTerapeutica', on_delete=models.CASCADE, db_column='fk_pauta_terapeutica')
 
     class Meta:
         db_table = 'audio'
@@ -63,8 +63,8 @@ class Audioscoeficientes(models.Model):
     apq3_shimmer = models.CharField(max_length=100)
     aqpq5_shimmer = models.CharField(max_length=100)
     apq11_shimmer = models.CharField(max_length=100)
-    fk_tipo_llenado = models.ForeignKey('TpLlenado', models.DO_NOTHING, db_column='fk_tipo_llenado')
-    id_audio = models.ForeignKey(Audio, models.DO_NOTHING, db_column='id_audio')
+    fk_tipo_llenado = models.ForeignKey('TpLlenado', on_delete=models.PROTECT, db_column='fk_tipo_llenado')
+    id_audio = models.ForeignKey(Audio, on_delete=models.CASCADE, db_column='id_audio')
 
     class Meta:
         db_table = 'audioscoeficientes'
@@ -76,7 +76,7 @@ class Audioscoeficientes(models.Model):
 class Comuna(models.Model):
     id_comuna = models.AutoField(primary_key=True)
     comuna = models.CharField(max_length=50)
-    id_provincia = models.ForeignKey('Provincia', models.DO_NOTHING, db_column='id_provincia')
+    id_provincia = models.ForeignKey('Provincia', on_delete=models.CASCADE, db_column='id_provincia')
 
     class Meta:
         db_table = 'comuna'
@@ -86,7 +86,7 @@ class Comuna(models.Model):
         return self.comuna
 
 class Esv(models.Model):
-    id_informe = models.OneToOneField('Informe', models.DO_NOTHING, db_column='id_informe', primary_key=True)
+    id_informe = models.OneToOneField('Informe', on_delete=models.CASCADE, db_column='id_informe', primary_key=True)
     total_esv = models.IntegerField()
     limitacion = models.IntegerField()
     emocional = models.IntegerField()
@@ -100,8 +100,8 @@ class Esv(models.Model):
 class FamiliarPaciente(models.Model):
     id_familiar_paciente = models.AutoField(primary_key=True)
     ##parentesco = models.CharField(max_length=20)
-    id_usuario = models.OneToOneField('Usuario', models.DO_NOTHING, db_column='id_usuario')
-    fk_tipo_familiar = models.ForeignKey('TpFamiliar', models.DO_NOTHING, db_column='fk_tipo_familiar',default=1)
+    id_usuario = models.OneToOneField('Usuario', on_delete=models.CASCADE, db_column='id_usuario')
+    fk_tipo_familiar = models.ForeignKey('TpFamiliar', on_delete=models.PROTECT, db_column='fk_tipo_familiar',default=1)
 
     class Meta:
         db_table = 'familiar_paciente'
@@ -115,7 +115,7 @@ class FamiliarPaciente(models.Model):
         return f'{self.fk_tipo_familiar}: {self.id_usuario.primer_nombre} {self.id_usuario.ap_paterno}'
 
 class Grbas(models.Model):
-    id_informe = models.OneToOneField('Informe', models.DO_NOTHING, db_column='id_informe', primary_key=True)
+    id_informe = models.OneToOneField('Informe', on_delete=models.CASCADE, db_column='id_informe', primary_key=True)
     g_grado_disfonia = models.CharField(max_length=30)
     r_aspereza = models.CharField(max_length=30)
     b_soplo = models.CharField(max_length=30)
@@ -135,9 +135,9 @@ class Informe(models.Model):
     descripcion = models.CharField(max_length=200)
     fecha = models.DateTimeField()
     observacion = models.TextField()
-    fk_relacion_pa_pro = models.ForeignKey('RelacionPaPro', models.DO_NOTHING, db_column='fk_relacion_pa_pro')
-    id_audio = models.ForeignKey(Audio, models.DO_NOTHING, db_column='id_audio', blank=True, null=True)
-    tp_informe = models.ForeignKey('TpInforme', models.DO_NOTHING)
+    fk_relacion_pa_pro = models.ForeignKey('RelacionPaPro', on_delete=models.PROTECT, db_column='fk_relacion_pa_pro')
+    id_audio = models.ForeignKey(Audio, on_delete=models.PROTECT, db_column='id_audio', blank=True, null=True)
+    tp_informe = models.ForeignKey('TpInforme', on_delete=models.PROTECT)
 
     class Meta:
         db_table = 'informe'
@@ -150,7 +150,7 @@ class Informe(models.Model):
 class Institucion(models.Model):
     id_institucion = models.AutoField(primary_key=True)
     nombre_institucion = models.CharField(max_length=50)
-    id_comuna = models.ForeignKey(Comuna, models.DO_NOTHING, db_column='id_comuna')
+    id_comuna = models.ForeignKey(Comuna, on_delete=models.CASCADE, db_column='id_comuna')
 
     class Meta:
         db_table = 'institucion'
@@ -161,7 +161,7 @@ class Institucion(models.Model):
 
 
 class Intensidad(models.Model):
-    id_pauta_terapeutica = models.OneToOneField('PautaTerapeutica', models.DO_NOTHING, db_column='id_pauta_terapeutica', primary_key=True)
+    id_pauta_terapeutica = models.OneToOneField('PautaTerapeutica', on_delete=models.CASCADE, db_column='id_pauta_terapeutica', primary_key=True)
     intensidad = models.CharField(max_length=20)
     min_db = models.IntegerField()
     max_db = models.IntegerField()
@@ -189,9 +189,9 @@ class OrigenAudio(models.Model):
 class Paciente(models.Model):
     id_paciente = models.AutoField(primary_key=True)
     telegram = models.CharField(max_length=30, blank=True, null=True)
-    fk_tipo_hipertension = models.ForeignKey('TipoHipertension', models.DO_NOTHING, db_column='fk_tipo_hipertension')
-    fk_tipo_diabetes = models.ForeignKey('TipoDiabetes', models.DO_NOTHING, db_column='fk_tipo_diabetes')
-    id_usuario = models.OneToOneField('Usuario', models.DO_NOTHING, db_column='id_usuario')
+    fk_tipo_hipertension = models.ForeignKey('TipoHipertension', on_delete=models.PROTECT, db_column='fk_tipo_hipertension')
+    fk_tipo_diabetes = models.ForeignKey('TipoDiabetes', on_delete=models.PROTECT, db_column='fk_tipo_diabetes')
+    id_usuario = models.OneToOneField('Usuario', on_delete=models.PROTECT, db_column='id_usuario')
 
     class Meta:
         db_table = 'paciente'
@@ -220,15 +220,16 @@ class PautaTerapeutica(models.Model):
     fecha_fin = models.DateTimeField()
     url_video = models.CharField(max_length=200, blank=True, null=True)
     comentario = models.CharField(max_length=200)
-    fk_tp_terapia = models.ForeignKey('TpTerapia', models.DO_NOTHING, db_column='fk_tp_terapia')
-    fk_relacion_pa_pro = models.ForeignKey('RelacionPaPro', models.DO_NOTHING, db_column='fk_relacion_pa_pro')
+    fk_tp_terapia = models.ForeignKey('TpTerapia',on_delete= models.PROTECT, db_column='fk_tp_terapia')
+    # fk_relacion_pa_pro = models.ForeignKey('RelacionPaPro', models.DO_NOTHING, db_column='fk_relacion_pa_pro')
+    fk_informe = models.ForeignKey('Informe', on_delete=models.CASCADE, db_column='fk_informe',default=1)
 
     class Meta:
         db_table = 'pauta_terapeutica'
         verbose_name_plural = "Pauta terapéutica"
 
     def __str__(self):
-        return f'Pauta: {self.id_pauta_terapeutica} | Paciente: {self.fk_relacion_pa_pro.id_paciente.id_usuario.primer_nombre} {self.fk_relacion_pa_pro.id_paciente.id_usuario.ap_paterno}'
+        return f'Pauta: {self.id_pauta_terapeutica} | Paciente: {self.fk_informe.fk_relacion_pa_pro.id_paciente.id_usuario.primer_nombre} {self.fk_informe.fk_relacion_pa_pro.id_paciente.id_usuario.ap_paterno}'
 
 class PreRegistro(models.Model):
     id_pre_registro = models.AutoField(primary_key=True)
@@ -242,9 +243,9 @@ class PreRegistro(models.Model):
     password = models.CharField(max_length=120)
     numero_telefonico = models.CharField(max_length=20, blank=True, null=True)
     validado = models.CharField(max_length=1, default=0)
-    id_comuna = models.ForeignKey(Comuna, models.DO_NOTHING, db_column='id_comuna')
-    id_tp_usuario = models.ForeignKey('TpUsuario', models.DO_NOTHING, db_column='id_tp_usuario')
-    id_institucion = models.ForeignKey(Institucion, models.DO_NOTHING, db_column='id_institucion')
+    id_comuna = models.ForeignKey(Comuna, on_delete=models.PROTECT, db_column='id_comuna')
+    id_tp_usuario = models.ForeignKey('TpUsuario', on_delete=models.PROTECT, db_column='id_tp_usuario')
+    id_institucion = models.ForeignKey(Institucion, on_delete=models.PROTECT, db_column='id_institucion')
 
     class Meta:
         db_table = 'pre_registro'
@@ -257,8 +258,8 @@ class PreRegistro(models.Model):
 class ProfesionalSalud(models.Model):
     id_profesional_salud = models.AutoField(primary_key=True)
     titulo_profesional = models.CharField(max_length=30, blank=True, null=True)
-    id_institucion = models.ForeignKey(Institucion, models.DO_NOTHING, db_column='id_institucion')
-    id_usuario = models.OneToOneField('Usuario', models.DO_NOTHING, db_column='id_usuario')
+    id_institucion = models.ForeignKey(Institucion, on_delete=models.PROTECT, db_column='id_institucion')
+    id_usuario = models.OneToOneField('Usuario', on_delete=models.PROTECT, db_column='id_usuario')
 
     class Meta:
         db_table = 'profesional_salud'
@@ -270,7 +271,7 @@ class ProfesionalSalud(models.Model):
 class Provincia(models.Model):
     id_provincia = models.AutoField(primary_key=True)
     provincia = models.CharField(max_length=50)
-    id_region = models.ForeignKey('Region', models.DO_NOTHING, db_column='id_region')
+    id_region = models.ForeignKey('Region', on_delete=models.CASCADE, db_column='id_region')
 
     class Meta:
         db_table = 'provincia'
@@ -281,7 +282,7 @@ class Provincia(models.Model):
 
 
 class Rasati(models.Model): 
-    id_informe = models.OneToOneField(Informe, models.DO_NOTHING, db_column='id_informe', primary_key=True)
+    id_informe = models.OneToOneField(Informe, on_delete=models.CASCADE, db_column='id_informe', primary_key=True)
     r_ronquedad = models.CharField(max_length=10)
     a_aspereza = models.CharField(max_length=10)
     s_soplo = models.CharField(max_length=10)
@@ -300,7 +301,7 @@ class Rasati(models.Model):
 class Region(models.Model): 
     id_region = models.AutoField(primary_key=True)
     region = models.CharField(max_length=50)
-    id_pais = models.ForeignKey(Pais, models.DO_NOTHING, db_column='id_pais')
+    id_pais = models.ForeignKey(Pais, on_delete=models.CASCADE, db_column='id_pais')
 
     class Meta:
         db_table = 'region'
@@ -325,8 +326,8 @@ class Registros(models.Model):
 
 class RelacionFp(models.Model):
     id_relacion_fp = models.AutoField(primary_key=True)
-    id_paciente = models.ForeignKey(Paciente, models.DO_NOTHING, db_column='id_paciente')
-    fk_familiar_paciente = models.ForeignKey(FamiliarPaciente, models.DO_NOTHING, db_column='fk_familiar_paciente')
+    id_paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, db_column='id_paciente')
+    fk_familiar_paciente = models.ForeignKey(FamiliarPaciente, on_delete=models.CASCADE, db_column='fk_familiar_paciente')
 
     class Meta:
         db_table = 'relacion_fp'
@@ -335,8 +336,8 @@ class RelacionFp(models.Model):
 
 class RelacionPaPro(models.Model):
     id_relacion_pa_pro = models.AutoField(primary_key=True)
-    fk_profesional_salud = models.ForeignKey(ProfesionalSalud, models.DO_NOTHING, db_column='fk_profesional_salud')
-    id_paciente = models.ForeignKey(Paciente, models.DO_NOTHING, db_column='id_paciente')
+    fk_profesional_salud = models.ForeignKey(ProfesionalSalud, on_delete=models.CASCADE, db_column='fk_profesional_salud')
+    id_paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, db_column='id_paciente')
 
     class Meta:
         db_table = 'relacion_pa_pro'
@@ -458,8 +459,8 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     email = models.CharField(unique=True, max_length=100)
     #password = models.CharField(max_length=20) #Generado Automaticamente por Django
     numero_telefonico = models.CharField(max_length=20, blank=True, null=True)
-    id_tp_usuario = models.ForeignKey(TpUsuario, on_delete=models.CASCADE, db_column='id_tp_usuario',default=1)
-    id_comuna = models.ForeignKey(Comuna, models.DO_NOTHING, db_column='id_comuna',default=1)
+    id_tp_usuario = models.ForeignKey(TpUsuario, on_delete=models.PROTECT, db_column='id_tp_usuario',default=1)
+    id_comuna = models.ForeignKey(Comuna, on_delete=models.PROTECT, db_column='id_comuna',default=1)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
@@ -495,8 +496,8 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
 class Validacion(models.Model):
     id_validacion = models.AutoField(primary_key=True)
     fecha_validacion = models.DateTimeField()
-    id_pre_registro = models.OneToOneField(PreRegistro, models.DO_NOTHING, db_column='id_pre_registro')
-    id_usuario = models.ForeignKey(Usuario, models.DO_NOTHING, db_column='id_usuario')
+    id_pre_registro = models.OneToOneField(PreRegistro, on_delete=models.CASCADE, db_column='id_pre_registro')
+    id_usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, db_column='id_usuario')
 
     class Meta:
         db_table = 'validacion'
@@ -506,7 +507,7 @@ class Validacion(models.Model):
     #     return self.id_validacion
 
 class Vocalizacion(models.Model):
-    id_pauta_terapeutica = models.OneToOneField(PautaTerapeutica, models.DO_NOTHING, db_column='id_pauta_terapeutica', primary_key=True)
+    id_pauta_terapeutica = models.OneToOneField(PautaTerapeutica, on_delete=models.CASCADE, db_column='id_pauta_terapeutica', primary_key=True)
     duracion_seg = models.IntegerField()
     bpm = models.IntegerField()
 
