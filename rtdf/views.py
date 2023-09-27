@@ -487,15 +487,22 @@ def ingresar_informes(request):
 
             if form.is_valid() and grbas_form.is_valid() and rasati_form.is_valid():
                 informe = form.save()
+                tipo_informe = str(form.cleaned_data['tp_informe']).strip()
+                print(f"Tipo de informe seleccionado: {tipo_informe}")
 
                 # Asociar el informe con GRBAS y RASATI
-                grbas = grbas_form.save(commit=False)
-                grbas.id_informe = informe
-                grbas.save()
+                if tipo_informe == 'GRBAS':
+                    
+                    grbas = grbas_form.save(commit=False)
+                    grbas.id_informe = informe
+                    grbas.save()
 
-                rasati = rasati_form.save(commit=False)
-                rasati.id_informe = informe
-                rasati.save()
+                elif tipo_informe == 'RASATI':
+                    
+                    ##print(f"Tipo AAA: {tipo_informe}")    
+                    rasati = rasati_form.save(commit=False)
+                    rasati.id_informe = informe
+                    rasati.save()
 
                 return redirect('listado_pacientes')
         else:
