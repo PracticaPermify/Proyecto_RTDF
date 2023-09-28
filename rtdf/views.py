@@ -9,6 +9,7 @@ import re
 from django.contrib.auth.decorators import user_passes_test
 from django.views.decorators.cache import never_cache
 from django.utils import timezone
+from django.urls import reverse
 
 # Create your views here.
 def index(request):
@@ -214,8 +215,33 @@ def detalle_prof_paci(request, paciente_id):
                                                                  'informes_grbas': informes_grbas,
                                                                  })
 
+def listado_informes(request):
+    # Obtén el fonoaudiólogo actual
+    profesional_medico = request.user.profesionalsalud
+
+    # Filtra los informes asociados al fonoaudiólogo actual
+    informes = Informe.objects.filter(fk_relacion_pa_pro__fk_profesional_salud=profesional_medico)
+
+    tipo_usuario = None
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+
+    return render(request, 'vista_profe/listado_informes.html', {'informes': informes,
+                                                                 'tipo_usuario': tipo_usuario,})
+    
+
 @user_passes_test(validate)
 def detalle_prof_infor(request, informe_id):
+
+    source = request.GET.get('source')
+
+    if source == 'plantilla1':
+        url_regreso = reverse('detalle_prof_paci')
+    elif source == 'plantilla2':
+        url_regreso = reverse('listado_informes')
+    else:
+        # Si no proviene de ninguna de las plantillas conocidas, configura una URL predeterminada
+        url_regreso = reverse('index')
 
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
@@ -240,8 +266,6 @@ def detalle_prof_infor(request, informe_id):
     tipo_usuario = None
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
-
-
 
         if request.method == 'POST':
 
@@ -290,7 +314,8 @@ def detalle_prof_infor(request, informe_id):
             'grbas': grbas,
             'rasati': rasati,
             'paciente_relacionado': paciente_relacionado,
-            'tipo_usuario': tipo_usuario  
+            'tipo_usuario': tipo_usuario,
+            'url_regreso': url_regreso,
         })
     
     else:
@@ -616,7 +641,7 @@ def ingresar_informes(request):
                     rasati.id_informe = informe
                     rasati.save()
 
-                return redirect('listado_pacientes')
+                return redirect('listado_informes')
         else:
             form = InformeForm(initial={'fecha': timezone.now()})
             form.fields['fk_relacion_pa_pro'].queryset = relaciones_pacientes

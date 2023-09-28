@@ -1,0 +1,39 @@
+{% extends 'rtdf/base.html' %}
+
+{% block content %}
+
+<h1>Informes del Fonoaudiólogo</h1>
+<br>
+<div class="table-responsive">
+  <table class="table">
+    <thead class="thead-dark">
+      <tr>
+        <th>ID informe</th>
+        <th>Tipo de informe</th>
+        <th>Título</th>
+        <th>Descripción</th>
+        <th>Fecha</th>
+        <!-- Agrega otras columnas si es necesario -->
+      </tr>
+    </thead>
+    <tbody>
+      {% for informe in informes %}
+        <tr>
+          <td><a href="{% url 'detalle_prof_infor' informe.id_informe %}">
+            Informe {{ informe.id_informe }}</a></td>
+          <td>{{ informe.tp_informe.tipo_informe }}</td>
+          <td>{{ informe.titulo }}</td>
+          <td>{{ informe.descripcion }}</td>
+          <td>{{ informe.fecha }}</td>
+          <!-- Agrega otras columnas si es necesario -->
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="8">No se han añadido informes para los pacientes.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock%}

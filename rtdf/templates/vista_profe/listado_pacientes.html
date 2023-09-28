@@ -13,6 +13,7 @@
                                 Listado de mis pacientes:
                             </p>
                             <!-- Listado de pacientes del fonoaudiologo-->
+                            <div class="table-responsive">
                             <table class="table">
                                 <thead class="thead-dark">
                                 <tr>
@@ -49,6 +50,7 @@
                                     {% endfor %}
                                 </tbody>
                             </table>
+                        </div>
 
                             {% elif tipo_usuario == 'Neurologo' %}
                             <h2><p>Pacientes del neurologo <b>{{ user.primer_nombre }} {{ user.ap_paterno }}</b></p></h2>

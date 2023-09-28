@@ -15,6 +15,7 @@ urlpatterns = [
     path('list_fono_admin/', views.list_fono_admin, name='list_fono_admin'),
     path('list_neur_admin/', views.list_neur_admin, name='list_neur_admin'),
     path('list_fami_admin/', views.list_fami_admin, name='list_fami_admin'),
+    path('listado_informes/', views.listado_informes, name='listado_informes'),
     path('detalle_paciente/<int:paciente_id>/', views.detalle_paciente, name='detalle_paciente'),
     path('detalle_fonoaudiologo/<int:fonoaudiologo_id>/', views.detalle_fonoaudiologo, name='detalle_fonoaudiologo'),
     path('detalle_neurologo/<int:neurologo_id>/', views.detalle_neurologo, name='detalle_neurologo'),
