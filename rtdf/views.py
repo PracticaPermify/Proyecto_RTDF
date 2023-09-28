@@ -7,6 +7,8 @@ from django.http import JsonResponse
 from django.contrib import messages
 import re
 from django.contrib.auth.decorators import user_passes_test
+from django.views.decorators.cache import never_cache
+from django.utils import timezone
 
 # Create your views here.
 def index(request):
@@ -101,6 +103,7 @@ def obtener_comunas(request):
 
 ##Login para el usuario
 
+@never_cache
 def login_view(request):
     if request.method == 'POST':
         email = request.POST['email']
@@ -109,12 +112,16 @@ def login_view(request):
         
         if user is not None:
             login(request, user)
-            return redirect('index')
+            response = redirect('index')
         else:
             error_message = "Credenciales inválidas. Inténtalo de nuevo."
             return render(request, 'registro/login.html', {'error_message': error_message})
+    else:
+        response = render(request, 'registro/login.html')
 
-    return render(request, 'registro/login.html')
+    response['Cache-Control'] = 'no-store'
+
+    return response
 
 ##Cierre de sesion
 
@@ -224,6 +231,9 @@ def detalle_prof_infor(request, informe_id):
     except Rasati.DoesNotExist:
         rasati = None
 
+    datos_vocalizacion = Vocalizacion.objects.filter(id_pauta_terapeutica__fk_informe=informe_id,id_pauta_terapeutica__fk_tp_terapia= 1)    
+    datos_intensidad = Intensidad.objects.filter(id_pauta_terapeutica__fk_informe=informe_id,id_pauta_terapeutica__fk_tp_terapia= 2)
+
     # Obtén el paciente relacionado con este informe
     paciente_relacionado = informe.fk_relacion_pa_pro.id_paciente
 
@@ -231,14 +241,61 @@ def detalle_prof_infor(request, informe_id):
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
 
-    return render(request, 'vista_profe/detalle_prof_infor.html', {
-        'informe': informe,
-        'grbas': grbas,
-        'rasati': rasati,
-        'paciente_relacionado': paciente_relacionado,
-        'tipo_usuario': tipo_usuario  
-    })
 
+
+        if request.method == 'POST':
+
+            #guardo la pk del informe del detalle_informe
+            informe = Informe.objects.get(pk=informe_id)
+            form = PautaTerapeuticaForm(request.POST)
+            vocalizacion_form = VocalizacionForm(request.POST)
+            intensidad_form = IntensidadForm(request.POST)
+
+            if form.is_valid() and vocalizacion_form.is_valid() and intensidad_form.is_valid():
+                pauta_terapeutica = form.save(commit=False) #guardo el form para agregar el id informe manualmente
+                pauta_terapeutica.fk_informe = informe # le paso la pk del informe
+                pauta_terapeutica.save()
+
+                tipo_terapia = str(form.cleaned_data['fk_tp_terapia']).strip()
+
+                # Asociar el informe con GRBAS y RASATI
+                if tipo_terapia == 'Vocalización':
+                    
+                    vocalizacion = vocalizacion_form.save(commit=False)
+                    vocalizacion.id_pauta_terapeutica = pauta_terapeutica
+                    vocalizacion.save()
+
+                elif tipo_terapia == 'Intensidad':
+
+                    intensidad = intensidad_form.save(commit=False)
+                    intensidad.id_pauta_terapeutica = pauta_terapeutica
+                    intensidad.save()    
+
+                return redirect('detalle_prof_infor', informe_id=informe.id_informe)
+        
+
+        else:
+            # Si la solicitud no es POST, muestra el formulario en blanco
+            form = PautaTerapeuticaForm()
+            vocalizacion_form = VocalizacionForm()
+            intensidad_form = IntensidadForm()
+
+        return render(request, 'vista_profe/detalle_prof_infor.html', {
+            'form': form,
+            'vocalizacion_form': vocalizacion_form,
+            'intensidad_form': intensidad_form,
+            'datos_intensidad': datos_intensidad,
+            'informe': informe,
+            'datos_vocalizacion': datos_vocalizacion,
+            'grbas': grbas,
+            'rasati': rasati,
+            'paciente_relacionado': paciente_relacionado,
+            'tipo_usuario': tipo_usuario  
+        })
+    
+    else:
+        return redirect('vista_profe/index.html')
+    
 ##Listado para los familiares--------------------------------------
 
 @user_passes_test(validate)
@@ -542,6 +599,7 @@ def ingresar_informes(request):
             if form.is_valid() and grbas_form.is_valid() and rasati_form.is_valid():
                 informe = form.save()
                 tipo_informe = str(form.cleaned_data['tp_informe']).strip()
+                informe.fecha = timezone.now()
                 print(f"Tipo de informe seleccionado: {tipo_informe}")
 
                 # Asociar el informe con GRBAS y RASATI
@@ -560,10 +618,11 @@ def ingresar_informes(request):
 
                 return redirect('listado_pacientes')
         else:
-            form = InformeForm()
+            form = InformeForm(initial={'fecha': timezone.now()})
             form.fields['fk_relacion_pa_pro'].queryset = relaciones_pacientes
             grbas_form = GrbasForm()
             rasati_form = RasatiForm()
+            
 
         return render(request, 'vista_profe/ingresar_informes.html', {
             'form': form,
@@ -591,6 +650,8 @@ def detalle_informe(request, informe_id):
 
     # Obtén el paciente relacionado con este informe
     paciente_relacionado = informe.fk_relacion_pa_pro.id_paciente
+
+    
 
     return render(request, 'vista_admin/detalle_informe.html', {
         'informe': informe,

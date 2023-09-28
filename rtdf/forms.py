@@ -301,4 +301,90 @@ class RasatiForm(InformeForm):
         model = Rasati
         fields = InformeForm.Meta.fields + ['r_ronquedad', 'a_aspereza', 's_soplo', 'a_astenia', 't_tension', 'i_inestabilidad']            
 
-    
+
+class PautaTerapeuticaForm(forms.ModelForm):
+
+    cant_veces_dia = forms.CharField(
+        required=True,
+        widget=forms.TextInput(attrs={'placeholder': 'Número de veces al día'}),
+        label='Título'
+    )
+
+    descripcion = forms.CharField(
+        required=True,
+        widget=forms.Textarea(attrs={'placeholder': 'Descripción'}),
+        label='Descripción'
+    )
+
+    fecha_inicio = forms.DateTimeField(
+         widget=forms.DateTimeInput(format='%d-%m-%Y', attrs={'placeholder': 'día-mes-año'}),
+         required=True
+     )
+
+    fecha_fin = forms.DateTimeField(
+         widget=forms.DateTimeInput(format='%d-%m-%Y', attrs={'placeholder': 'día-mes-año'}),
+         required=True
+     )
+
+    comentario = forms.CharField(
+         required=True,
+         widget=forms.Textarea(attrs={'placeholder': 'Añadir comentarios'}),
+         label='Observación'
+    )
+
+    fk_tp_terapia = forms.ModelChoiceField(
+        queryset=TpTerapia.objects.filter(tipo_terapia__in=['Vocalización', 'Intensidad']),
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-control form-control-sm'}),
+        label='Tipo de terapia'
+    )
+
+    class Meta:
+        model = PautaTerapeutica
+        fields = ['cant_veces_dia', 'descripcion', 'fecha_inicio', 'fecha_fin', 'comentario', 'fk_tp_terapia']
+        widgets = {
+            'fecha_inicio': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'fecha_fin': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        }
+
+class VocalizacionForm(PautaTerapeuticaForm):
+
+    duracion_seg = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Duración en segundos'}),
+        required=False,
+        label='Duración en segundos'
+    )
+
+    bpm = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Ingresar BPM necesario'}),
+        required=False,
+        label='BPM'
+    )
+
+    class Meta:
+        model = Vocalizacion
+        fields = PautaTerapeuticaForm.Meta.fields + ['duracion_seg', 'bpm']
+
+class IntensidadForm(PautaTerapeuticaForm):
+
+    intensidad = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Intensidad'}),
+        required=False,
+        label='Duración en segundos'
+    )
+
+    min_db = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'dB minimo'}),
+        required=False,
+        label='BPM'
+    )
+
+    max_db = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'dB maximo'}),
+        required=False,
+        label='BPM'
+    )
+
+    class Meta:
+        model = Intensidad
+        fields = PautaTerapeuticaForm.Meta.fields + ['intensidad', 'min_db','max_db']

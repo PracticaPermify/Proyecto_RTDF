@@ -30,5 +30,25 @@
                 </div>
             </div>
         </div>
+
+        
+        
     </body>
+    <script>
+        {% if user.is_authenticated %}
+        (function() {
+            // Redirige al usuario a la página deseada después del inicio de sesión
+            window.location.replace("{% url 'index' %}");
+            
+            // Limpia el historial del navegador para evitar retrocesos no deseados
+            window.history.pushState({}, document.title, "{% url 'index' %}");
+            
+            // Cuando el usuario intente retroceder en el historial, vuelve a redirigirlo
+            window.onpopstate = function(event) {
+                window.location.replace("{% url 'index' %}");
+            };
+        })();
+        {% endif %}
+    </script>
 {% endblock %}
+
