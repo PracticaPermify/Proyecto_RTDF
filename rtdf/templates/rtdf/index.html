@@ -63,6 +63,8 @@
                                     Siempre estamos aquí para ayudarte en caso de que necesites asistencia. ¡Gracias por tu dedicación!
                                 </p>
 
+                            </br>
+
                                 <div class="table-responsive">
                                     <table class="table">
                                         <thead class="thead-dark">
@@ -86,8 +88,28 @@
                                             <td>{{ usuario.email }}</td>
                                         </tr>
                                             {% endfor %}
+
                                         </tbody>
                                     </table>
+
+                                    <div class="pagination">
+                                        <span class="step-links">
+                                            {% if usuario.has_previous %}
+                                                <a href="?page=1">&laquo; primero</a>
+                                                <a href="?page={{ usuario.previous_page_number }}">anterior</a>
+                                            {% endif %}
+                                    
+                                            <span class="current-page">
+                                                Página {{ usuario.number }} de {{ usuario.paginator.num_pages }}.
+                                            </span>
+                                    
+                                            {% if usuario.has_next %}
+                                                <a href="?page={{ usuario.next_page_number }}">siguiente</a>
+                                                <a href="?page={{ usuario.paginator.num_pages }}">ultimo &raquo;</a>
+                                            {% endif %}
+                                        </span>
+                                    </div>
+
                                 </div>
                             {% endif %}
                         {% else %}

@@ -2,6 +2,9 @@
 
 {% block content %}
 
+{% if tipo_usuario %}
+    {% if tipo_usuario == 'Fonoaudiologo' %}
+
 <h1>Informes del Fonoaudiólogo</h1>
 <br>
 <div class="table-responsive">
@@ -9,31 +12,61 @@
     <thead class="thead-dark">
       <tr>
         <th>ID informe</th>
+        <th>Paciente</th>
         <th>Tipo de informe</th>
         <th>Título</th>
         <th>Descripción</th>
         <th>Fecha</th>
+        <th>Pauta terapeutica</th>
         <!-- Agrega otras columnas si es necesario -->
       </tr>
     </thead>
     <tbody>
-      {% for informe in informes %}
+      {% for informe in page %}
         <tr>
           <td><a href="{% url 'detalle_prof_infor' informe.id_informe %}">
             Informe {{ informe.id_informe }}</a></td>
+          <td>{{ informe.fk_relacion_pa_pro.id_paciente.id_usuario.primer_nombre }} 
+            {{ informe.fk_relacion_pa_pro.id_paciente.id_usuario.ap_paterno }}</td>
           <td>{{ informe.tp_informe.tipo_informe }}</td>
           <td>{{ informe.titulo }}</td>
           <td>{{ informe.descripcion }}</td>
           <td>{{ informe.fecha }}</td>
-          <!-- Agrega otras columnas si es necesario -->
+          <td>{% if informe.num_pautas_terapeuticas > 0 %} 
+            Tiene pauta terapéutica 
+            {% else %} 
+            No tiene pauta terapéutica 
+            {% endif %}</td>
         </tr>
-        {% empty %}
+      {% empty %}
         <tr>
-            <td colspan="8">No se han añadido informes para los pacientes.</td>
+          <td colspan="8">No se han añadido informes para los pacientes.</td>
         </tr>
       {% endfor %}
     </tbody>
   </table>
 </div>
+
+<!-- Navegación de páginas -->
+<div class="pagination">
+  <span class="step-links">
+    {% if page.has_previous %}
+      <a href="?page=1">&laquo; primera</a>
+      <a href="?page={{ page.previous_page_number }}">anterior</a>
+    {% endif %}
+    
+    <span class="current-page">
+      Página {{ page.number }} de {{ page.paginator.num_pages }}.
+    </span>
+
+    {% if page.has_next %}
+      <a href="?page={{ page.next_page_number }}">siguiente</a>
+      <a href="?page={{ page.paginator.num_pages }}">última &raquo;</a>
+    {% endif %}
+  </span>
+</div>
+
+{% endif %}
+{% endif %}
 
 {% endblock%}

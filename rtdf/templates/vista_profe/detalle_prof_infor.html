@@ -16,6 +16,8 @@
 </br>
 
   <h1>Detalles del informe {{ informe.id_informe }}</h1>
+  <a href="{% url 'eliminar_informe' informe.id_informe %}" class="btn-derecha">Eliminar 🗑️</a>
+  <a href="{% url 'editar_informe' informe.id_informe %}" class="btn-derecha">Editar ✍</a>
   </br>
   <div class="table-responsive">
       <table class="table">

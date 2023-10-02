@@ -1,56 +1,58 @@
 {% extends 'rtdf/base.html' %}
 
 {% block content %}
+
+    <div class="container">
+
     <div>
         <a href="{% url 'listado_pacientes' %}">Volver a la lista de mis pacientes</a>
     </div>   
+    
     </br>
-    </br>
-    <div class="container">
-        <h1>Detalles del paciente {{ paciente.primer_nombre }} {{ paciente.ap_paterno }}</h1>
-      </br>
-    <table class="table">
-        <thead class="thead-dark">
-          <tr>
-            <th scope="col">Rut</th>
-            <th scope="col">Correo electronico</th>
-            <th scope="col">Comuna</th>
-            <th scope="col">Numero de contacto</th>
-            <th scope="col">telegram</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th scope="row">{{ paciente.numero_identificacion }}</th>
-            <td>{{ paciente.email }}</td>
-            <td>{{ paciente.id_comuna }}</td>
-            <td>{{ paciente.numero_telefonico }}</td>
-            <td>{{ paciente_info.telegram }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </br>
-    </br>
-    <h2><strong>Enfermedades del paciente</strong></h2>
     </br>
 
-    <table class="table">
-        <thead class="thead-dark">
-          <tr>
-            <th scope="col" class="col-6">Diabetes</th>
-            <th scope="col" class="col-6">Hipertension</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td >{{ paciente_info.fk_tipo_diabetes }}</td>
-            <td>{{ paciente_info.fk_tipo_hipertension }}</td>
-          </tr>
-        </tbody>
-      </table>
+        <h1>Detalles del paciente {{ paciente.primer_nombre }} {{ paciente.ap_paterno }}</h1>
+      </br>
+
+      <div class="table-responsive">
+        <table class="table">
+            <tbody>
+              <tr>
+                <th>Rut del paciente:</th>
+                <td scope="row">{{ paciente.numero_identificacion }}</td>
+              </tr>
+              <tr>
+                <th>Correo electronico:</th>
+                <td scope="row">{{ paciente.email }}</td>
+              </tr>
+              <tr>
+                <th>Comuna:</th>
+                <td scope="row">{{ paciente.id_comuna }}</td>
+              </tr>
+              <tr>
+                <th>Numero de contacto:</th>
+                <td scope="row">{{ paciente.numero_telefonico }}</td>
+              </tr>
+              <tr>
+                <th>Telegram:</th>
+                <td scope="row">{{ paciente_info.telegram }}</td>
+              </tr>
+              <tr>
+                <th>Diabetes:</th>
+                <td scope="row">{{ paciente_info.fk_tipo_diabetes }}</td>
+              </tr>
+              <tr>
+                <th>Hipertension:</th>
+                <td scope="row">{{ paciente_info.fk_tipo_hipertension }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
   </br>
 
   <h2><strong>Informe GRBAS</strong></h2>
+
   </br>
 
   <div class="table-responsive">
@@ -125,6 +127,6 @@
           {% endfor %}   
         </tbody>
       </table>
-    </div>
+  </div>
 
 {% endblock %}

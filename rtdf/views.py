@@ -2,23 +2,42 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import *
 from django.contrib.auth import authenticate, login, logout
 from .models import *
-from django.http import HttpResponseForbidden
 from django.http import JsonResponse
-from django.contrib import messages
-import re
 from django.contrib.auth.decorators import user_passes_test
 from django.views.decorators.cache import never_cache
 from django.utils import timezone
 from django.urls import reverse
+from django.core.paginator import Paginator
+from django.db.models import Count
+from django.contrib.auth.decorators import login_required
 
-# Create your views here.
+def validate(request):
+    if request.is_anonymous:
+        print(request)
+        return False
+    elif request:
+        print(request)
+        return True
+
 def index(request):
     tipo_usuario = None 
     usuarios = Usuario.objects.all()
+
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
 
-    return render(request, 'rtdf/index.html', {'tipo_usuario': tipo_usuario, 'usuario': usuarios})
+    usuarios_por_pagina = 10  # Número de usuarios por página
+
+    paginator = Paginator(usuarios, usuarios_por_pagina)  # Crea un objeto Paginator
+
+    # Obtiene el número de página actual desde la solicitud GET
+    page_number = request.GET.get('page')
+
+    # Obtiene la página actual de usuarios
+    page = paginator.get_page(page_number)
+
+    return render(request, 'rtdf/index.html', {'tipo_usuario': tipo_usuario, 
+                                               'usuario': page})  # Pasamos la página en lugar de usuarios
 
 ##ESTE APARTADO SOLO SERA PARA MODIFICAR LOS BOTONES DEL NAV
 
@@ -29,14 +48,6 @@ def base(request):
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
 
     return render(request, 'rtdf/base.html', {'tipo_usuario': tipo_usuario})
-
-def validate(request):
-    if request.is_anonymous:
-        print(request)
-        return False
-    elif request:
-        print(request)
-        return True
 
 def registro(request):
     regiones = Region.objects.all()
@@ -114,6 +125,8 @@ def login_view(request):
         if user is not None:
             login(request, user)
             response = redirect('index')
+            response.set_cookie('logged_in', 'true')
+            return response
         else:
             error_message = "Credenciales inválidas. Inténtalo de nuevo."
             return render(request, 'registro/login.html', {'error_message': error_message})
@@ -128,7 +141,9 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return redirect('index')  
+    response = redirect('index')
+    response.delete_cookie('logged_in')  # Elimina la cookie de inicio de sesión
+    return response
 
 ##LISTADO DE LOS PACIENTES------------------------------------------
 
@@ -220,14 +235,26 @@ def listado_informes(request):
     profesional_medico = request.user.profesionalsalud
 
     # Filtra los informes asociados al fonoaudiólogo actual
-    informes = Informe.objects.filter(fk_relacion_pa_pro__fk_profesional_salud=profesional_medico)
+    informes = Informe.objects.filter(fk_relacion_pa_pro__fk_profesional_salud=profesional_medico).annotate(
+    num_pautas_terapeuticas=Count('pautaterapeutica')).order_by('-fecha')
+
+    informes_por_pagina = 10
+
+    paginator = Paginator(informes, informes_por_pagina)
+
+    # Obtiene el número de página actual desde la solicitud GET
+    page_number = request.GET.get('page')
+
+    # Obtiene la página actual de informes
+    page = paginator.get_page(page_number)
 
     tipo_usuario = None
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
 
     return render(request, 'vista_profe/listado_informes.html', {'informes': informes,
-                                                                 'tipo_usuario': tipo_usuario,})
+                                                                 'tipo_usuario': tipo_usuario,
+                                                                 'page': page})
     
 
 @user_passes_test(validate)
@@ -241,7 +268,7 @@ def detalle_prof_infor(request, informe_id):
         url_regreso = reverse('listado_informes')
     else:
         # Si no proviene de ninguna de las plantillas conocidas, configura una URL predeterminada
-        url_regreso = reverse('index')
+        url_regreso = reverse('listado_informes')
 
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
@@ -657,24 +684,91 @@ def ingresar_informes(request):
         })
     else:
         return redirect('vista_profe/index.html')
+    
+
+
+def editar_informe(request, informe_id):
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+
+        informe = get_object_or_404(Informe, id_informe=informe_id)
+        profesional_salud = request.user.profesionalsalud
+        relaciones_pacientes = RelacionPaPro.objects.filter(fk_profesional_salud=profesional_salud)
+
+        rasati_form = None
+        grbas_form = None
+
+        try:
+            if informe.rasati:
+                rasati_form = RasatiForm(request.POST or None, instance=informe.rasati)
+        except Rasati.DoesNotExist:
+            rasati_form = RasatiForm()
+
+        try:
+            if informe.grbas:
+                grbas_form = GrbasForm(request.POST or None, instance=informe.grbas)
+        except Grbas.DoesNotExist:
+            grbas_form = GrbasForm()
+
+        if request.method == 'POST':
+            form = InformeForm(request.POST, instance=informe)
+            form.fields['fk_relacion_pa_pro'].queryset = relaciones_pacientes
+
+            if form.is_valid():
+                informe.fecha = timezone.now()
+                form.save()
+
+            if rasati_form and rasati_form.is_valid():
+                rasati_form.save()
+
+            if grbas_form and grbas_form.is_valid():
+                grbas_form.save()
+
+            return redirect('detalle_prof_infor', informe_id=informe.id_informe)
+        else:
+            form = InformeForm(instance=informe)
+            form.fields['fk_relacion_pa_pro'].queryset = relaciones_pacientes
+
+        return render(request, 'vista_profe/editar_informe.html', {'form': form, 
+                                                                'informe': informe,
+                                                                'grbas_form': grbas_form,
+                                                                'rasati_form': rasati_form,
+                                                                'tipo_usuario': tipo_usuario})
+
+def eliminar_informe(request, informe_id):
+    informe = get_object_or_404(Informe, id_informe=informe_id)
+    tipo_informe = informe.tp_informe
+
+    if tipo_informe == 'GRBAS':
+        informe.grbas.delete()
+    elif tipo_informe == 'RASATI':
+        informe.rasati.delete()
+
+    informe.delete()
+
+    return redirect('listado_informes')
 
 
 @user_passes_test(validate)
 def detalle_informe(request, informe_id):
-    informe = get_object_or_404(Informe, id_informe=informe_id)
 
-    try:
-        grbas = Grbas.objects.get(id_informe=informe)
-    except Grbas.DoesNotExist:
-        grbas = None
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
 
-    try:
-        rasati = Rasati.objects.get(id_informe=informe)
-    except Rasati.DoesNotExist:
-        rasati = None
+        informe = get_object_or_404(Informe, id_informe=informe_id)
 
-    # Obtén el paciente relacionado con este informe
-    paciente_relacionado = informe.fk_relacion_pa_pro.id_paciente
+        try:
+            grbas = Grbas.objects.get(id_informe=informe)
+        except Grbas.DoesNotExist:
+            grbas = None
+
+        try:
+            rasati = Rasati.objects.get(id_informe=informe)
+        except Rasati.DoesNotExist:
+            rasati = None
+
+        # Obtén el paciente relacionado con este informe
+        paciente_relacionado = informe.fk_relacion_pa_pro.id_paciente
 
     
 
@@ -682,5 +776,6 @@ def detalle_informe(request, informe_id):
         'informe': informe,
         'grbas': grbas,
         'rasati': rasati,
-        'paciente_relacionado': paciente_relacionado,  
+        'paciente_relacionado': paciente_relacionado, 
+        'tipo_usuario': tipo_usuario 
     })
