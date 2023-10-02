@@ -6,7 +6,7 @@ $(document).ready(function() {
         if (formularioVisible) {
             // Si el formulario ya está visible, ocúltalo y cambia el mensaje del botón
             $("#formulario-pauta").slideUp();
-            $("#mostrar-formulario-btn").text("Agregar nueva pauta terapéutica");
+            $("#mostrar-formulario-btn").text("Descartar la nueva pauta terapéutica");
             formularioVisible = false;
 
             // Limpia los campos del formulario
@@ -18,7 +18,36 @@ $(document).ready(function() {
         } else {
             // Si el formulario no está visible, muéstralo y cambia el mensaje del botón
             $("#formulario-pauta").slideDown();
-            $("#mostrar-formulario-btn").text("Descartar la nueva pauta terapéutica");
+            $("#mostrar-formulario-btn").text("Agregar nueva pauta terapéutica");
+            formularioVisible = true;
+              // Limpia los campos del formulario
+            $("#formulario-pauta input[type='text']").val("");
+            $("#formulario-pauta textarea").val("");
+            $("#formulario-pauta select").val("");
+
+        }
+
+
+
+    });
+
+    $("#ocultar-formulario-btn").click(function() {
+        if (formularioVisible) {
+            // Si el formulario ya está visible, ocúltalo y cambia el mensaje del botón
+            $("#formulario-pauta").slideUp();
+            $("#ocultar-formulario-btn").text("Descartar la nueva pauta terapéutica");
+            formularioVisible = false;
+    
+                // Limpia los campos del formulario
+            $("#formulario-pauta input[type='text']").val("");
+            $("#formulario-pauta textarea").val("");
+            $("#formulario-pauta select").val("");
+    
+    
+        } else {
+            // Si el formulario no está visible, muéstralo y cambia el mensaje del botón
+            $("#formulario-pauta").slideDown();
+            $("#ocultar-formulario-btn").text("Descartar la nueva pauta terapéutica");
             formularioVisible = true;
         }
     });

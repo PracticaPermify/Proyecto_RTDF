@@ -309,7 +309,7 @@ def detalle_prof_infor(request, informe_id):
 
                 tipo_terapia = str(form.cleaned_data['fk_tp_terapia']).strip()
 
-                # Asociar el informe con GRBAS y RASATI
+                # asociar el informe con VOCALIZACION O INTENSIDAD
                 if tipo_terapia == 'Vocalización':
                     
                     vocalizacion = vocalizacion_form.save(commit=False)
@@ -317,6 +317,18 @@ def detalle_prof_infor(request, informe_id):
                     vocalizacion.save()
 
                 elif tipo_terapia == 'Intensidad':
+                        
+                    #se obtiene en valor del campo validado del form y se compara que este vacio    
+                    if not intensidad_form.cleaned_data['min_db']:
+                        #se setea a null
+                        intensidad_form.cleaned_data['min_db'] = None
+
+                    if not intensidad_form.cleaned_data['max_db']:
+                        intensidad_form.cleaned_data['max_db'] = None   
+
+                    #antes de guardar el formulario se setea el campo de min db y max db
+                    intensidad_form.instance.min_db = intensidad_form.cleaned_data['min_db']
+                    intensidad_form.instance.max_db = intensidad_form.cleaned_data['max_db']
 
                     intensidad = intensidad_form.save(commit=False)
                     intensidad.id_pauta_terapeutica = pauta_terapeutica

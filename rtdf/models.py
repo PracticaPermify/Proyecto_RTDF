@@ -163,8 +163,8 @@ class Institucion(models.Model):
 class Intensidad(models.Model):
     id_pauta_terapeutica = models.OneToOneField('PautaTerapeutica', on_delete=models.CASCADE, db_column='id_pauta_terapeutica', primary_key=True)
     intensidad = models.CharField(max_length=20)
-    min_db = models.IntegerField()
-    max_db = models.IntegerField()
+    min_db = models.IntegerField(null=True, blank=True)
+    max_db = models.IntegerField(null=True, blank=True)  
 
     class Meta:
         db_table = 'intensidad'

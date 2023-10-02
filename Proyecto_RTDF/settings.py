@@ -27,12 +27,29 @@ SECRET_KEY = 'django-insecure-b$%#mw8_62v-q!t9(9noi_xo(5&fjnq(s^(q0%1*rp@#3f5-=)
 DEBUG = True
 
 
-#LOCAL
-ALLOWED_HOSTS = []
 
+# CONFIGURACIOIN DE ENTORNO -------------
+    # Felipe = local_felipe
+    # Francisco = local_francisco
+    # Nicolas =  local_nico
+    # PythonAnywhere = pa
 
-# #ENTORNO PYTHONANYWHERE
-# ALLOWED_HOSTS = ['farmaciadigital.pythonanywhere.com']
+entorno = 'local_francisco'
+
+if entorno == "local_felipe" or "local_francisco" or "local_nico":
+
+    #LOCAL
+    ALLOWED_HOSTS = []
+
+elif entorno == 'pa':
+
+    # #ENTORNO PYTHONANYWHERE
+    ALLOWED_HOSTS = ['farmaciadigital.pythonanywhere.com']
+
+else:
+
+    raise ValueError(f"Entorno desconocido: {entorno}")
+
 
 
 # Application definition
@@ -87,51 +104,62 @@ AUTH_USER_MODEL = 'rtdf.Usuario'  # Reemplaza 'tu_app' con el nombre de tu aplic
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 
-# ##LOCAL DATABASE PARA PRUEBAS
-# DATABASES = {
-#      'default': {
-#          'ENGINE': 'django.db.backends.mysql',
-#          'NAME': 'rtdf_data',
-#          'USER': 'root',
-#          'PASSWORD': 'nico123',
-#          'HOST': 'localhost',
-#          'PORT': '3306',
-#          'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"},
-#      }
-#  }
+# configuración de la base de datos por entorno
+if entorno == "local_felipe":
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'rtdf_beta',
+            'USER': 'root',
+            'PASSWORD': 'practica',
+            'HOST': 'localhost',
+            'PORT': '3306',
+            'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"},
+        }
+    }
 
-##LOCAL DATABASE FINAL
-DATABASES = {
-     'default': {
-         'ENGINE': 'django.db.backends.mysql',
-         'NAME': 'rtdf_data_final',
-         'USER': 'root',
-         'PASSWORD': 'nico123',
-         'HOST': 'localhost',
-         'PORT': '3306',
-         'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"},
-     }
- }
+elif entorno == "local_francisco":
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'rtdf_data',
+            'USER': 'root',
+            'PASSWORD': 'admin',
+            'HOST': 'localhost',
+            'PORT': '3306',
+            'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"},
+        }
+    }
 
-# ##PYTHON ANYWHERE DATABASE
-# DATABASES = {
-#      'default': {
-#          'ENGINE': 'django.db.backends.mysql',
-#          'NAME': 'farmaciadigital$rtdf',
-#          'USER': 'farmaciadigital',
-#          'PASSWORD': 'rtdfdev2023',
-#          'HOST': 'farmaciadigital.mysql.pythonanywhere-services.com',
-#          'PORT': '3306',
-#          'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"},
-#      }
-#  }
+elif entorno == "local_nico":
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'rtdf_data_final',
+            'USER': 'root',
+            'PASSWORD': 'nico123',
+            'HOST': 'localhost',
+            'PORT': '3306',
+            'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"},
+        }
+    }
+
+elif entorno == "pa":
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'farmaciadigital$rtdf',
+            'USER': 'farmaciadigital',
+            'PASSWORD': 'rtdfdev2023',
+            'HOST': 'farmaciadigital.mysql.pythonanywhere-services.com',
+            'PORT': '3306',
+            'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"},
+        }
+    }
+else:
+    raise ValueError(f"Entorno desconocido: {entorno}")
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators

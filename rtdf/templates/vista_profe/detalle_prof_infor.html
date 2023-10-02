@@ -152,6 +152,16 @@
         <h2>Ingresar nueva pauta terapéutica</h2>
 
         <br>
+        
+        <div class="form-group">
+            <label for="fk_tp_terapia">Tipo de pauta terapéutica:</label>
+            <select id="fk_tp_terapia" name="{{ form.fk_tp_terapia.name }}" class="form-control form-control-sm">
+                <option value="" selected>Tipo de pauta terapeutica para diagnostico</option>
+                {% for choice in form.fk_tp_terapia.field.choices %}
+                    <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                {% endfor %}
+            </select>
+        </div>
 
         <div class="form-group">
             <label for="cant_veces_dia">Cantidad de veces al día:</label>
@@ -179,15 +189,7 @@
             {{ form.comentario }}
         </div>
 
-        <div class="form-group">
-            <label for="fk_tp_terapia">Tipo de pauta terapéutica:</label>
-            <select id="fk_tp_terapia" name="{{ form.fk_tp_terapia.name }}" class="form-control form-control-sm">
-                <option value="" selected>Tipo de pauta terapeutica para diagnostico</option>
-                {% for choice in form.fk_tp_terapia.field.choices %}
-                    <option value="{{ choice.0 }}">{{ choice.1 }}</option>
-                {% endfor %}
-            </select>
-        </div>
+        
 
         {% comment %}Aqui va campos para vocalización{% endcomment %}
 
@@ -230,6 +232,7 @@
 
         {% comment %}Aca termina los campos para intensidad{% endcomment %}
         </br>
+        <button type="button" class="btn btn-primary btn-block" id="ocultar-formulario-btn">Descartar la nueva pauta terapéutica</button>
         <button type="submit" class="btn btn-primary btn-block">Registrar</button>
         </br>
         </br>
@@ -301,6 +304,7 @@
             </tr>
             {% empty %}
             <tr>
+                
                 <td colspan="8">Este informe aún no cuenta con pautas terapéuticas de intensidad adjuntas.</td>
             </tr>
             {% endfor %}  
