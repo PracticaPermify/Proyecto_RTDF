@@ -34,7 +34,7 @@ DEBUG = True
     # Nicolas =  local_nico
     # PythonAnywhere = pa
 
-entorno = 'local_francisco'
+entorno = 'local_nico'
 
 if entorno == "local_felipe" or "local_francisco" or "local_nico":
 

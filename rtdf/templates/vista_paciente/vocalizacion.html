@@ -11,64 +11,39 @@
     </head>
     <body class="is-preload">
 
-     
-            <div class="inner">
-                <!-- Post -->
-                    <article class="box post post-excerpt"> 
-                            <a href="#" class="image featured"><img src="images/pic01.jpg" alt="" /></a>
-                            <h2><p>Vocalizacion, {{ user.primer_nombre }}.</p></h2>
-
-
-                            <div class="container-metronome">
-                                <div class="metronome">
-                                    <div class="bpm-display">
-                                        <span class="tempo">140</span>
-                                        <span class="bpm">BPM</span>
-                                    </div>
-                                    <div class="tempo-text">Nice and steady</div>
-                                    <div class="tempo-settings">
-                                        <div class="adjust-tempo-btn decrease-tempo">-</div>
-                                        <input type="range" min="20" max="280" step="1" class="slider">
-                                        <div class="adjust-tempo-btn increase-tempo">+</div>
-                                    </div>
-                                </div>
-                                <div class="controlador">
-                                    <button onclick="clickAudio(false)" id="start_stop" class="start-stop">COMENZAR EJERCITACIÓN</button>
-                                    <form method="POST" id="post-form" enctype="multipart/form-data">
-                                        {% csrf_token %}
-                                        <div id="tiempo">
-                                            <h3>La grabación terminará automáticamente en <p id="segundos">{{6}}</p> segundos</h3>
-                                        </div>
-                                    </form>
-                                    <div class="measures">
-                                        <div class="subtract-beats stepper">-</div>
-                                        <div class="measure-count">4</div>
-                                        <div class="add-beats stepper">+</div>
-                                    </div>
-                                    <span class="beats-per-measure-text">Sonidos por minuto</span>
-                                    <div>
-                                        <p class="duracion" id="duracion">--Duración--</p>
-                                    </div>
-                                </div>
-                            </div>
-                        
-                        
-     
-                        </div>
-                        
-                        <div class="container-mic" style="display:none;">
-                            <div class="selector-audio">
-                                <select name="listaDeDispositivos" id="listaDeDispositivos"></select>
-                            </div>
-                            <div class="audio">
-                                <audio controls playsinline></audio>
-                            </div>
-                        
-                            <hr>
-                        </div>
+        <div class="container">
+            <div class="metronome">
+                <div class="metronome-info">
+                    <h1><strong>Buenos días</strong> {{ user.primer_nombre }}</h1>
+                    <p>Esta semana debes trabajar con BPM. Recuerda ajustar muy bien tu tiempo y BPM.</p>
+                    <p>Al ejercitar, debes respirar por la nariz y tus ejercicios deben durar aproximadamente 5 minutos.</p>
+                </div>
+                <div class="bpm-display">
+                    <span class="tempo">140</span>
+                    <span class="bpm">BPM</span>
+                </div>
+                <div class="tempo-text">Nice and steady</div>
+                <div class="tempo-settings">
+                    <div class="adjust-tempo-btn decrease-tempo">-</div>
+                    <div class="slider-container">
+                        <input type="range" min="20" max="280" step="1" class="slider">
+                    </div>
+                    <div class="adjust-tempo-btn increase-tempo">+</div>
+                </div>
+                <div class="start-stop">Empezar</div>
+                <div class="measures">
+                    <div class="subtract-beats stepper">-</div>
+                    <div class="measure-count">4</div>
+                    <div class="add-beats stepper">+</div>
+                </div>
+                <span class="beats-per-measure-text">Beats per measure</span>
             </div>
+        </div>
+
+        
     </body>
 
-    <script src="{% static 'app/js/metronomo/metronomo.js' %}"></script>
+    <script src="{% static 'app/js/metronomo.js' %}"></script>
+
 {% endblock %}
 </html>

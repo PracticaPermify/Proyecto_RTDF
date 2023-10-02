@@ -1,0 +1,134 @@
+.metronome {
+    background-color: #f5f5f5; /* Fondo más claro */
+    width: 100%; /* Ancho del 100% para ser responsivo */
+    max-width: 400px; /* Ancho máximo para evitar que se extienda demasiado */
+    max-width: 900px;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    margin: 0 auto;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.additional-text {
+    font-size: 14px;
+    margin-top: 10px;
+    color: #c94663; /* Color rojo especificado */
+}
+
+.metronome-info {
+    margin-bottom: 20px;
+    color: #c94663; /* Color de texto rojo */
+    font-size: 16px;
+    line-height: 1.4;
+}
+
+.bpm-display {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #c94663; /* Color de texto rojo */
+}
+
+.tempo-text {
+    color: #c94663; /* Color de texto rojo */
+    font-weight: bold;
+}
+
+.adjust-tempo-btn {
+    font-size: 24px;
+    color: #c94663; /* Color de texto rojo */
+    cursor: pointer;
+}
+
+.slider-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 15px;
+    position: relative;
+}
+
+.slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%; /* Ancho ajustable */
+    height: 10px;
+    background: #f5f5f5; /* Fondo más claro */
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+    border-radius: 10px;
+    position: relative;
+    z-index: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 30px; /* Tamaño del control deslizante circular (más ancho) */
+    height: 30px; /* Tamaño del control deslizante circular (más alto) */
+    background: #c94663; /* Color rojo especificado */
+    cursor: pointer;
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
+}
+
+.slider-container::before, .slider-container::after {
+    content: "";
+    width: 50%;
+    height: 4px; /* Altura de las líneas (más gruesas) */
+    background: #c94663; /* Color rojo especificado */
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 0;
+}
+
+.slider-container::before {
+    left: 0;
+}
+
+.slider-container::after {
+    right: 0;
+}
+
+.start-stop {
+    background-color: #c94663; /* Color de botón rojo */
+    color: white;
+    font-size: 18px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.start-stop:hover {
+    background-color: #a93244; /* Cambia de color al pasar el mouse */
+}
+
+.measures {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.stepper {
+    font-size: 24px;
+    color: #c94663; /* Color de texto rojo */
+    cursor: pointer;
+}
+
+.measure-count {
+    font-size: 24px;
+    margin: 0 20px;
+}
