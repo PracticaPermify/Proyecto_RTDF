@@ -6,8 +6,10 @@ $(document).ready(function() {
         if (formularioVisible) {
             // Si el formulario ya está visible, ocúltalo y cambia el mensaje del botón
             $("#formulario-pauta").slideUp();
-            $("#mostrar-formulario-btn").text("Descartar la nueva pauta terapéutica");
+            $("#mostrar-formulario-btn").text("Agregar nueva pauta terapéutica");
             formularioVisible = false;
+
+            $("#mostrar-formulario-btn").removeClass("btn-danger").addClass("btn-primary");
 
             // Limpia los campos del formulario
             $("#formulario-pauta input[type='text']").val("");
@@ -18,13 +20,18 @@ $(document).ready(function() {
         } else {
             // Si el formulario no está visible, muéstralo y cambia el mensaje del botón
             $("#formulario-pauta").slideDown();
-            $("#mostrar-formulario-btn").text("Agregar nueva pauta terapéutica");
+            $("#mostrar-formulario-btn").text("Descartar la nueva pauta terapéutica");
             formularioVisible = true;
+
+            //cambio de las clases del boton usan bootstrap
+            $("#mostrar-formulario-btn").removeClass("btn-primary").addClass("btn-danger");
               // Limpia los campos del formulario
             $("#formulario-pauta input[type='text']").val("");
             $("#formulario-pauta textarea").val("");
             $("#formulario-pauta select").val("");
 
+            //ajustar el scroll al desplegar el formulario
+            $("html, body").animate({ scrollTop: $("#formulario-pauta").offset().top }, "slow");
         }
 
 
@@ -36,6 +43,8 @@ $(document).ready(function() {
             // Si el formulario ya está visible, ocúltalo y cambia el mensaje del botón
             $("#formulario-pauta").slideUp();
             $("#ocultar-formulario-btn").text("Descartar la nueva pauta terapéutica");
+            $("#mostrar-formulario-btn").text("Agregar nueva pauta terapéutica");
+            $("#mostrar-formulario-btn").removeClass("btn-danger").addClass("btn-primary");
             formularioVisible = false;
     
                 // Limpia los campos del formulario
@@ -44,11 +53,6 @@ $(document).ready(function() {
             $("#formulario-pauta select").val("");
     
     
-        } else {
-            // Si el formulario no está visible, muéstralo y cambia el mensaje del botón
-            $("#formulario-pauta").slideDown();
-            $("#ocultar-formulario-btn").text("Descartar la nueva pauta terapéutica");
-            formularioVisible = true;
         }
     });
 });

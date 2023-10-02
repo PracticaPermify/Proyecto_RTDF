@@ -779,12 +779,67 @@ def detalle_informe(request, informe_id):
         except Rasati.DoesNotExist:
             rasati = None
 
+        datos_vocalizacion = Vocalizacion.objects.filter(id_pauta_terapeutica__fk_informe=informe_id,id_pauta_terapeutica__fk_tp_terapia= 1)    
+        datos_intensidad = Intensidad.objects.filter(id_pauta_terapeutica__fk_informe=informe_id,id_pauta_terapeutica__fk_tp_terapia= 2)
+
         # Obtén el paciente relacionado con este informe
         paciente_relacionado = informe.fk_relacion_pa_pro.id_paciente
 
-    
+        if request.method == 'POST':
+
+            #guardo la pk del informe del detalle_informe
+            informe = Informe.objects.get(pk=informe_id)
+            form = PautaTerapeuticaForm(request.POST)
+            vocalizacion_form = VocalizacionForm(request.POST)
+            intensidad_form = IntensidadForm(request.POST)
+
+            if form.is_valid() and vocalizacion_form.is_valid() and intensidad_form.is_valid():
+                pauta_terapeutica = form.save(commit=False) #guardo el form para agregar el id informe manualmente
+                pauta_terapeutica.fk_informe = informe # le paso la pk del informe
+                pauta_terapeutica.save()
+
+                tipo_terapia = str(form.cleaned_data['fk_tp_terapia']).strip()
+
+                # asociar el informe con VOCALIZACION O INTENSIDAD
+                if tipo_terapia == 'Vocalización':
+                    
+                    vocalizacion = vocalizacion_form.save(commit=False)
+                    vocalizacion.id_pauta_terapeutica = pauta_terapeutica
+                    vocalizacion.save()
+
+                elif tipo_terapia == 'Intensidad':
+                        
+                    #se obtiene en valor del campo validado del form y se compara que este vacio    
+                    if not intensidad_form.cleaned_data['min_db']:
+                        #se setea a null
+                        intensidad_form.cleaned_data['min_db'] = None
+
+                    if not intensidad_form.cleaned_data['max_db']:
+                        intensidad_form.cleaned_data['max_db'] = None   
+
+                    #antes de guardar el formulario se setea el campo de min db y max db
+                    intensidad_form.instance.min_db = intensidad_form.cleaned_data['min_db']
+                    intensidad_form.instance.max_db = intensidad_form.cleaned_data['max_db']
+
+                    intensidad = intensidad_form.save(commit=False)
+                    intensidad.id_pauta_terapeutica = pauta_terapeutica
+                    intensidad.save()    
+
+                return redirect('detalle_prof_infor', informe_id=informe.id_informe)
+        
+
+        else:
+            # Si la solicitud no es POST, muestra el formulario en blanco
+            form = PautaTerapeuticaForm()
+            vocalizacion_form = VocalizacionForm()
+            intensidad_form = IntensidadForm()
 
     return render(request, 'vista_admin/detalle_informe.html', {
+        'form': form,
+        'vocalizacion_form': vocalizacion_form,
+        'intensidad_form': intensidad_form,
+        'datos_vocalizacion': datos_vocalizacion,
+        'datos_intensidad': datos_intensidad,
         'informe': informe,
         'grbas': grbas,
         'rasati': rasati,

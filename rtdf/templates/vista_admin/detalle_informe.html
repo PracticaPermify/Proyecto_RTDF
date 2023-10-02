@@ -1,14 +1,19 @@
 {% extends 'rtdf/base.html' %}
 
+{% load static%}
+
 {% block content %}
+
+<body class="is-preload"></body>
+<div class="container">
 
 <div>
     <a href="{% url 'detalle_paciente' paciente_relacionado.id_usuario.id_usuario %}">Volver a la información del paciente</a>
 </div>
+
 </br>
 </br>
 
-<div class="container">
 
     <h1>Detalles del informe {{ informe.id_informe }}</h1>
     </br>
@@ -126,7 +131,189 @@
                 {% endif %}
             </tbody>
         </table>
+        </br>
+        <button type="button" class="btn btn-primary btn-block" id="mostrar-formulario-btn">Agregar nueva pauta terapéutica</button>
     </div>
 </div>
 
+</br>
+<!-- Formulario de pauta-terapeutica -->
+</br>
+
+<div class="container">
+    <div id="formulario-pauta" style="display: none;">
+        <form method="post">
+        {% csrf_token %}
+        <!-- <input type="hidden" name="id_informe" value="{{ informe.id_informe }}">
+        <button type="submit" class="btn btn-success">Guardar Pauta</button> -->
+
+        <h2>Ingresar nueva pauta terapéutica</h2>
+
+        <br>
+        
+        <div class="form-group">
+            <label for="fk_tp_terapia">Tipo de pauta terapéutica:</label>
+            <select id="fk_tp_terapia" name="{{ form.fk_tp_terapia.name }}" class="form-control form-control-sm">
+                <option value="" selected>Tipo de pauta terapeutica para diagnostico</option>
+                {% for choice in form.fk_tp_terapia.field.choices %}
+                    <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="cant_veces_dia">Cantidad de veces al día:</label>
+            {{ form.cant_veces_dia }}
+        </div>
+
+        <div class="form-group">
+            <label for="descripcion">Descripción:</label>
+            {{ form.descripcion }}
+        </div>
+
+        <div class="form-group">
+            <label for="fecha_inicio">Fecha de inicio:</label></br>
+            <input type="datetime-local" id="fecha_inicio" name="fecha_inicio" value="{{ form.fecha_inicio.value|date:'Y-m-d\TH:i' }}">
+        </div>
+
+        
+        <div class="form-group">
+            <label for="fecha_fin">Fecha de fin:</label></br>
+            <input type="datetime-local" id="fecha_fin" name="fecha_fin" value="{{ form.fecha_fin.value|date:'Y-m-d\TH:i' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="comentario">Comentarios:</label>
+            {{ form.comentario }}
+        </div>
+
+        
+
+        {% comment %}Aqui va campos para vocalización{% endcomment %}
+
+        <div class="campos-vocalizacion">
+
+            <div class="form-group">
+                <label for="{{ vocalizacion_form.duracion_seg.id_for_label }}">Duración en segundos:</label>
+                {{ vocalizacion_form.duracion_seg }}
+            </div>
+    
+            <div class="form-group">
+                <label for="{{ vocalizacion_form.bpm.id_for_label }}">BPM:</label>
+                {{ vocalizacion_form.bpm }}
+            </div>
+    
+        </div>
+
+        {% comment %}Aca termina los campos para vocalización{% endcomment %}
+
+        {% comment %}Aqui va campos para intensidad{% endcomment %}
+
+        <div class="campos-intensidad">
+
+            <div class="form-group">
+                <label for="{{ intensidad_form.intensidad.id_for_label }}">Especificar intensidad:</label>
+                {{ intensidad_form.intensidad }}
+            </div>
+    
+            <div class="form-group">
+                <label for="{{ intensidad_form.min_db.id_for_label }}">Decibelio minimo:</label>
+                {{ intensidad_form.min_db }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ intensidad_form.max_db.id_for_label }}">Decibelio maximo:</label>
+                {{ intensidad_form.max_db }}
+            </div>          
+
+        </div>
+
+        {% comment %}Aca termina los campos para intensidad{% endcomment %}
+        </br>
+        <button type="button" class="btn btn-danger btn-block " id="ocultar-formulario-btn">Descartar la nueva pauta terapéutica</button>
+        <button type="submit" class="btn btn-primary btn-block">Guardar</button>
+        </br>
+        </br>
+        </form>
+    </div>
+
+    <h2><strong>Pauta Terapéutica: Vocalización</strong></h2>
+  </br>
+
+  <div class="table-responsive">
+    <table class="table">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">N° veces al día</th>
+            <th scope="col">Fecha de inicio</th>
+            <th scope="col">Fecha fin</th>
+            <th scope="col">Duración segundos</th>
+            <th scope="col">BPM</th>
+            
+          </tr>
+        </thead>
+        <tbody>
+          {% for vocalizacion in datos_vocalizacion %}
+          <tr>
+            <td>{{ vocalizacion.id_pauta_terapeutica_id}}</td>
+            <td>{{ vocalizacion.id_pauta_terapeutica.cant_veces_dia}}</td>
+            <td>{{ vocalizacion.id_pauta_terapeutica.fecha_inicio }}</td>
+            <td>{{ vocalizacion.id_pauta_terapeutica.fecha_fin }}</td>
+            <td>{{ vocalizacion.duracion_seg }}</td>
+            <td>{{ vocalizacion.bpm }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+              <td colspan="8">Este informe aún no cuenta con pautas terapéuticas de vocalización adjuntas.</td>
+          </tr>
+          {% endfor %}          
+        </tbody>
+      </table>
+    </div>
+
+    </br>
+    <h2><strong>Pauta Terapéutica: Intensidad</strong></h2>
+    </br>
+
+    <div class="table-responsive">
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">N° veces al día</th>
+                <th scope="col">Fecha de inicio</th>
+                <th scope="col">Fecha fin</th>
+                <th scope="col">Intensidad</th>
+                <th scope="col">dB Minimo</th>
+                <th scope="col">dB Maximo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for intensidad in datos_intensidad %}
+            <tr>
+              <td>{{ intensidad.id_pauta_terapeutica_id}}</td>
+              <td>{{ intensidad.id_pauta_terapeutica.cant_veces_dia}}</td>
+              <td>{{ intensidad.id_pauta_terapeutica.fecha_inicio }}</td>
+              <td>{{ intensidad.id_pauta_terapeutica.fecha_fin }}</td>
+              <td>{{ intensidad.intensidad }}</td>
+              <td>{{ intensidad.min_db }}</td>
+              <td>{{ intensidad.max_db }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                
+                <td colspan="8">Este informe aún no cuenta con pautas terapéuticas de intensidad adjuntas.</td>
+            </tr>
+            {% endfor %}  
+        </tbody>
+        </table>
+    </div>
+
+</div>
+</body>    
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- <script src="../../../static/app/js/pauta_terapeutica.js"></script> -->
+    <script src="{% static 'app/js/pauta_terapeutica.js' %}"></script>
 {% endblock %}
