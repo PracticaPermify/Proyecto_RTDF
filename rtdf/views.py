@@ -825,7 +825,7 @@ def detalle_informe(request, informe_id):
                     intensidad.id_pauta_terapeutica = pauta_terapeutica
                     intensidad.save()    
 
-                return redirect('detalle_prof_infor', informe_id=informe.id_informe)
+                return redirect('detalle_informe', informe_id=informe.id_informe)
         
 
         else:
@@ -846,3 +846,56 @@ def detalle_informe(request, informe_id):
         'paciente_relacionado': paciente_relacionado, 
         'tipo_usuario': tipo_usuario 
     })
+
+
+def editar_informe_admin(request, informe_id):
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+
+        
+        informe = get_object_or_404(Informe, id_informe=informe_id)
+
+        pk_profesional = informe.fk_relacion_pa_pro.fk_profesional_salud
+        relaciones_pacientes = RelacionPaPro.objects.filter(fk_profesional_salud=pk_profesional)
+
+        # for relacion in relaciones_pacientes:
+        #   print(relacion)
+
+        rasati_form = None
+        grbas_form = None
+
+        try:
+            if informe.rasati:
+                rasati_form = RasatiForm(request.POST or None, instance=informe.rasati)
+        except Rasati.DoesNotExist:
+            rasati_form = RasatiForm()
+
+        try:
+            if informe.grbas:
+                grbas_form = GrbasForm(request.POST or None, instance=informe.grbas)
+        except Grbas.DoesNotExist:
+            grbas_form = GrbasForm()
+
+        if request.method == 'POST':
+            form = InformeForm(request.POST, instance=informe)
+
+            if form.is_valid():
+                informe.fecha = timezone.now()
+                form.save()
+
+            if rasati_form and rasati_form.is_valid():
+                rasati_form.save()
+
+            if grbas_form and grbas_form.is_valid():
+                grbas_form.save()
+
+            return redirect('detalle_informe', informe_id=informe.id_informe)
+        else:
+            form = InformeForm(instance=informe)
+            form.fields['fk_relacion_pa_pro'].queryset = relaciones_pacientes
+
+        return render(request, 'vista_admin/editar_informe_admin.html', {'form': form, 
+                                                                        'informe': informe,
+                                                                        'grbas_form': grbas_form,
+                                                                        'rasati_form': rasati_form,
+                                                                        'tipo_usuario': tipo_usuario})

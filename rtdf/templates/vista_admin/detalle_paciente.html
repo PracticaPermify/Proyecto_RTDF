@@ -132,7 +132,11 @@
             <td>{{ informe.a_debilidad }}</td>
             <td>{{ informe.s_tension }}</td>
           </tr>
-          {% endfor %}
+          {% empty %}
+          <tr>
+              <td colspan="8">Este paciente aún no cuenta con informes GRBAS adjuntos.</td>
+          </tr>
+          {% endfor %}   
         </tbody>
       </table>
     </div>
@@ -168,7 +172,11 @@
             <td>{{ informe.t_tension }}</td>
             <td>{{ informe.i_inestabilidad }}</td>
           </tr>
-        {% endfor %}
+          {% empty %}
+          <tr>
+              <td colspan="8">Este paciente aún no cuenta con informes RASATI adjuntos.</td>
+          </tr>
+          {% endfor %}   
         </tbody>
       </table>
     </div>

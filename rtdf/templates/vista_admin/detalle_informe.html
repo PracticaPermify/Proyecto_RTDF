@@ -16,6 +16,10 @@
 
 
     <h1>Detalles del informe {{ informe.id_informe }}</h1>
+
+    <a href="{% url 'eliminar_informe' informe.id_informe %}" class="btn-derecha">Eliminar 🗑️</a>
+    <a href="{% url 'editar_informe_admin' informe.id_informe %}" class="btn-derecha">Editar ✍</a>
+    
     </br>
     <div class="table-responsive">
         <table class="table">
@@ -33,10 +37,6 @@
                 </tr>
                 {% endif %}
                 <tr>
-                    <th>Tipo de informe:</th>
-                    <td>GRBAS</td>
-                </tr>
-                <tr>
                     <th>Titulo:</th>
                     <td>{{ informe.titulo }}</td>
                 </tr>
@@ -51,6 +51,11 @@
                 <tr>
                     <th>Fecha:</th>
                     <td>{{ informe.fecha }}</td>
+                </tr>
+
+                <tr>
+                    <th>Tipo de informe:</th>
+                    <td>GRBAS</td>
                 </tr>
                 <tr>
                     <th>Grado disfonía:</th>
@@ -230,8 +235,14 @@
 
         {% comment %}Aca termina los campos para intensidad{% endcomment %}
         </br>
-        <button type="button" class="btn btn-danger btn-block " id="ocultar-formulario-btn">Descartar la nueva pauta terapéutica</button>
-        <button type="submit" class="btn btn-primary btn-block">Guardar</button>
+        <div class="row">
+            <div class="col-sm-6 mb-2">
+                <button type="button" class="btn btn-danger w-100" id="ocultar-formulario-btn">Descartar la nueva pauta terapéutica</button>
+            </div>
+            <div class="col-sm-6 mb-2 custom-div">
+                <button type="submit" class="btn btn-primary w-100">Registrar</button>
+            </div>
+        </div>
         </br>
         </br>
         </form>

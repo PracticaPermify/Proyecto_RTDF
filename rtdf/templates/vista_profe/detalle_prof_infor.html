@@ -2,7 +2,7 @@
 
 
 {% load static%}
-
+    
 {% block content %}
 
 <body class="is-preload">
@@ -146,9 +146,7 @@
     <div id="formulario-pauta" style="display: none;">
         <form method="post">
         {% csrf_token %}
-        <!-- <input type="hidden" name="id_informe" value="{{ informe.id_informe }}">
-        <button type="submit" class="btn btn-success">Guardar Pauta</button> -->
-
+        
         <h2>Ingresar nueva pauta terapéutica</h2>
 
         <br>
@@ -232,8 +230,14 @@
 
         {% comment %}Aca termina los campos para intensidad{% endcomment %}
         </br>
-        <button type="button" class="btn btn-primary btn-block" id="ocultar-formulario-btn">Descartar la nueva pauta terapéutica</button>
-        <button type="submit" class="btn btn-primary btn-block">Registrar</button>
+        <div class="row">
+            <div class="col-sm-6 mb-2">
+                <button type="button" class="btn btn-danger w-100" id="ocultar-formulario-btn">Descartar la nueva pauta terapéutica</button>
+            </div>
+            <div class="col-sm-6 mb-2 custom-div">
+                <button type="submit" class="btn btn-primary w-100">Registrar</button>
+            </div>
+        </div>
         </br>
         </br>
         </form>

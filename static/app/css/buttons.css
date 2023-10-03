@@ -2,3 +2,10 @@
   float: right;       /* Mueve el botón hacia la derecha */
   margin-right: 10px; /* Ajusta el margen derecho según sea necesario */
 }
+
+@media screen and (max-width: 575px) {
+  .custom-div {
+      padding-top: 20px;
+  }
+}
+
