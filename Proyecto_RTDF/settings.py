@@ -34,7 +34,7 @@ DEBUG = True
     # Nicolas =  local_nico
     # PythonAnywhere = pa
 
-entorno = 'local_nico'
+entorno = 'local_felipe'
 
 if entorno == "local_felipe" or "local_francisco" or "local_nico":
 
@@ -149,7 +149,7 @@ elif entorno == "pa":
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'farmaciadigital$rtdf',
+            'NAME': 'farmaciadigital$rtdf_final',
             'USER': 'farmaciadigital',
             'PASSWORD': 'rtdfdev2023',
             'HOST': 'farmaciadigital.mysql.pythonanywhere-services.com',

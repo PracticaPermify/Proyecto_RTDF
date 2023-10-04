@@ -374,13 +374,13 @@ class IntensidadForm(PautaTerapeuticaForm):
     )
 
     min_db = forms.CharField(
-        widget=forms.TextInput(attrs={'placeholder': 'dB minimo'}),
+        widget=forms.TextInput(attrs={'placeholder': 'dB mínimo'}),
         required=False,
         label='BPM'
     )
 
     max_db = forms.CharField(
-        widget=forms.TextInput(attrs={'placeholder': 'dB maximo'}),
+        widget=forms.TextInput(attrs={'placeholder': 'dB máximo'}),
         required=False,
         label='BPM'
     )

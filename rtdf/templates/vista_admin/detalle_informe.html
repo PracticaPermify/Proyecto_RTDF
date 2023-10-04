@@ -17,8 +17,13 @@
 
     <h1>Detalles del informe {{ informe.id_informe }}</h1>
 
-    <a href="{% url 'eliminar_informe_admin' informe.id_informe %}" class="btn-derecha">Eliminar 🗑️</a>
-    <a href="{% url 'editar_informe_admin' informe.id_informe %}" class="btn-derecha">Editar ✍</a>
+    </br>
+    <a href="{% url 'eliminar_informe_admin' informe.id_informe %}" class="btn btn-danger btn-derecha">
+        Eliminar <i class="fas fa-trash-alt" style="margin-left: 5px;"></i> 
+    </a>
+    <a href="{% url 'editar_informe_admin' informe.id_informe %}" class="btn btn-primary btn-derecha">
+        Editar <i class="fas fa-pencil-alt" style="margin-left: 5px;"></i>
+    </a>
     
     </br>
     <div class="table-responsive">
@@ -149,8 +154,6 @@
     <div id="formulario-pauta" style="display: none;">
         <form method="post">
         {% csrf_token %}
-        <!-- <input type="hidden" name="id_informe" value="{{ informe.id_informe }}">
-        <button type="submit" class="btn btn-success">Guardar Pauta</button> -->
 
         <h2>Ingresar nueva pauta terapéutica</h2>
 
@@ -240,7 +243,7 @@
                 <button type="button" class="btn btn-danger w-100" id="ocultar-formulario-btn">Descartar la nueva pauta terapéutica</button>
             </div>
             <div class="col-sm-6 mb-2 custom-div">
-                <button type="submit" class="btn btn-primary w-100">Registrar</button>
+                <button type="submit" class="btn btn-primary w-100">Guardar la nueva pauta terapéutica</button>
             </div>
         </div>
         </br>
@@ -326,5 +329,5 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- <script src="../../../static/app/js/pauta_terapeutica.js"></script> -->
-    <script src="{% static 'app/js/pauta_terapeutica.js' %}"></script>
+    <script src="{% static 'app/js/template/pauta_terapeutica.js' %}"></script>
 {% endblock %}

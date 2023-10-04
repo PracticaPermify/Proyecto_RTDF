@@ -36,7 +36,8 @@ urlpatterns = [
     path('pacientes_disponibles/', views.pacientes_disponibles, name='pacientes_disponibles'),
     path('agregar_paciente/<int:paciente_id>/', views.agregar_paciente, name='agregar_paciente'),
     path('desvincular_paciente/<int:paciente_id>/', views.desvincular_paciente, name='desvincular_paciente'),
-
+    path('detalle_prof_pauta/<int:id_pauta_terapeutica_id>/', views.detalle_prof_pauta, name='detalle_prof_pauta'),
+    path('editar_prof_pauta/<int:id_pauta_terapeutica_id>/', views.editar_prof_pauta, name='editar_prof_pauta'),
 ]
 
 ##urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

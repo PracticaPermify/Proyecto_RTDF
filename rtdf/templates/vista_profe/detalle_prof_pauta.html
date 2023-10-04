@@ -1,0 +1,137 @@
+{% extends 'rtdf/base.html' %}
+
+
+{% load static%}
+    
+{% block content %}
+
+<body class="is-preload">
+<div class="container">
+
+  <div>
+    <a href="{{ url_regreso }}">Volver al detalle informe</a>
+</div>
+
+</br>
+</br>
+
+  <h1>Detalles de la Pauta {{ pauta.id_pauta_terapeutica }}</h1>
+    </br>
+    <a href="{% url 'editar_prof_pauta' pauta.id_pauta_terapeutica %}" class="btn btn-primary btn-derecha">
+        Editar <i class="fas fa-pencil-alt" style="margin-left: 5px;"></i>
+    </a>
+  </br>
+  <div class="table-responsive">
+      <table class="table">
+          <tbody>
+              {% if intensidad %}
+
+              {% if paciente_relacionado %}</p>
+              <tr>
+                  <th>Rut del paciente:</th>
+                  <td>{{ paciente_relacionado.id_usuario.numero_identificacion }}</td>
+              </tr>
+              <tr>
+                  <th>Paciente:</th>
+                  <td>{{ paciente_relacionado.id_usuario.primer_nombre }} {{ paciente_relacionado.id_usuario.ap_paterno }}</td>
+              </tr>
+              {% endif %}
+              <tr>
+                <th>Tipo de informe:</th>
+                <td>{{ pauta.fk_informe.tp_informe}}</td>
+              </tr>   
+              <tr>
+                <th>Cantidad de veces al día:</th>
+                <td>{{ pauta.cant_veces_dia }}</td>
+              </tr>              
+              <tr>
+                  <th>Descripción:</th>
+                  <td>{{ pauta.descripcion }}</td>
+              </tr>
+              <tr>
+                  <th>Fecha de inicio:</th>
+                  <td>{{ pauta.fecha_inicio }}</td>
+              </tr>
+              <tr>
+                  <th>Fecha fin:</th>
+                  <td>{{ pauta.fecha_fin }}</td>
+              </tr>
+              <tr>
+                <th>Comentario:</th>
+                <td>{{ pauta.comentario}}</td>
+              </tr>
+              <tr>
+                <th>Tipo de terapia:</th>
+                <td>{{ pauta.fk_tp_terapia }}</td>
+              </tr>
+              <tr>
+                  <th>Intensidad en dB:</th>
+                  <td>{{ intensidad.intensidad }}</td>
+              </tr>
+              <tr>
+                  <th>dB Minimo: </th>
+                  <td>{{ intensidad.min_db }}</td>
+              </tr>
+              <tr>
+                  <th>dB Maximo:</th>
+                  <td> {{ intensidad.max_db }}</td>
+              </tr>
+
+              {% endif %}
+              {% if vocalizacion %}
+              {% if paciente_relacionado %}</p>
+              
+              <tr>
+                  <th>Rut del paciente:</th>
+                  <td>{{ paciente_relacionado.id_usuario.numero_identificacion }}</td>
+              </tr>
+              <tr>
+                  <th>Paciente:</th>
+                  <td>{{ paciente_relacionado.id_usuario.primer_nombre }} {{ paciente_relacionado.id_usuario.ap_paterno }}</td>
+              </tr>
+              {% endif %}
+
+            <tr>
+            <th>Tipo de informe:</th>
+            <td>{{ pauta.fk_informe.tp_informe}}</td>
+            </tr>     
+            <tr>
+            <th>Cantidad de veces al día:</th>
+            <td>{{ pauta.cant_veces_dia }}</td>
+            </tr>              
+            <tr>
+                <th>Descripción:</th>
+                <td>{{ pauta.descripcion }}</td>
+            </tr>
+            <tr>
+                <th>Fecha de inicio:</th>
+                <td>{{ pauta.fecha_inicio }}</td>
+            </tr>
+            <tr>
+                <th>Fecha fin:</th>
+                <td>{{ pauta.fecha_fin }}</td>
+            </tr>
+            <tr>
+            <th>Comentario:</th>
+            <td>{{ pauta.comentario}}</td>
+            </tr>
+
+            <tr>
+                <th>Tipo de terapia:</th>
+                <td>{{ pauta.fk_tp_terapia }}</td>
+            </tr>
+              <tr>
+                  <th>Duración en segundos:</th>
+                  <td>{{ vocalizacion.duracion_seg }}</td>
+              </tr>
+              <tr>
+                  <th>BPM: </th>
+                  <td>{{ vocalizacion.bpm }}</td>
+              </tr>
+              {% endif %}
+          </tbody>
+      </table>
+  </div>
+</div>
+
+{% endblock %}

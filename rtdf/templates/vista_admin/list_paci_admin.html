@@ -32,7 +32,11 @@
                                 </td>
                                 <td>{{ paciente.id_tp_usuario }}</td>
                               </tr>
-                              {% endfor %}
+                              {% empty %}
+                              <tr>
+                                  <td colspan="8">No hay pacientes.</td>
+                              </tr>
+                              {% endfor %}    
                             </tbody>
                           </table>
                     </div>

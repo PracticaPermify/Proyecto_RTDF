@@ -15,6 +15,33 @@
                                     fonoaudiólogo si tienes alguna pregunta o necesitas asistencia adicional.¡Tu salud vocal es nuestra prioridad! 
                                     ¡Esperamos que tengas una experiencia positiva en nuestra plataforma!
                                 </p>
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead class="thead-dark">
+                                            <tr>
+                                                <th>Tipo de terapia</th>
+                                                <th>Descripción</th>
+                                                <th>Fecha de Inicio</th>
+                                                <th>Fecha de Fin</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for pauta_terapeutica in pautas_terapeuticas %}
+                                            <tr>
+                                                <td>{{ pauta_terapeutica.fk_tp_terapia }}</td>
+                                                <td>{{ pauta_terapeutica.descripcion }}</td>
+                                                <td>{{ pauta_terapeutica.fecha_inicio }}</td>
+                                                <td>{{ pauta_terapeutica.fecha_fin }}</td>
+                                            </tr>
+                                            {% empty %}
+                                            <tr>
+                                                <td colspan="2">No hay pautas terapeuticas para hoy o en la semana.</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+
                             {% elif tipo_usuario == 'Fonoaudiologo' %}
                                 <h2><p>Bienvenido, {{ user.primer_nombre }}.</p></h2>
                                 <p>

@@ -25,19 +25,30 @@ def index(request):
 
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+        
+        if tipo_usuario == 'Paciente':
+            paciente = Paciente.objects.get(id_usuario=request.user)
 
-    usuarios_por_pagina = 10  # Número de usuarios por página
+            now = timezone.now()
+            pautas_terapeuticas = PautaTerapeutica.objects.filter(
+                fk_informe__fk_relacion_pa_pro__id_paciente=paciente,
+                fecha_fin__gte=now 
+            )
 
-    paginator = Paginator(usuarios, usuarios_por_pagina)  # Crea un objeto Paginator
+            return render(request, 'rtdf/index.html', {'tipo_usuario': tipo_usuario, 
+                                                       'usuario': usuarios,
+                                                       'pautas_terapeuticas': pautas_terapeuticas})
+    
+    usuarios_por_pagina = 10  
+    paginator = Paginator(usuarios, usuarios_por_pagina)  
 
-    # Obtiene el número de página actual desde la solicitud GET
     page_number = request.GET.get('page')
 
     # Obtiene la página actual de usuarios
     page = paginator.get_page(page_number)
 
     return render(request, 'rtdf/index.html', {'tipo_usuario': tipo_usuario, 
-                                               'usuario': page})  # Pasamos la página en lugar de usuarios
+                                               'usuario': page})
 
 ##ESTE APARTADO SOLO SERA PARA MODIFICAR LOS BOTONES DEL NAV
 
@@ -272,6 +283,7 @@ def detalle_prof_infor(request, informe_id):
         # Si no proviene de ninguna de las plantillas conocidas, configura una URL predeterminada
         url_regreso = reverse('listado_informes')
 
+
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
     informe = get_object_or_404(Informe, id_informe=informe_id)
@@ -432,12 +444,22 @@ def detalle_familiar(request, paciente_id):
 
 @user_passes_test(validate)
 def vocalizacion(request):
-
     tipo_usuario = None
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
 
-    return render(request,'vista_paciente/vocalizacion.html', {'tipo_usuario': tipo_usuario})
+        paciente = Paciente.objects.get(id_usuario=request.user)
+        now = timezone.now()
+        
+        # Filtra las pautas terapéuticas que están dentro del rango de fechas válidas
+        pautas_terapeuticas = PautaTerapeutica.objects.filter(
+            fk_informe__fk_relacion_pa_pro__id_paciente=paciente,
+            fecha_fin__gte=now
+        )
+
+
+    return render(request,'vista_paciente/vocalizacion.html', {'tipo_usuario': tipo_usuario,
+                                                               'pautas_terapeuticas': pautas_terapeuticas})
 
 @user_passes_test(validate)
 def intensidad(request):
@@ -957,3 +979,98 @@ def desvincular_paciente(request, paciente_id):
         return redirect('listado_pacientes')
     else:
         return redirect('listado_pacientes')
+    
+
+def detalle_prof_pauta(request, id_pauta_terapeutica_id):
+
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+
+        #print(tipo_usuario)
+
+        pauta = get_object_or_404(PautaTerapeutica, id_pauta_terapeutica=id_pauta_terapeutica_id)
+
+        if tipo_usuario == 'Admin':
+            url_regreso = reverse('detalle_prof_infor', kwargs={'informe_id': pauta.fk_informe.id_informe})
+        elif tipo_usuario == 'Fonoaudiologo':
+            url_regreso = reverse('detalle_prof_infor', kwargs={'informe_id': pauta.fk_informe.id_informe})
+        else:
+            url_regreso = reverse('detalle_prof_infor', kwargs={'informe_id': pauta.fk_informe.id_informe})
+
+        
+
+        try:
+            intensidad = Intensidad.objects.get(id_pauta_terapeutica=pauta)
+        except Intensidad.DoesNotExist:
+            intensidad = None
+
+        try:
+            vocalizacion = Vocalizacion.objects.get(id_pauta_terapeutica=pauta)
+        except Vocalizacion.DoesNotExist:
+            vocalizacion = None
+
+    # Obtén el paciente relacionado con este informe
+    paciente_relacionado = pauta.fk_informe.fk_relacion_pa_pro.id_paciente
+
+    return render(request, 'vista_profe/detalle_prof_pauta.html', {
+        'tipo_usuario': tipo_usuario,
+        'pauta' : pauta, 
+        'intensidad' : intensidad,
+        'vocalizacion': vocalizacion,
+        'paciente_relacionado': paciente_relacionado,
+        'url_regreso': url_regreso,
+
+    })
+
+
+def editar_prof_pauta(request, id_pauta_terapeutica_id):
+ 
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+
+        pauta = get_object_or_404(PautaTerapeutica, id_pauta_terapeutica=id_pauta_terapeutica_id)
+        profesional_salud = request.user.profesionalsalud
+        relaciones_pacientes = RelacionPaPro.objects.filter(fk_profesional_salud=profesional_salud)
+
+        intensidad_form = None
+        vocalizacion_form = None
+
+        try:
+            if pauta.intensidad:
+                intensidad_form = IntensidadForm(request.POST or None, instance=pauta.intensidad)
+        except Intensidad.DoesNotExist:
+            intensidad_form = IntensidadForm()
+
+        try:
+            if pauta.vocalizacion:
+                vocalizacion_form = VocalizacionForm(request.POST or None, instance=pauta.vocalizacion)
+        except Vocalizacion.DoesNotExist:
+            vocalizacion_form = VocalizacionForm()
+
+        if request.method == 'POST':
+            form = PautaTerapeuticaForm(request.POST, instance=pauta)
+
+            if form.is_valid():
+                form.save()
+
+            if intensidad_form and intensidad_form.is_valid():
+                intensidad_form.save()
+
+            if vocalizacion_form and vocalizacion_form.is_valid():
+                vocalizacion_form.save()
+
+            return redirect('detalle_prof_pauta', id_pauta_terapeutica_id=pauta.id_pauta_terapeutica)
+        else:
+            form = PautaTerapeuticaForm(instance=pauta)
+
+
+    return render(request, 'vista_profe/editar_prof_pauta.html', {
+        'tipo_usuario': tipo_usuario,
+        'pauta': pauta,
+        'form': form, 
+        'intensidad_form': intensidad_form,
+        'vocalizacion_form': vocalizacion_form,
+
+
+    })
+    

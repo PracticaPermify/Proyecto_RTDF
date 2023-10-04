@@ -41,9 +41,9 @@
             <tr>
               <th scope="col">ID paciente</th>
               <th scope="col">Nombre completo</th>
-              <th scope="col">telegram</th>
+              <th scope="col">Telegram</th>
               <th scope="col">Diabetes</th>
-              <th scope="col">hipertension</th>
+              <th scope="col">Hipertensión</th>
             </tr>
           </thead>
           <tbody>
@@ -61,7 +61,11 @@
               <td>{{ paciente_asociado.fk_tipo_diabetes  }}</td>
               <td>{{ paciente_asociado.fk_tipo_hipertension  }}</td>
             </tr>
-            {% endfor %}
+            {% empty %}
+            <tr>
+                <td colspan="8">Aún no hay paciente asociados.</td>
+            </tr>
+            {% endfor %}  
           </tbody>
         </table>
     </div>

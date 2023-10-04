@@ -16,8 +16,13 @@
 </br>
 
   <h1>Detalles del informe {{ informe.id_informe }}</h1>
-  <a href="{% url 'eliminar_informe' informe.id_informe %}" class="btn-derecha">Eliminar 🗑️</a>
-  <a href="{% url 'editar_informe' informe.id_informe %}" class="btn-derecha">Editar ✍</a>
+    </br>
+    <a href="{% url 'eliminar_informe' informe.id_informe %}" class="btn btn-danger btn-derecha">
+        Eliminar <i class="fas fa-trash-alt" style="margin-left: 5px;"></i> 
+    </a>
+    <a href="{% url 'editar_informe' informe.id_informe %}" class="btn btn-primary btn-derecha">
+        Editar <i class="fas fa-pencil-alt" style="margin-left: 5px;"></i>
+    </a>
   </br>
   <div class="table-responsive">
       <table class="table">
@@ -235,7 +240,7 @@
                 <button type="button" class="btn btn-danger w-100" id="ocultar-formulario-btn">Descartar la nueva pauta terapéutica</button>
             </div>
             <div class="col-sm-6 mb-2 custom-div">
-                <button type="submit" class="btn btn-primary w-100">Registrar</button>
+                <button type="submit" class="btn btn-primary w-100">Guardar la nueva pauta terapéutica</button>
             </div>
         </div>
         </br>
@@ -262,7 +267,8 @@
         <tbody>
           {% for vocalizacion in datos_vocalizacion %}
           <tr>
-            <td>{{ vocalizacion.id_pauta_terapeutica_id}}</td>
+            <td><a href="{% url 'detalle_prof_pauta' vocalizacion.id_pauta_terapeutica_id %}">
+                {{ vocalizacion.id_pauta_terapeutica_id}}</a></td>
             <td>{{ vocalizacion.id_pauta_terapeutica.cant_veces_dia}}</td>
             <td>{{ vocalizacion.id_pauta_terapeutica.fecha_inicio }}</td>
             <td>{{ vocalizacion.id_pauta_terapeutica.fecha_fin }}</td>
@@ -298,7 +304,8 @@
         <tbody>
             {% for intensidad in datos_intensidad %}
             <tr>
-              <td>{{ intensidad.id_pauta_terapeutica_id}}</td>
+            <td><a href="{% url 'detalle_prof_pauta' intensidad.id_pauta_terapeutica_id %}">
+                {{ intensidad.id_pauta_terapeutica_id}}</a></td>
               <td>{{ intensidad.id_pauta_terapeutica.cant_veces_dia}}</td>
               <td>{{ intensidad.id_pauta_terapeutica.fecha_inicio }}</td>
               <td>{{ intensidad.id_pauta_terapeutica.fecha_fin }}</td>
@@ -319,7 +326,6 @@
 </div>
 </body>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- <script src="../../../static/app/js/pauta_terapeutica.js"></script> -->
-    <script src="{% static 'app/js/pauta_terapeutica.js' %}"></script>
+    <script src="{% static 'app/js/template/pauta_terapeutica.js' %}"></script>
 
 {% endblock %}
