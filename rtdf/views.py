@@ -186,7 +186,9 @@ def listado_pacientes(request):
                 'id_usuario': relacion.id_paciente.id_usuario.id_usuario,
                 'id_paciente': relacion.id_paciente.id_paciente,
                 'primer_nombre': relacion.id_paciente.id_usuario.primer_nombre,
+                'segundo_nombre': relacion.id_paciente.id_usuario.segundo_nombre,
                 'ap_paterno': relacion.id_paciente.id_usuario.ap_paterno,
+                'ap_materno': relacion.id_paciente.id_usuario.ap_materno,
                 'email': relacion.id_paciente.id_usuario.email,
                 'numero_telefonico': relacion.id_paciente.id_usuario.numero_telefonico,
                 'telegram': relacion.id_paciente.telegram,
@@ -760,6 +762,19 @@ def eliminar_informe(request, informe_id):
 
     return redirect('listado_informes')
 
+def eliminar_informe_admin(request, informe_id):
+    informe = get_object_or_404(Informe, id_informe=informe_id)
+    tipo_informe = informe.tp_informe
+
+    if tipo_informe == 'GRBAS':
+        informe.grbas.delete()
+    elif tipo_informe == 'RASATI':
+        informe.rasati.delete()
+
+    informe.delete()
+
+    return redirect('detalle_paciente')
+
 
 @user_passes_test(validate)
 def detalle_informe(request, informe_id):
@@ -899,3 +914,46 @@ def editar_informe_admin(request, informe_id):
                                                                         'grbas_form': grbas_form,
                                                                         'rasati_form': rasati_form,
                                                                         'tipo_usuario': tipo_usuario})
+    
+def pacientes_disponibles(request):
+    tipo_usuario = None 
+
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+
+        pacientes_disponibles = Paciente.objects.filter(relacionpapro__isnull=True)
+
+        return render(request, 'vista_profe/pacientes_disponibles.html', {'tipo_usuario': tipo_usuario, 
+                                                                          'pacientes_disponibles': pacientes_disponibles})
+    
+def agregar_paciente(request, paciente_id):
+    if request.user.is_authenticated and request.user.id_tp_usuario.tipo_usuario == 'Fonoaudiologo':
+        profesional_salud = request.user.profesionalsalud
+        paciente = Paciente.objects.get(pk=paciente_id)
+        
+        if RelacionPaPro.objects.filter(fk_profesional_salud=profesional_salud).count() < 10:
+
+            if not RelacionPaPro.objects.filter(id_paciente=paciente).exists():
+  
+                relacion = RelacionPaPro(fk_profesional_salud=profesional_salud, id_paciente=paciente)
+                relacion.save()
+                return redirect('listado_pacientes')
+            else:
+                return render(request, 'vista_profe/error.html', {'error_message': 'El paciente ya está asignado a otro profesional.'})
+        else:
+            return render(request, 'vista_profe/error.html', {'error_message': 'Has alcanzado el límite de 10 pacientes asignados.'})
+    else:
+        return render(request, 'vista_profe/error.html', {'error_message': 'No tienes permiso para realizar esta acción.'})
+    
+def desvincular_paciente(request, paciente_id):
+
+    paciente = get_object_or_404(Paciente, id_paciente=paciente_id)
+    profesional_salud = request.user.profesionalsalud
+
+    relacion = RelacionPaPro.objects.filter(fk_profesional_salud=profesional_salud, id_paciente=paciente)
+    
+    if relacion.exists():
+        relacion.delete()
+        return redirect('listado_pacientes')
+    else:
+        return redirect('listado_pacientes')

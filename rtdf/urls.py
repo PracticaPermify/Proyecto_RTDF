@@ -29,9 +29,13 @@ urlpatterns = [
     path('ingresar_informes/', views.ingresar_informes, name='ingresar_informes'),
     path('editar_informe/<int:informe_id>/', views.editar_informe, name='editar_informe'),
     path('eliminar_informe/<int:informe_id>/', views.eliminar_informe, name='eliminar_informe'),
+    path('eliminar_informe_admin/<int:informe_id>/', views.eliminar_informe_admin, name='eliminar_informe_admin'),
     path('detalle_informe/<int:informe_id>/', views.detalle_informe, name='detalle_informe'),
     path('detalle_prof_infor/<int:informe_id>/', views.detalle_prof_infor, name='detalle_prof_infor'),
     path('editar_informe_admin/<int:informe_id>/', views.editar_informe_admin, name='editar_informe_admin'),
+    path('pacientes_disponibles/', views.pacientes_disponibles, name='pacientes_disponibles'),
+    path('agregar_paciente/<int:paciente_id>/', views.agregar_paciente, name='agregar_paciente'),
+    path('desvincular_paciente/<int:paciente_id>/', views.desvincular_paciente, name='desvincular_paciente'),
 
 ]
 

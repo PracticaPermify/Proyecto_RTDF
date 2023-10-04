@@ -1,14 +1,13 @@
 {% extends 'rtdf/base.html' %}
 <html> 
     {% block content %}
-    <div id="content">
         <div class="inner">
             <!-- Post -->
                 <article class="box post post-excerpt"> 
                         <a href="#" class="image featured"><img src="images/pic01.jpg" alt="" /></a>
                     {% if tipo_usuario %}
                         {% if tipo_usuario == 'Fonoaudiologo' %}
-                            <h2><p>Pacientes del fonoaudiólogo <b>{{ user.primer_nombre }} {{ user.ap_paterno }}</b></p></h2>
+                            <h1><p>Pacientes del fonoaudiólogo <b>{{ user.primer_nombre }} {{ user.ap_paterno }}</b></p></h1>
                             <p>
                                 Listado de mis pacientes:
                             </p>
@@ -25,6 +24,7 @@
                                     <!-- <th scope="col">Fecha nacimiento</th> -->
                                     <th scope="col">Tipo diabetes</th>
                                     <th scope="col">Tipo Hipertensión</th>
+                                    <th scope="col">Desvincular paciente</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -33,8 +33,8 @@
                                     <tr>
                                         <td>{{ paciente.id_paciente }}</td>
                                         <td><a href="{% url 'detalle_prof_paci' paciente.id_usuario %}">
-
-                                            {{ paciente.primer_nombre }} {{ paciente.ap_paterno }}
+                                            {{ paciente.primer_nombre }} {{ paciente.segundo_nombre }}
+                                            {{ paciente.ap_paterno }} {{ paciente.ap_materno }}
                                             </a></td>
                                         <td>{{ paciente.email }}</td>
                                         <td>{{ paciente.numero_telefonico }}</td>
@@ -42,6 +42,9 @@
                                         <!-- <td>{{ paciente.fecha_nacimiento }}</td> -->
                                         <td>{{ paciente.tipo_diabetes }}</td>
                                         <td>{{ paciente.tipo_hipertension }}</td>
+                                        <td>
+                                            <a href="{% url 'desvincular_paciente' paciente.id_paciente %}" class="btn btn-danger">Desvincular</a>
+                                        </td>
                                     </tr>
                                     {% empty %}
                                     <tr>
@@ -112,7 +115,6 @@
                 {% endif %}
                 </article>
         </div>
-    </div>
     {% endblock %}
 
 </html> 
