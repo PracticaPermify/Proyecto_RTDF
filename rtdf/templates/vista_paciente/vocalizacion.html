@@ -15,7 +15,7 @@
             <h1>Vocalización</h1>
             {% if pauta_seleccionada %}
             <table class="table">
-                <thead class="thead-dark">
+                <thead>
                     <tr>
                         <th>Descripción</th>
                         <th>Cantidad de veces al día</th>
@@ -32,12 +32,8 @@
                     </tr>
                 </tbody>
             </table>
-
             {% else %}
-            <p>No se ha seleccionado una pauta terapéutica. por favor vaya al menu
-                y seleccione su pauta para el tratamiento
-            </p>
-
+            <p>No se ha seleccionado una pauta terapéutica.</p>
             {% endif %}
         </div>
 
@@ -51,7 +47,7 @@
                     <p>Al ejercitar, debes respirar por la nariz y tus ejercicios deben durar aproximadamente 5 segundos.</p>
                 </div>
                 <div class="bpm-display">
-                    <span class="tempo">140</span>
+                    <span class="tempo">{{ pauta_seleccionada.vocalizacion.bpm }}</span>
                     <span class="bpm">BPM</span>
                 </div>
                 <div class="tempo-text">Nice and steady</div>

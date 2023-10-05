@@ -443,33 +443,23 @@ def detalle_familiar(request, paciente_id):
 ##Ejercicios de vocalización-----------------------------------
 
 @user_passes_test(validate)
-def vocalizacion(request):
+def vocalizacion(request, pauta_id=None):
     tipo_usuario = None
+    pautas_terapeuticas = None
+    pauta_seleccionada = None
+
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
 
-        paciente = Paciente.objects.get(id_usuario=request.user)
-        now = timezone.now()
-
-        # Filtrar las pautas terapéuticas de vocalización
-        pautas_terapeuticas = PautaTerapeutica.objects.filter(
-            fk_informe__fk_relacion_pa_pro__id_paciente=paciente,
-            fecha_fin__gte=now,
-            vocalizacion__isnull=False  # Asegurarse de que la relación de vocalización no sea nula
-        )
+        if pauta_id is not None:
+            try:
+                pauta_seleccionada = PautaTerapeutica.objects.get(id_pauta_terapeutica=pauta_id)
+            except PautaTerapeutica.DoesNotExist:
+                pauta_seleccionada = None
 
     return render(request, 'vista_paciente/vocalizacion.html', {'tipo_usuario': tipo_usuario,
-                                                               'pautas_terapeuticas': pautas_terapeuticas})
+                                                               'pauta_seleccionada': pauta_seleccionada})
 
-@user_passes_test(validate)
-def vocalizacion_pauta(request, pauta_id):
-    tipo_usuario = None
-    if request.user.is_authenticated:
-        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
-        pauta_terapeutica = get_object_or_404(PautaTerapeutica, id_pauta_terapeutica=pauta_id)
-
-    return render(request, 'vista_paciente/vocalizacion_pauta.html', {'pauta_terapeutica': pauta_terapeutica,
-                                                                      'tipo_usuario': tipo_usuario})
 
 @user_passes_test(validate)
 def intensidad(request):

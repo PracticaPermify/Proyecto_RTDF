@@ -36,7 +36,7 @@
                                             <td>
                                                 {% if pauta_terapeutica.vocalizacion %}
                                                     {% if pauta_terapeutica.vocalizacion %}
-                                                        <a href="{% url 'vocalizacion_pauta' pauta_terapeutica.id_pauta_terapeutica %}" class="btn btn-primary">Empezar</a>
+                                                    <a href="{% url 'vocalizacion_con_pauta' pauta_terapeutica.id_pauta_terapeutica %}" class="btn btn-primary">Empezar</a>
                                                     {% endif %}
                                                 {% endif %}
                                             </td>
