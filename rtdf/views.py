@@ -35,9 +35,15 @@ def index(request):
                 fecha_fin__gte=now 
             )
 
+            pautas_terapeuticas_expiradas = PautaTerapeutica.objects.filter(
+                fk_informe__fk_relacion_pa_pro__id_paciente=paciente,
+                fecha_fin__lt=now 
+            )
+
             return render(request, 'rtdf/index.html', {'tipo_usuario': tipo_usuario, 
                                                        'usuario': usuarios,
-                                                       'pautas_terapeuticas': pautas_terapeuticas})
+                                                       'pautas_terapeuticas': pautas_terapeuticas,
+                                                       'pautas_terapeuticas_expiradas': pautas_terapeuticas_expiradas,})
     
     usuarios_por_pagina = 10  
     paginator = Paginator(usuarios, usuarios_por_pagina)  
@@ -462,22 +468,23 @@ def vocalizacion(request, pauta_id=None):
 
 
 @user_passes_test(validate)
-def intensidad(request):
+def intensidad(request, pauta_id=None):
 
     tipo_usuario = None
+    pautas_terapeuticas = None
+    pauta_seleccionada = None
+
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
-        
-        paciente = Paciente.objects.get(id_usuario=request.user)
-        now = timezone.now()
-        # Filtra las pautas terapéuticas que están dentro del rango de fechas válidas
-        pautas_terapeuticas = PautaTerapeutica.objects.filter(
-            fk_informe__fk_relacion_pa_pro__id_paciente=paciente,
-            fecha_fin__gte=now
-           )
+
+        if pauta_id is not None:
+            try:
+                pauta_seleccionada = PautaTerapeutica.objects.get(id_pauta_terapeutica=pauta_id)
+            except PautaTerapeutica.DoesNotExist:
+                pauta_seleccionada = None
 
     return render(request,'vista_paciente/intensidad.html', {'tipo_usuario': tipo_usuario,
-                                                            'pautas_terapeuticas': pautas_terapeuticas})
+                                                            'pauta_seleccionada': pauta_seleccionada})
 
 @user_passes_test(validate)
 def mi_fonoaudiologo(request):

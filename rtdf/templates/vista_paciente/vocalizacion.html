@@ -10,9 +10,10 @@
         <link rel="stylesheet" href="{% static 'app/css/metronomo.css' %}"/>
     </head>
     <body class="is-preload">
-        
+    
         <div class="container">
             <h1>Vocalización</h1>
+            <br/>
             {% if pauta_seleccionada %}
             <table class="table">
                 <thead>
@@ -38,13 +39,18 @@
         </div>
 
     </br>
+        
+
+    {% if pauta_seleccionada %}
 
         <div class="container">
             <div class="metronome">
                 <div class="metronome-info">
-                    <h1><strong>Buenos días</strong> {{ user.primer_nombre }}</h1>
-                    <p>Esta semana debes trabajar con BPM. Recuerda ajustar muy bien tu tiempo y BPM.</p>
-                    <p>Al ejercitar, debes respirar por la nariz y tus ejercicios deben durar aproximadamente 5 segundos.</p>
+                    <h1><strong>Buenos días</strong> {{ user.primer_nombre }} {{ user.ap_paterno }}</h1>
+                    <br/>
+                    <p>Esta semana debes trabajar con <b>{{ pauta_seleccionada.vocalizacion.bpm }} BPM</b>. Este sera ajustado automaticamente.</p>
+                    <p>Deberas realizar el ejercicio <b>{{ pauta_seleccionada.cant_veces_dia }} </b> veces al día </p>
+                    <p>Al ejercitar, debes respirar por la nariz y tus ejercicios deben durar aproximadamente <b>{{ pauta_seleccionada.vocalizacion.duracion_seg }} segundos</b>.</p>
                 </div>
                 <div class="bpm-display">
                     <span class="tempo">{{ pauta_seleccionada.vocalizacion.bpm }}</span>
@@ -68,9 +74,44 @@
             </div>
         </div>
 
+    {% else %}
+        <div class="container">
+            <div class="metronome">
+                <div class="metronome-info">
+                    <h1><strong>Buenos días</strong> {{ user.primer_nombre }} {{ user.ap_paterno }}</h1>
+                    <p>Esta semana debes trabajar con BPM. Recuerda ajustar muy bien tu tiempo y BPM.</p>
+                    <p>Al ejercitar, debes respirar por la nariz y tus ejercicios deben durar aproximadamente 5 segundos.</p>
+                </div>
+                <div class="bpm-display">
+                    <span class="tempo">50</span>
+                    <span class="bpm">BPM</span>
+                </div>
+                <div class="tempo-text">Nice and steady</div>
+                <div class="tempo-settings">
+                    <div class="adjust-tempo-btn decrease-tempo">-</div>
+                    <div class="slider-container">
+                        <input type="range" min="20" max="280" step="1" class="slider">
+                    </div>
+                    <div class="adjust-tempo-btn increase-tempo">+</div>
+                </div>
+                <div class="start-stop">Empezar</div>
+                <div class="measures">
+                    <div class="subtract-beats stepper">-</div>
+                    <div class="measure-count">4</div>
+                    <div class="add-beats stepper">+</div>
+                </div>
+                <span class="beats-per-measure-text">Beats per measure</span>
+            </div>
+        </div>
+    {% endif %}
+        
+
     </body>
 
     <script src="{% static 'app/js/metronomo.js' %}"></script>
-
+    <script>
+        window.bpm = {{ pauta_seleccionada.vocalizacion.bpm }};
+        window.duracion_seg = {{ pauta_seleccionada.vocalizacion.duracion_seg }};
+    </script>
 {% endblock %}
 </html>

@@ -5,7 +5,7 @@
             <div class="inner">
                 <!-- Post -->
                     <article class="box post post-excerpt"> 
-                            <a href="#" class="image featured"><img src="images/pic01.jpg" alt="" /></a>
+                            <!-- <a href="#" class="image featured"><img src="images/pic01.jpg" alt="" /></a> -->
                         {% if tipo_usuario %}
                             {% if tipo_usuario == 'Paciente' %}
                             <h2><p>Bienvenido, {{ user.primer_nombre }}.</p></h2>
@@ -15,12 +15,18 @@
                                 fonoaudiólogo si tienes alguna pregunta o necesitas asistencia adicional.¡Tu salud vocal es nuestra prioridad! 
                                 ¡Esperamos que tengas una experiencia positiva en nuestra plataforma!
                             </p>
+
+                            <h3>Pautas Vigentes</h3>
+                            </br>
                             <div class="table-responsive">
                                 <table class="table">
                                     <thead class="thead-dark">
                                         <tr>
+                                            <th>ID de pauta</th>
                                             <th>Tipo de terapia</th>
                                             <th>Descripción</th>
+                                            <th>Informe asociado</th>
+                                            <th>Tipo de informe</th>
                                             <th>Fecha de Inicio</th>
                                             <th>Fecha de Fin</th>
                                             <th>Empezar pauta</th>
@@ -29,16 +35,24 @@
                                     <tbody>
                                         {% for pauta_terapeutica in pautas_terapeuticas %}
                                         <tr>
+                                            <td>{{ pauta_terapeutica.id_pauta_terapeutica }}</td>
                                             <td>{{ pauta_terapeutica.fk_tp_terapia }}</td>
                                             <td>{{ pauta_terapeutica.descripcion }}</td>
+                                            <td>{{ pauta_terapeutica.fk_informe }}</td>
+                                            <td>{{ pauta_terapeutica.fk_informe.tp_informe }}</td>
                                             <td>{{ pauta_terapeutica.fecha_inicio }}</td>
                                             <td>{{ pauta_terapeutica.fecha_fin }}</td>
                                             <td>
-                                                {% if pauta_terapeutica.vocalizacion %}
                                                     {% if pauta_terapeutica.vocalizacion %}
-                                                    <a href="{% url 'vocalizacion_con_pauta' pauta_terapeutica.id_pauta_terapeutica %}" class="btn btn-primary">Empezar</a>
+                                                        {% if pauta_terapeutica.vocalizacion %}
+                                                        <a href="{% url 'vocalizacion_con_pauta' pauta_terapeutica.id_pauta_terapeutica %}" class="btn btn-primary">Empezar</a>
+                                                        {% endif %}
+    
+                                                    {% elif pauta_terapeutica.intensidad %}
+                                                        {% if pauta_terapeutica.intensidad %}
+                                                        <a href="{% url 'intensidad_con_pauta' pauta_terapeutica.id_pauta_terapeutica %}" class="btn btn-primary">Empezar</a>
+                                                        {% endif %}
                                                     {% endif %}
-                                                {% endif %}
                                             </td>
                                         </tr>
                                         {% empty %}
@@ -48,6 +62,43 @@
                                         {% endfor %}
                                     </tbody>
                                 </table>
+
+                                </br>
+                                <h3>Pautas no vigentes</h3>
+                                </br>
+                                <table class="table">
+                                    <thead class="thead-dark">
+                                        <tr>
+                                            <th>ID de pauta</th>
+                                            <th>Tipo de terapia</th>
+                                            <th>Descripción</th>
+                                            <th>Informe asociado</th>
+                                            <th>Tipo de informe</th>
+                                            <th>Fecha de Inicio</th>
+                                            <th>Fecha de Fin</th>
+                                            <th>Empezar pauta</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for pauta_terapeutica in pautas_terapeuticas_expiradas %}
+                                        <tr>
+                                            <td>{{ pauta_terapeutica.id_pauta_terapeutica }}</td>
+                                            <td>{{ pauta_terapeutica.fk_tp_terapia }}</td>
+                                            <td>{{ pauta_terapeutica.descripcion }}</td>
+                                            <td>{{ pauta_terapeutica.fk_informe }}</td>
+                                            <td>{{ pauta_terapeutica.fk_informe.tp_informe }}</td>
+                                            <td>{{ pauta_terapeutica.fecha_inicio }}</td>
+                                            <td>{{ pauta_terapeutica.fecha_fin }}</td>
+                                            <td>Pauta terminada o expirada</td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="8">No hay pautas terapéuticas expiradas.</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+
                             </div>
 
 
@@ -154,7 +205,7 @@
                                 <h2><a href="#">Lorem ipsum dolor sit amet</a></h2>
                                 <p>Feugiat interdum sed commodo ipsum consequat dolor nullam metus</p>
                             </header>
-                            <a href="#" class="image featured"><img src="images/pic02.jpg" alt="" /></a>
+                            <!-- <a href="#" class="image featured"><img src="images/pic02.jpg" alt="" /></a> -->
                             <p>
                                 Quisque vel sapien sit amet tellus elementum ultricies. Nunc vel orci turpis. Donec id malesuada metus.
                                 Nunc nulla velit, fermentum quis interdum quis, tate etiam commodo lorem ipsum dolor sit amet dolore.
@@ -167,3 +218,5 @@
             </div>
         {% endblock %}
 </html>
+
+

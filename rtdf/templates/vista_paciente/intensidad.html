@@ -8,18 +8,13 @@
 
 {% block content %}
 
-<div class="container-mic" style="display:none;">
-    <div class="selector-audio">
-        <select name="listaDeDispositivos" id="listaDeDispositivos"></select>
-    </div>
-    <div class="audio">
-        <audio controls playsinline></audio>
-    </div>
-</div>
 
+    <h1>Intensidad</h1>
+    <br/>
         <div class="table-responsive">
             <table class="table">
                 <thead class="thead-dark">
+                    {% if pauta_seleccionada %}
                     <tr>
                         <th>Detalles de la pauta</th>
                         <th>Duracion del ejericicio</th>
@@ -28,19 +23,18 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for pauta_terapeutica in pautas_terapeuticas %}
                     <tr>
-                        <td>{{ pauta_terapeutica.descripcion }}</td>
-                        <td>{{ pauta_terapeutica.intensidad.intensidad}}</td>
-                        <td>{{ pauta_terapeutica.intensidad.min_db}}</td>
-                        <td>{{ pauta_terapeutica.intensidad.max_db}}</td>
+                        <td>{{ pauta_seleccionada.descripcion }}</td>
+                        <td>{{ pauta_seleccionada.intensidad.intensidad}}</td>
+                        <td>{{ pauta_seleccionada.intensidad.min_db}}</td>
+                        <td>{{ pauta_seleccionada.intensidad.max_db}}</td>
                   
                     </tr>
-                    {% empty %}
+                    {% else %}
                     <tr>
-                        <td colspan="2">No hay pautas terapeuticas para hoy o en la semana.</td>
+                        <td colspan="8">No hay pautas terapeuticas para hoy o en la semana.</td>
                     </tr>
-                    {% endfor %}
+                    {% endif %}
                 </tbody>
             </table>
         </div>
@@ -50,26 +44,29 @@
                 <p id="segundos"></p>
                 <p class="duracion" id="duracion"> <h1><strong>Buenos días</strong> {{ user.primer_nombre }}</h1></p>
             </div>
+            <br/>
             <div style=" justify-content:center; margin:5px;">
                 <div class="container"> <h1></h1>
                     <div class="metronome-info" text-align: center;>
-                        {% for pauta_terapeutica in pautas_terapeuticas %}
+                        {% if pauta_seleccionada %}
                         <p><b>Esta semana debes trabajar en la intensidad de tu voz. Recuerda ajustar muy bien tu tiempo y calibracion.</b></p>
-                        <p><b>Recuerde la descripcion de su pauta dice que:</b>{{ pauta_terapeutica.descripcion }}</p>
-                        <p><b>Comentario del fonoaudiologo:</b> {{ pauta_terapeutica.comentario }}</p>
-                        <p><b>El ejercicio lo debe realizar durante</b> {{ pauta_terapeutica.intensidad.intensidad}} minutos. 
-                        <p><b>Minimo DB:</b> {{ pauta_terapeutica.intensidad.min_db}}</p>
-                        <p><b>Max DB:</b>{{ pauta_terapeutica.intensidad.max_db}}</p>
-                        {% empty %} 
-                        
-                        {% endfor %}
-                
+                        <p><b>Recuerde la descripcion de su pauta dice que:</b>{{ pauta_seleccionada.descripcion }}</p>
+                        <p><b>Comentario del fonoaudiologo:</b> {{ pauta_seleccionada.comentario }}</p>
+                        <p><b>El ejercicio lo debe realizar durante</b> {{ pauta_seleccionada.intensidad.intensidad}} minutos. 
+                        <p><b>Minimo DB:</b> {{ pauta_seleccionada.intensidad.min_db}}</p>
+                        <p><b>Max DB:</b>{{ pauta_seleccionada.intensidad.max_db}}</p>
+                        {% else %} 
+                        <tr>
+                            <td colspan="8">No hay pautas terapeuticas para hoy o en la semana.</td>
+                        </tr>
+                        {% endif %}
                 </div>
             </div>
             
             <div style="width:100%; display:flex; justify-content:center; margin:5px;">
                 <button  id="start_stop" class="start-stop" onclick="clickAudio(true)">EMPEZAR</button>
             </div>
+            <br/>
             <link type="text/css" rel="stylesheet" href="{% static 'app/css/oscilagrama.css' %}"> 
             <link rel="stylesheet" href="{% static 'app/css/metronomo.css' %}"/>
 
