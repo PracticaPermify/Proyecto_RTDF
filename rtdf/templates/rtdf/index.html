@@ -37,7 +37,7 @@
                                         <tr>
                                             <td>{{ pauta_terapeutica.id_pauta_terapeutica }}</td>
                                             <td>{{ pauta_terapeutica.fk_tp_terapia }}</td>
-                                            <td>{{ pauta_terapeutica.descripcion }}</td>
+                                            <td>{{ pauta_terapeutica.descripcion|truncatechars:150 }}</td>
                                             <td>{{ pauta_terapeutica.fk_informe }}</td>
                                             <td>{{ pauta_terapeutica.fk_informe.tp_informe }}</td>
                                             <td>{{ pauta_terapeutica.fecha_inicio }}</td>
@@ -84,7 +84,7 @@
                                         <tr>
                                             <td>{{ pauta_terapeutica.id_pauta_terapeutica }}</td>
                                             <td>{{ pauta_terapeutica.fk_tp_terapia }}</td>
-                                            <td>{{ pauta_terapeutica.descripcion }}</td>
+                                            <td>{{ pauta_terapeutica.descripcion|truncatechars:150 }}</td>
                                             <td>{{ pauta_terapeutica.fk_informe }}</td>
                                             <td>{{ pauta_terapeutica.fk_informe.tp_informe }}</td>
                                             <td>{{ pauta_terapeutica.fecha_inicio }}</td>
@@ -98,6 +98,24 @@
                                         {% endfor %}
                                     </tbody>
                                 </table>
+                                    <div class="pagination">
+                                        <span class="step-links">
+                                            {% if pautas_terapeuticas_expiradas.has_previous %}
+                                                <a href="?page=1">&laquo; primero</a>
+                                                <a href="?page={{ pautas_terapeuticas_expiradas.previous_page_number }}">anterior</a>
+                                            {% endif %}
+                                    
+                                            <span class="current-page">
+                                                Page {{ pautas_terapeuticas_expiradas.number }} de {{ pautas_terapeuticas_expiradas.paginator.num_pages }}.
+                                            </span>
+                                    
+                                            {% if pautas_terapeuticas_expiradas.has_next %}
+                                                <a href="?page={{ pautas_terapeuticas_expiradas.next_page_number }}">siguiente</a>
+                                                <a href="?page={{ pautas_terapeuticas_expiradas.paginator.num_pages }}">ultimo &raquo;</a>
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                </div>
 
                             </div>
 

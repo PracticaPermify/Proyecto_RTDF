@@ -40,6 +40,10 @@ def index(request):
                 fecha_fin__lt=now 
             )
 
+            paginador = Paginator(pautas_terapeuticas_expiradas, 5)
+            page_number = request.GET.get('page')
+            pautas_terapeuticas_expiradas = paginador.get_page(page_number)
+
             return render(request, 'rtdf/index.html', {'tipo_usuario': tipo_usuario, 
                                                        'usuario': usuarios,
                                                        'pautas_terapeuticas': pautas_terapeuticas,
