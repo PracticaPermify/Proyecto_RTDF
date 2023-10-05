@@ -10,6 +10,7 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'), 
     path('listado_pacientes/', views.listado_pacientes, name='listado_pacientes'),
     path('vocalizacion/',views.vocalizacion, name="vocalizacion"),
+    path('vocalizacion_pauta/<int:pauta_id>/', views.vocalizacion_pauta, name='vocalizacion_pauta'),
     path('intensidad/',views.intensidad, name="intensidad"),
     path('list_paci_admin/', views.list_paci_admin, name='list_paci_admin'), 
     path('list_fono_admin/', views.list_fono_admin, name='list_fono_admin'),
@@ -38,6 +39,10 @@ urlpatterns = [
     path('desvincular_paciente/<int:paciente_id>/', views.desvincular_paciente, name='desvincular_paciente'),
     path('detalle_prof_pauta/<int:id_pauta_terapeutica_id>/', views.detalle_prof_pauta, name='detalle_prof_pauta'),
     path('editar_prof_pauta/<int:id_pauta_terapeutica_id>/', views.editar_prof_pauta, name='editar_prof_pauta'),
+    path('eliminar_prof_pauta/<int:id_pauta_terapeutica_id>/', views.eliminar_prof_pauta, name='eliminar_prof_pauta'),
+    path('detalle_pauta_admin/<int:id_pauta_terapeutica_id>/', views.detalle_pauta_admin, name='detalle_pauta_admin'),
+    path('editar_pauta_admin/<int:id_pauta_terapeutica_id>/', views.editar_pauta_admin, name='editar_pauta_admin'),
+    path('eliminar_pauta_admin/<int:id_pauta_terapeutica_id>/', views.eliminar_pauta_admin, name='eliminar_pauta_admin'),
 ]
 
 ##urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

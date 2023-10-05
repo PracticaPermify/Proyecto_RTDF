@@ -8,39 +8,48 @@
                             <a href="#" class="image featured"><img src="images/pic01.jpg" alt="" /></a>
                         {% if tipo_usuario %}
                             {% if tipo_usuario == 'Paciente' %}
-                                <h2><p>Bienvenido, {{ user.primer_nombre }}.</p></h2>
-                                <p> 
-                                    Gracias por utilizar nuestra plataforma de atención en línea. Estamos aquí para brindarte el mejor servicio y cuidado de tu salud vocal.
-                                    En tu panel de usuario, podrás acceder a tus informes, pautas terapéuticas y más. No dudes en contactar a tu 
-                                    fonoaudiólogo si tienes alguna pregunta o necesitas asistencia adicional.¡Tu salud vocal es nuestra prioridad! 
-                                    ¡Esperamos que tengas una experiencia positiva en nuestra plataforma!
-                                </p>
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead class="thead-dark">
-                                            <tr>
-                                                <th>Tipo de terapia</th>
-                                                <th>Descripción</th>
-                                                <th>Fecha de Inicio</th>
-                                                <th>Fecha de Fin</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for pauta_terapeutica in pautas_terapeuticas %}
-                                            <tr>
-                                                <td>{{ pauta_terapeutica.fk_tp_terapia }}</td>
-                                                <td>{{ pauta_terapeutica.descripcion }}</td>
-                                                <td>{{ pauta_terapeutica.fecha_inicio }}</td>
-                                                <td>{{ pauta_terapeutica.fecha_fin }}</td>
-                                            </tr>
-                                            {% empty %}
-                                            <tr>
-                                                <td colspan="2">No hay pautas terapeuticas para hoy o en la semana.</td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
+                            <h2><p>Bienvenido, {{ user.primer_nombre }}.</p></h2>
+                            <p> 
+                                Gracias por utilizar nuestra plataforma de atención en línea. Estamos aquí para brindarte el mejor servicio y cuidado de tu salud vocal.
+                                En tu panel de usuario, podrás acceder a tus informes, pautas terapéuticas y más. No dudes en contactar a tu 
+                                fonoaudiólogo si tienes alguna pregunta o necesitas asistencia adicional.¡Tu salud vocal es nuestra prioridad! 
+                                ¡Esperamos que tengas una experiencia positiva en nuestra plataforma!
+                            </p>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead class="thead-dark">
+                                        <tr>
+                                            <th>Tipo de terapia</th>
+                                            <th>Descripción</th>
+                                            <th>Fecha de Inicio</th>
+                                            <th>Fecha de Fin</th>
+                                            <th>Empezar pauta</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for pauta_terapeutica in pautas_terapeuticas %}
+                                        <tr>
+                                            <td>{{ pauta_terapeutica.fk_tp_terapia }}</td>
+                                            <td>{{ pauta_terapeutica.descripcion }}</td>
+                                            <td>{{ pauta_terapeutica.fecha_inicio }}</td>
+                                            <td>{{ pauta_terapeutica.fecha_fin }}</td>
+                                            <td>
+                                                {% if pauta_terapeutica.vocalizacion %}
+                                                    {% if pauta_terapeutica.vocalizacion %}
+                                                        <a href="{% url 'vocalizacion_pauta' pauta_terapeutica.id_pauta_terapeutica %}" class="btn btn-primary">Empezar</a>
+                                                    {% endif %}
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="2">No hay pautas terapeuticas para hoy o en la semana.</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+
 
                             {% elif tipo_usuario == 'Fonoaudiologo' %}
                                 <h2><p>Bienvenido, {{ user.primer_nombre }}.</p></h2>

@@ -450,16 +450,26 @@ def vocalizacion(request):
 
         paciente = Paciente.objects.get(id_usuario=request.user)
         now = timezone.now()
-        
-        # Filtra las pautas terapéuticas que están dentro del rango de fechas válidas
+
+        # Filtrar las pautas terapéuticas de vocalización
         pautas_terapeuticas = PautaTerapeutica.objects.filter(
             fk_informe__fk_relacion_pa_pro__id_paciente=paciente,
-            fecha_fin__gte=now
+            fecha_fin__gte=now,
+            vocalizacion__isnull=False  # Asegurarse de que la relación de vocalización no sea nula
         )
 
-
-    return render(request,'vista_paciente/vocalizacion.html', {'tipo_usuario': tipo_usuario,
+    return render(request, 'vista_paciente/vocalizacion.html', {'tipo_usuario': tipo_usuario,
                                                                'pautas_terapeuticas': pautas_terapeuticas})
+
+@user_passes_test(validate)
+def vocalizacion_pauta(request, pauta_id):
+    tipo_usuario = None
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+        pauta_terapeutica = get_object_or_404(PautaTerapeutica, id_pauta_terapeutica=pauta_id)
+
+    return render(request, 'vista_paciente/vocalizacion_pauta.html', {'pauta_terapeutica': pauta_terapeutica,
+                                                                      'tipo_usuario': tipo_usuario})
 
 @user_passes_test(validate)
 def intensidad(request):
@@ -467,8 +477,17 @@ def intensidad(request):
     tipo_usuario = None
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+        
+        paciente = Paciente.objects.get(id_usuario=request.user)
+        now = timezone.now()
+        # Filtra las pautas terapéuticas que están dentro del rango de fechas válidas
+        pautas_terapeuticas = PautaTerapeutica.objects.filter(
+            fk_informe__fk_relacion_pa_pro__id_paciente=paciente,
+            fecha_fin__gte=now
+           )
 
-    return render(request,'vista_paciente/intensidad.html', {'tipo_usuario': tipo_usuario})
+    return render(request,'vista_paciente/intensidad.html', {'tipo_usuario': tipo_usuario,
+                                                            'pautas_terapeuticas': pautas_terapeuticas})
 
 @user_passes_test(validate)
 def mi_fonoaudiologo(request):
@@ -1074,3 +1093,119 @@ def editar_prof_pauta(request, id_pauta_terapeutica_id):
 
     })
     
+def eliminar_prof_pauta(request, id_pauta_terapeutica_id):
+
+    pauta = get_object_or_404(PautaTerapeutica, id_pauta_terapeutica=id_pauta_terapeutica_id)
+    tipo_pauta = pauta.fk_tp_terapia
+
+    if tipo_pauta == 'Intensidad':
+        pauta.intensidad.delete()
+    elif tipo_pauta == 'Vocalización':
+        pauta.vocalizacion.delete()
+
+    pauta.delete()
+
+    return redirect('detalle_prof_infor', informe_id=pauta.fk_informe.id_informe)
+
+
+def detalle_pauta_admin(request, id_pauta_terapeutica_id):
+
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+
+        #print(tipo_usuario)
+
+        pauta = get_object_or_404(PautaTerapeutica, id_pauta_terapeutica=id_pauta_terapeutica_id)
+
+        if tipo_usuario == 'Admin':
+            url_regreso = reverse('detalle_informe', kwargs={'informe_id': pauta.fk_informe.id_informe})
+        elif tipo_usuario == 'Fonoaudiologo':
+            url_regreso = reverse('detalle_prof_infor', kwargs={'informe_id': pauta.fk_informe.id_informe})
+        else:
+            url_regreso = reverse('detalle_prof_infor', kwargs={'informe_id': pauta.fk_informe.id_informe})
+
+        
+
+        try:
+            intensidad = Intensidad.objects.get(id_pauta_terapeutica=pauta)
+        except Intensidad.DoesNotExist:
+            intensidad = None
+
+        try:
+            vocalizacion = Vocalizacion.objects.get(id_pauta_terapeutica=pauta)
+        except Vocalizacion.DoesNotExist:
+            vocalizacion = None
+
+    # Obtén el paciente relacionado con este informe
+    paciente_relacionado = pauta.fk_informe.fk_relacion_pa_pro.id_paciente
+
+    return render(request, 'vista_admin/detalle_pauta_admin.html', {
+        'tipo_usuario': tipo_usuario,
+        'pauta' : pauta, 
+        'intensidad' : intensidad,
+        'vocalizacion': vocalizacion,
+        'paciente_relacionado': paciente_relacionado,
+        'url_regreso': url_regreso,
+        })
+
+def editar_pauta_admin(request, id_pauta_terapeutica_id):
+
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+
+        pauta = get_object_or_404(PautaTerapeutica, id_pauta_terapeutica=id_pauta_terapeutica_id)
+        # profesional_salud = request.user.profesionalsalud
+        # relaciones_pacientes = RelacionPaPro.objects.filter(fk_profesional_salud=profesional_salud)
+
+        intensidad_form = None
+        vocalizacion_form = None
+
+        try:
+            if pauta.intensidad:
+                intensidad_form = IntensidadForm(request.POST or None, instance=pauta.intensidad)
+        except Intensidad.DoesNotExist:
+            intensidad_form = IntensidadForm()
+
+        try:
+            if pauta.vocalizacion:
+                vocalizacion_form = VocalizacionForm(request.POST or None, instance=pauta.vocalizacion)
+        except Vocalizacion.DoesNotExist:
+            vocalizacion_form = VocalizacionForm()
+
+        if request.method == 'POST':
+            form = PautaTerapeuticaForm(request.POST, instance=pauta)
+
+            if form.is_valid():
+                form.save()
+
+            if intensidad_form and intensidad_form.is_valid():
+                intensidad_form.save()
+
+            if vocalizacion_form and vocalizacion_form.is_valid():
+                vocalizacion_form.save()
+
+            return redirect('detalle_pauta_admin', id_pauta_terapeutica_id=pauta.id_pauta_terapeutica)
+        else:
+            form = PautaTerapeuticaForm(instance=pauta)
+
+    return render(request, 'vista_admin/editar_pauta_admin.html',{
+        'tipo_usuario': tipo_usuario,
+        'pauta': pauta,
+        'form': form, 
+        'intensidad_form': intensidad_form,
+        'vocalizacion_form': vocalizacion_form,
+    })
+
+def eliminar_pauta_admin(request, id_pauta_terapeutica_id):
+
+    pauta = get_object_or_404(PautaTerapeutica, id_pauta_terapeutica=id_pauta_terapeutica_id)
+    tipo_pauta = pauta.fk_tp_terapia
+
+    if tipo_pauta == 'Intensidad':
+        pauta.intensidad.delete()
+    elif tipo_pauta == 'Vocalización':
+        pauta.vocalizacion.delete()
+
+    pauta.delete()
+
+    return redirect('detalle_informe', informe_id=pauta.fk_informe.id_informe)

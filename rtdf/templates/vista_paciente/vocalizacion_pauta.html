@@ -13,7 +13,6 @@
         
         <div class="container">
             <h1>Vocalización</h1>
-            {% if pauta_seleccionada %}
             <table class="table">
                 <thead class="thead-dark">
                     <tr>
@@ -25,20 +24,14 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>{{ pauta_seleccionada.descripcion }}</td>
-                        <td>{{ pauta_seleccionada.cant_veces_dia }}</td>
-                        <td>{{ pauta_seleccionada.vocalizacion.duracion_seg }}</td>
-                        <td>{{ pauta_seleccionada.vocalizacion.bpm }}</td>
+                        <td>{{ pauta_terapeutica.descripcion }}</td>
+                        <td>{{ pauta_terapeutica.cant_veces_dia }}</td>
+                        <td>{{ pauta_terapeutica.vocalizacion.duracion_seg }}</td>
+                        <td>{{ pauta_terapeutica.vocalizacion.bpm }}</td>
                     </tr>
                 </tbody>
             </table>
-
-            {% else %}
-            <p>No se ha seleccionado una pauta terapéutica. por favor vaya al menu
-                y seleccione su pauta para el tratamiento
-            </p>
-
-            {% endif %}
+ 
         </div>
 
     </br>
@@ -48,7 +41,7 @@
                 <div class="metronome-info">
                     <h1><strong>Buenos días</strong> {{ user.primer_nombre }}</h1>
                     <p>Esta semana debes trabajar con BPM. Recuerda ajustar muy bien tu tiempo y BPM.</p>
-                    <p>Al ejercitar, debes respirar por la nariz y tus ejercicios deben durar aproximadamente 5 segundos.</p>
+                    <p>Al ejercitar, debes respirar por la nariz y tus ejercicios deben durar aproximadamente {{ pauta_terapeutica.vocalizacion.duracion_seg }} segundos.</p>
                 </div>
                 <div class="bpm-display">
                     <span class="tempo">140</span>
@@ -78,3 +71,4 @@
 
 {% endblock %}
 </html>
+

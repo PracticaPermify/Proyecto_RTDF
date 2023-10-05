@@ -270,7 +270,8 @@
         <tbody>
           {% for vocalizacion in datos_vocalizacion %}
           <tr>
-            <td>{{ vocalizacion.id_pauta_terapeutica_id}}</td>
+            <td><a href="{% url 'detalle_pauta_admin' vocalizacion.id_pauta_terapeutica_id %}">
+                {{ vocalizacion.id_pauta_terapeutica_id}}</a></td>
             <td>{{ vocalizacion.id_pauta_terapeutica.cant_veces_dia}}</td>
             <td>{{ vocalizacion.id_pauta_terapeutica.fecha_inicio }}</td>
             <td>{{ vocalizacion.id_pauta_terapeutica.fecha_fin }}</td>
@@ -306,7 +307,8 @@
         <tbody>
             {% for intensidad in datos_intensidad %}
             <tr>
-              <td>{{ intensidad.id_pauta_terapeutica_id}}</td>
+                <td><a href="{% url 'detalle_pauta_admin' intensidad.id_pauta_terapeutica_id %}">
+                    {{ intensidad.id_pauta_terapeutica_id}}</a></td>
               <td>{{ intensidad.id_pauta_terapeutica.cant_veces_dia}}</td>
               <td>{{ intensidad.id_pauta_terapeutica.fecha_inicio }}</td>
               <td>{{ intensidad.id_pauta_terapeutica.fecha_fin }}</td>

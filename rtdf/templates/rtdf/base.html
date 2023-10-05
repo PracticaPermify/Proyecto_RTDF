@@ -27,10 +27,10 @@
 							<li class="current"><a href={% url 'index' %}>Menu</a></li>
 							{% if tipo_usuario %}
 								{% if tipo_usuario == 'Fonoaudiologo' %}
-									<li><a href={% url 'pacientes_disponibles' %}>Pacientes disponibles</a></li>
 									<li><a href={% url 'listado_pacientes' %}>Listado de pacientes</a></li>
 									<li><a href={% url 'listado_informes' %}>Listado de informes</a></li>
 									<li><a href={% url 'ingresar_informes' %}>Ingresar informe</a></li>
+									<li><a href={% url 'pacientes_disponibles' %}>Pacientes disponibles</a></li>
 								{% endif %}
 								{% if tipo_usuario == 'Paciente' %}
                 						<li><a href={% url 'vocalizacion' %}>Vocalizacion</a></li>

@@ -10,22 +10,21 @@
 
   <div>
     <a href="{{ url_regreso }}">Volver al detalle informe</a>
+
 </div>
 
 </br>
 </br>
 
   <h1>Detalles de la Pauta {{ pauta.id_pauta_terapeutica }}</h1>
-    </br>
 
-    <a href="{% url 'eliminar_prof_pauta' pauta.id_pauta_terapeutica %}" class="btn btn-danger btn-derecha">
+    <a href="{% url 'eliminar_pauta_admin' pauta.id_pauta_terapeutica %}" class="btn btn-danger btn-derecha">
         Eliminar <i class="fas fa-trash-alt" style="margin-left: 5px;"></i> 
     </a>
 
-    <a href="{% url 'editar_prof_pauta' pauta.id_pauta_terapeutica %}" class="btn btn-primary btn-derecha">
+    <a href="{% url 'editar_pauta_admin' pauta.id_pauta_terapeutica %}" class="btn btn-primary btn-derecha">
         Editar <i class="fas fa-pencil-alt" style="margin-left: 5px;"></i>
     </a>
-
   </br>
   <div class="table-responsive">
       <table class="table">
