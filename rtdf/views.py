@@ -470,41 +470,14 @@ def vocalizacion(request, pauta_id=None):
                 pauta_seleccionada = None
 
     if request.method == 'POST':
-
-        p = pyaudio.PyAudio()
-        formato = pyaudio.paInt16
-        tasa_muestreo = 44100
-        duracion = pauta_seleccionada.vocalizacion.duracion_seg 
-        #print(pauta_seleccionada.vocalizacion.duracion_seg)
-
-        # iniciar la grabación
-        stream = p.open(format=formato,
-                        channels=1,
-                        rate=tasa_muestreo,
-                        input=True,
-                        frames_per_buffer=1024)
-
-        frames = []
-
-        for _ in range(0, int(tasa_muestreo / 1024 * duracion)):
-            data = stream.read(1024)
-            frames.append(data)
-
-        # detener la grabación
-        stream.stop_stream()
-        stream.close()
-        p.terminate()
-
-        # guardado el archivo de audio
-        archivo_audio = "media/audios_pacientes/audio.wav"
-        with wave.open(archivo_audio, 'wb') as wf:
-            wf.setnchannels(1)
-            wf.setsampwidth(p.get_sample_size(formato))
-            wf.setframerate(tasa_muestreo)
-            wf.writeframes(b''.join(frames))
-
-        return JsonResponse({'message': 'Grabación de audio completada.'})
-
+        audio_file = request.FILES.get('audio')
+        if audio_file:
+            with open('media/audios_pacientes/audio.wav', 'wb') as destination:
+                for chunk in audio_file.chunks():
+                    destination.write(chunk)
+            return JsonResponse({'message': 'Audio guardado exitosamente.'})
+        else:
+            return JsonResponse({'error': 'No se ha recibido ningún archivo de audio.'})
 
     return render(request, 'vista_paciente/vocalizacion.html', {'tipo_usuario': tipo_usuario,
                                                                'pauta_seleccionada': pauta_seleccionada})
