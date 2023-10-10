@@ -9,10 +9,10 @@
 {% block content %}
 
 
-    <h1>Intensidad</h1>
+    <h1 style="text-align: center;">Pauta terapeutica de Intensidad</h1>
     <br/>
         <div class="table-responsive">
-            <table class="table">
+            <table class="table" hidden>
                 <thead class="thead-dark">
                     {% if pauta_seleccionada %}
                     <tr>
@@ -49,12 +49,12 @@
                 <div class="container"> <h1></h1>
                     <div class="metronome-info" text-align: center;>
                         {% if pauta_seleccionada %}
-                        <p><b>Esta semana debes trabajar en la intensidad de tu voz. Recuerda ajustar muy bien tu tiempo y calibracion.</b></p>
-                        <p><b>Recuerde la descripcion de su pauta dice que:</b>{{ pauta_seleccionada.descripcion }}</p>
-                        <p><b>Comentario del fonoaudiologo:</b> {{ pauta_seleccionada.comentario }}</p>
-                        <p><b>El ejercicio lo debe realizar durante</b> {{ pauta_seleccionada.intensidad.intensidad}} minutos. 
-                        <p><b>Minimo DB:</b> {{ pauta_seleccionada.intensidad.min_db}}</p>
-                        <p><b>Max DB:</b>{{ pauta_seleccionada.intensidad.max_db}}</p>
+                        <p style="text-align: center;"><b>Esta semana debes trabajar en la intensidad de tu voz. Recuerda ajustar muy bien tu tiempo y calibracion.</b></p>
+                        <p style="text-align: center;"><b>Recuerde la descripcion de su pauta dice que:</b>{{ pauta_seleccionada.descripcion }}</p>
+                        <p style="text-align: center;"><b>Comentario del fonoaudiologo:</b> {{ pauta_seleccionada.comentario }}</p>
+                        <p style="text-align: center;"><b>El ejercicio lo debe realizar durante</b> {{ pauta_seleccionada.intensidad.intensidad}} minutos. 
+                        <p style="text-align: center;"><b>Minimo DB:</b> {{ pauta_seleccionada.intensidad.min_db}}</p>
+                        <p style="text-align: center;"><b>Max DB:</b>{{ pauta_seleccionada.intensidad.max_db}}</p>
                         {% else %} 
                         <tr>
                             <td colspan="8">No hay pautas terapeuticas para hoy o en la semana.</td>

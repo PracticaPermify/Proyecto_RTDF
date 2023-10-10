@@ -10,33 +10,30 @@
         <link rel="stylesheet" href="{% static 'app/css/metronomo.css' %}"/>
     </head>
     <body class="is-preload">
-    
-        <div class="container">
-            <h1>Vocalización</h1>
+            <h1 style="text-align: center;">Pauta terapeutica de Vocalización</h1>
             <br/>
             {% if pauta_seleccionada %}
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Descripción</th>
-                        <th>Cantidad de veces al día</th>
-                        <th>Duración del ejercicio (segundos)</th>
-                        <th>BPM ajustado</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>{{ pauta_seleccionada.descripcion }}</td>
-                        <td>{{ pauta_seleccionada.cant_veces_dia }}</td>
-                        <td>{{ pauta_seleccionada.vocalizacion.duracion_seg }}</td>
-                        <td>{{ pauta_seleccionada.vocalizacion.bpm }}</td>
-                    </tr>
-                </tbody>
-            </table>
-            {% else %}
-            <p>No se ha seleccionado una pauta terapéutica.</p>
-            {% endif %}
-        </div>
+                    {% comment %} <table class="table" hidden>
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Descripción</th>
+                                <th>Cantidad de veces al día</th>
+                                <th>Duración del ejercicio (segundos)</th>
+                                <th>BPM ajustado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{ pauta_seleccionada.descripcion }}</td>
+                                <td>{{ pauta_seleccionada.cant_veces_dia }}</td>
+                                <td>{{ pauta_seleccionada.vocalizacion.duracion_seg }}</td>
+                                <td>{{ pauta_seleccionada.vocalizacion.bpm }}</td>
+                            </tr>
+                        </tbody>
+                    </table> {% endcomment %}
+                    {% else %}
+                    <p style="text-align: center;">No se ha seleccionado una pauta terapéutica.</p>
+                    {% endif %}
 
     </br>
         
@@ -48,7 +45,8 @@
                 <div class="metronome-info">
                     <h1><strong>Buenos días</strong> {{ user.primer_nombre }} {{ user.ap_paterno }}</h1>
                     <br/>
-                    <p>Esta semana debes trabajar con <b>{{ pauta_seleccionada.vocalizacion.bpm }} BPM</b>. Este sera ajustado automaticamente.</p>
+                    <p>El numero de tu pauta es <strong>{{ pauta_seleccionada.id_pauta_terapeutica }}</strong>. 
+                        Esta semana debes trabajar con <b>{{ pauta_seleccionada.vocalizacion.bpm }} BPM</b>. Este sera ajustado automaticamente.</p>
                     <p>Deberas realizar el ejercicio <b>{{ pauta_seleccionada.cant_veces_dia }} </b> veces al día </p>
                     <p>Al ejercitar, debes respirar por la nariz y tus ejercicios deben durar aproximadamente <b>{{ pauta_seleccionada.vocalizacion.duracion_seg }} segundos</b>.</p>
                 </div>
@@ -109,6 +107,8 @@
     </body>
 
     <script src="{% static 'app/js/metronomo.js' %}"></script>
+    <script src="{% static 'app/js/RecordRTC.js' %}"></script>
+    <script src="{% static 'app/js/microfono_utils.js' %}"></script>
     <script>
         window.bpm = {{ pauta_seleccionada.vocalizacion.bpm }};
         window.duracion_seg = {{ pauta_seleccionada.vocalizacion.duracion_seg }};

@@ -455,7 +455,6 @@ def detalle_familiar(request, paciente_id):
 @user_passes_test(validate)
 def vocalizacion(request, pauta_id=None):
     tipo_usuario = None
-    pautas_terapeuticas = None
     pauta_seleccionada = None
 
     if request.user.is_authenticated:
