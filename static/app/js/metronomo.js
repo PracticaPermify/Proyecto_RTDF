@@ -60,13 +60,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
   const click1 = new Audio('/static/app/recursos/sonido_metronomo/click1.mp3');
   const click2 = new Audio('/static/app/recursos/sonido_metronomo/click2.mp3');
 
-
-
-
-  
-  
-  // let bpm = window.bpm;
-
   let bpm;
 
   if (typeof window.bpm === 'undefined') {
@@ -76,9 +69,17 @@ window.addEventListener('DOMContentLoaded', (event) => {
       console.log("El valor de bpm es: " + window.bpm);
   }
 
-  // let bpm = window.bpm || 140;
+  let beatsPerMeasure;
 
-  let beatsPerMeasure = 4;
+  if (typeof window.tempo === 'undefined') {
+    beatsPerMeasure = 4;  
+  } else {
+      beatsPerMeasure = window.tempo;
+      console.log("El valor de tempo " + window.tempo);
+  }
+
+  // let bpm = window.bpm || 140;
+  //let beatsPerMeasure = window.tempo || 4;
   let count = 0;
   let isRunning = false;
   let tempoTextString = 'Medium'

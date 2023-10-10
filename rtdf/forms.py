@@ -361,9 +361,15 @@ class VocalizacionForm(PautaTerapeuticaForm):
         label='BPM'
     )
 
+    tempo = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Ingresar Tempo en segundos'}),
+        required=False,
+        label='Tempo'
+    )
+
     class Meta:
         model = Vocalizacion
-        fields = PautaTerapeuticaForm.Meta.fields + ['duracion_seg', 'bpm']
+        fields = PautaTerapeuticaForm.Meta.fields + ['duracion_seg', 'bpm', 'tempo']
 
 class IntensidadForm(PautaTerapeuticaForm):
 

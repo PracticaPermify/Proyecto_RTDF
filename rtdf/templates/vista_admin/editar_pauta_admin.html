@@ -41,11 +41,6 @@
         </div>
 
         <div class="form-group">
-            <label for="comentario">Comentario:</label>
-            {{ form.comentario }}
-        </div>
-
-        <div class="form-group">
             <label for="fk_tp_terapia">Tipo de Terapia:</label>
             <select id="fk_tp_terapia" name="{{ form.fk_tp_terapia.name }}" class="form-control form-control-sm" readonly>
                 {% for choice in form.fk_tp_terapia.field.choices %}
@@ -58,6 +53,7 @@
         <!-- Verificar si tiene un tipo de pauta asociada -->
         {% if pauta.fk_tp_terapia.tipo_terapia == 'Intensidad' %}
         <div id="campos-intensidad">
+
             <div class="form-group">
                 <label for="{{ intensidad_form.intensidad.id_for_label }}">Intensidad en dB:</label>
                 {{ intensidad_form.intensidad }}
@@ -88,6 +84,11 @@
             <div class="form-group">
                 <label for="{{ vocalizacion_form.bpm.id_for_label }}">BPM:</label>
                 {{ vocalizacion_form.bpm }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ vocalizacion_form.tempo.id_for_label }}">Tempo:</label>
+                {{ vocalizacion_form.tempo }}
             </div>
 
         </div>

@@ -510,6 +510,7 @@ class Vocalizacion(models.Model):
     id_pauta_terapeutica = models.OneToOneField(PautaTerapeutica, on_delete=models.CASCADE, db_column='id_pauta_terapeutica', primary_key=True)
     duracion_seg = models.IntegerField()
     bpm = models.IntegerField()
+    tempo = models.IntegerField(default=4, blank=True, null=True)
 
     class Meta:
         db_table = 'vocalizacion'
