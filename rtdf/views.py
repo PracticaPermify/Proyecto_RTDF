@@ -10,6 +10,9 @@ from django.urls import reverse
 from django.core.paginator import Paginator
 from django.db.models import Count
 from django.contrib.auth.decorators import login_required
+import pyaudio
+import wave
+from django.http import JsonResponse
 
 def validate(request):
     if request.is_anonymous:
@@ -465,6 +468,43 @@ def vocalizacion(request, pauta_id=None):
                 pauta_seleccionada = PautaTerapeutica.objects.get(id_pauta_terapeutica=pauta_id)
             except PautaTerapeutica.DoesNotExist:
                 pauta_seleccionada = None
+
+    if request.method == 'POST':
+
+        p = pyaudio.PyAudio()
+        formato = pyaudio.paInt16
+        tasa_muestreo = 44100
+        duracion = pauta_seleccionada.vocalizacion.duracion_seg 
+        #print(pauta_seleccionada.vocalizacion.duracion_seg)
+
+        # iniciar la grabación
+        stream = p.open(format=formato,
+                        channels=1,
+                        rate=tasa_muestreo,
+                        input=True,
+                        frames_per_buffer=1024)
+
+        frames = []
+
+        for _ in range(0, int(tasa_muestreo / 1024 * duracion)):
+            data = stream.read(1024)
+            frames.append(data)
+
+        # detener la grabación
+        stream.stop_stream()
+        stream.close()
+        p.terminate()
+
+        # guardado el archivo de audio
+        archivo_audio = "media/audios_pacientes/audio.wav"
+        with wave.open(archivo_audio, 'wb') as wf:
+            wf.setnchannels(1)
+            wf.setsampwidth(p.get_sample_size(formato))
+            wf.setframerate(tasa_muestreo)
+            wf.writeframes(b''.join(frames))
+
+        return JsonResponse({'message': 'Grabación de audio completada.'})
+
 
     return render(request, 'vista_paciente/vocalizacion.html', {'tipo_usuario': tipo_usuario,
                                                                'pauta_seleccionada': pauta_seleccionada})

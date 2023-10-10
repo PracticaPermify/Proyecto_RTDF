@@ -1,5 +1,4 @@
 {% extends 'rtdf/base.html' %}
-
 <html>
     {% block content %}
     <head>
@@ -40,6 +39,8 @@
 
     {% if pauta_seleccionada %}
 
+    <form id="csrf-form">
+        {% csrf_token %}
         <div class="container">
             <div class="metronome">
                 <div class="metronome-info">
@@ -64,6 +65,7 @@
                     <div class="adjust-tempo-btn increase-tempo">+</div>
                 </div>
                 <div class="start-stop">Empezar</div>
+                <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
                 <div class="measures">
                     <div class="subtract-beats stepper">-</div>
                     <div class="measure-count">{{pauta_seleccionada.vocalizacion.tempo}}</div>
@@ -72,6 +74,7 @@
                 <span class="beats-per-measure-text">Beats per measure</span>
             </div>
         </div>
+    </form>
 
     {% else %}
         <div class="container">
@@ -93,6 +96,7 @@
                     <div class="adjust-tempo-btn increase-tempo">+</div>
                 </div>
                 <div class="start-stop">Empezar</div>
+                
                 <div class="measures">
                     <div class="subtract-beats stepper">-</div>
                     <div class="measure-count">4</div>
@@ -109,10 +113,20 @@
     <script src="{% static 'app/js/metronomo.js' %}"></script>
     <script src="{% static 'app/js/RecordRTC.js' %}"></script>
     <script src="{% static 'app/js/microfono_utils.js' %}"></script>
+    <script src="{% static 'app/js/grabacion_vocalizacion.js' %}"></script>
+    
     <script>
         window.bpm = {{ pauta_seleccionada.vocalizacion.bpm }};
         window.duracion_seg = {{ pauta_seleccionada.vocalizacion.duracion_seg }};
         window.tempo = {{ pauta_seleccionada.vocalizacion.tempo }};
+        window.id = {{ pauta_seleccionada.id_pauta_terapeutica }};
+
+        //variables de url procesadas por django        
+        var vocalizacionConPautaURL = "{% url 'vocalizacion_con_pauta' pauta_id=0 %}".replace('0', {{pauta_seleccionada.id_pauta_terapeutica}});
+        var vocalizacionURL = "{% url 'vocalizacion' %}";
     </script>
+
+
+
 {% endblock %}
 </html>
