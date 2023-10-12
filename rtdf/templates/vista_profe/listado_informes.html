@@ -8,65 +8,108 @@
 <h1>Informes del Fonoaudiólogo</h1>
 <br>
 <div class="table-responsive">
-  <table class="table">
-    <thead class="thead-dark">
-      <tr>
-        <th>ID informe</th>
-        <th>Paciente</th>
-        <th>Tipo de informe</th>
-        <th>Título</th>
-        <th>Descripción</th>
-        <th>Fecha</th>
-        <th>Pauta terapeutica</th>
-        <!-- Agrega otras columnas si es necesario -->
-      </tr>
-    </thead>
-    <tbody>
-      {% for informe in page %}
-        <tr>
-          <td><a href="{% url 'detalle_prof_infor' informe.id_informe %}">
-            Informe {{ informe.id_informe }}</a></td>
-          <td>{{ informe.fk_relacion_pa_pro.id_paciente.id_usuario.primer_nombre }} 
-            {{ informe.fk_relacion_pa_pro.id_paciente.id_usuario.ap_paterno }}</td>
-          <td>{{ informe.tp_informe.tipo_informe }}</td>
-          <td>{{ informe.titulo }}</td>
-          <td>{{ informe.descripcion }}</td>
-          <td>{{ informe.fecha }}</td>
-          <td>{% if informe.num_pautas_terapeuticas > 0 %} 
-            Tiene pauta terapéutica 
-            {% else %} 
-            No tiene pauta terapéutica 
-            {% endif %}</td>
-        </tr>
-      {% empty %}
-        <tr>
-          <td colspan="8">No se han añadido informes para los pacientes.</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th>ID informe</th>
+                <th>Paciente</th>
+                <th>Tipo de informe</th>
+                <th>Título</th>
+                <th>Descripción</th>
+                <th>Fecha</th>
+                <th>Pauta terapeutica</th>
+                <!-- Agrega otras columnas si es necesario -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for informe in page %}
+                {% if informe.tp_informe.tipo_informe == "GRBAS" or informe.tp_informe.tipo_informe == "RASATI" %}
+                    <tr>
+                        <td><a href="{% url 'detalle_prof_infor' informe.id_informe %}">
+                            Informe {{ informe.id_informe }}</a></td>
+                        <td>{{ informe.fk_relacion_pa_pro.id_paciente.id_usuario.primer_nombre }} 
+                            {{ informe.fk_relacion_pa_pro.id_paciente.id_usuario.ap_paterno }}</td>
+                        <td>{{ informe.tp_informe.tipo_informe }}</td>
+                        <td>{{ informe.titulo }}</td>
+                        <td>{{ informe.descripcion }}</td>
+                        <td>{{ informe.fecha }}</td>
+                        <td>{% if informe.num_pautas_terapeuticas > 0 %} 
+                            Tiene pauta terapéutica 
+                            {% else %} 
+                            No tiene pauta terapéutica 
+                            {% endif %}</td>
+                    </tr>
+                {% endif %}
+            {% empty %}
+                <tr>
+                    <td colspan="8">No se han añadido informes para los pacientes.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 
-<!-- Navegación de páginas -->
+
 <div class="pagination">
   <span class="step-links">
-    {% if page.has_previous %}
-      <a href="?page=1">&laquo; primera</a>
-      <a href="?page={{ page.previous_page_number }}">anterior</a>
-    {% endif %}
-    
-    <span class="current-page">
-      Página {{ page.number }} de {{ page.paginator.num_pages }}.
-    </span>
+      {% if page.has_previous %}
+          <a href="?page=1">&laquo; primera</a>
+          <a href="?page={{ page.previous_page_number }}">anterior</a>
+      {% endif %}
+  
+      <span class="current-page">
+          Página {{ page.number }} de {{ page.paginator.num_pages }}.
+      </span>
 
-    {% if page.has_next %}
-      <a href="?page={{ page.next_page_number }}">siguiente</a>
-      <a href="?page={{ page.paginator.num_pages }}">última &raquo;</a>
-    {% endif %}
+      {% if page.has_next %}
+          <a href="?page={{ page.next_page_number }}">siguiente</a>
+          <a href="?page={{ page.paginator.num_pages }}">última &raquo;</a>
+      {% endif %}
   </span>
 </div>
 
+</br>
+</br>
+
+
+<div class="table-responsive">
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th>ID informe ESV</th>
+                <th>Paciente ESV</th>
+                <th>Fecha ESV</th>
+                <th>Puntaje Total ESV</th>
+                <th>Limitación ESV</th>
+                <th>Emocional ESV</th>
+                <th>Físico ESV</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for informe in page %}
+                {% if informe.tp_informe.tipo_informe == "ESV" %}
+                    <tr>
+                        <td>ESV {{ informe.id_informe }}</td>
+                        <td>{{ informe.fk_relacion_pa_pro.id_paciente.id_usuario.primer_nombre }} 
+                            {{ informe.fk_relacion_pa_pro.id_paciente.id_usuario.ap_paterno }}</td>
+                        <td>{{ informe.fecha }}</td>
+                        <td>{{ informe.esv.total_esv }}</td>
+                        <td>{{ informe.esv.limitacion }}</td>
+                        <td>{{ informe.esv.emocional }}</td>
+                        <td>{{ informe.esv.fisico }}</td>
+                    </tr>
+                {% endif %}
+            {% empty %}
+                <tr>
+                    <td colspan="9">No se han añadido informes ESV para los pacientes.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
 {% endif %}
 {% endif %}
 
-{% endblock%}
+{% endblock %}

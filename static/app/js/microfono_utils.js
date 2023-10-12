@@ -7,6 +7,9 @@
 var nombre;
 var cancelled=false;
 var grabando=false;
+var csrftoken = document.querySelector('#post-form [name=csrfmiddlewaretoken]').value;
+var pauta_id = window.id;
+
 function captureMicrophone(callback) {
     navigator.mediaDevices.getUserMedia({audio: true}).then(callback).catch(function(error) {
         alert('Unable to access your microphone.');
@@ -24,9 +27,32 @@ function stopRecordingCallback() {
             var filer = new File([blob], "audio.wav", { type: "audio/wav" });
             formData.append('file', filer,);
             formData.append('string',nombre);
-            fetch('/save_audio/', {
+
+            //Logica de la construcción de URL
+
+            var url;
+
+            if (pauta_id) {
+                url = vocalizacionConPautaURL;
+            } else {
+                url = '/vocalizacion/';
+            }
+
+            fetch(url, {
                 method: 'POST',
-                body: formData});
+                body: formData,
+                headers: {
+                    'X-CSRFToken': csrftoken
+                },
+                
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Grabación de audio completada y enviada al servidor.');
+                } else {
+                    console.error('Error al enviar el audio al servidor.');
+                }
+            });
         }
         else{console.log("nada que guardar");}
     }
@@ -68,7 +94,7 @@ const guardarGrabacion =() =>{
         var filer = new File([blob], "audio.wav", { type: "audio/wav" });
         formData.append('file', filer,);
         formData.append('string',nombre);
-        fetch('/save_audio/', {
+        fetch('/vocalizacion/', {
             method: 'POST',
             body: formData});
     }

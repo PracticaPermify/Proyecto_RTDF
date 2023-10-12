@@ -5,14 +5,16 @@ from .models import *
 from django.http import JsonResponse
 from django.contrib.auth.decorators import user_passes_test
 from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_exempt
+from django.core.files.storage import default_storage
 from django.utils import timezone
 from django.urls import reverse
 from django.core.paginator import Paginator
 from django.db.models import Count
 from django.contrib.auth.decorators import login_required
-import pyaudio
 import wave
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
+import os
 
 def validate(request):
     if request.is_anonymous:
@@ -455,32 +457,83 @@ def detalle_familiar(request, paciente_id):
 
 ##Ejercicios de vocalización-----------------------------------
 
+
 @user_passes_test(validate)
-def vocalizacion(request, pauta_id=None):
+def vocalizacion(request, pauta_id=None, *args, **kwargs):
     tipo_usuario = None
     pauta_seleccionada = None
 
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
 
+        # Obtén el nombre de usuario y su ID
+        nombre_usuario = f"{request.user.primer_nombre}_{request.user.ap_paterno}"
+        id_usuario = request.user.id_usuario
+        fecha = timezone.now()
+        fecha_formateada = fecha.strftime("%Y-%m-%d-%H-%M-%S")
+        terapia = 'vocalizacion'
+
+        # Crea una ruta para la carpeta del usuario
+        carpeta_usuario = os.path.join('media/audios_pacientes', nombre_usuario)
+
+        # Verifica si la carpeta del usuario existe, si no, créala
+        if not os.path.exists(carpeta_usuario):
+            os.makedirs(carpeta_usuario)
+
         if pauta_id is not None:
             try:
                 pauta_seleccionada = PautaTerapeutica.objects.get(id_pauta_terapeutica=pauta_id)
+                nombre_pauta =pauta_seleccionada.fk_tp_terapia         
             except PautaTerapeutica.DoesNotExist:
                 pauta_seleccionada = None
+       
 
     if request.method == 'POST':
-        audio_file = request.FILES.get('audio')
+        audio_file = request.FILES.get('file')
+        print("Estoy llegando aquí", audio_file)
+
+        # Define el nombre del archivo con el nombre del usuario y su ID
+        nombre_archivo = f"{nombre_usuario}_{id_usuario}_{fecha_formateada}_{terapia}_audio.wav"
+        ruta_archivo = os.path.join(carpeta_usuario, nombre_archivo)
+
+        # Guarda el archivo en la carpeta del usuario con el nuevo nombre
         if audio_file:
-            with open('media/audios_pacientes/audio.wav', 'wb') as destination:
+            with open(ruta_archivo, 'wb') as destination:
                 for chunk in audio_file.chunks():
                     destination.write(chunk)
-            return JsonResponse({'message': 'Audio guardado exitosamente.'})
-        else:
-            return JsonResponse({'error': 'No se ha recibido ningún archivo de audio.'})
 
     return render(request, 'vista_paciente/vocalizacion.html', {'tipo_usuario': tipo_usuario,
                                                                'pauta_seleccionada': pauta_seleccionada})
+
+
+
+# @user_passes_test(validate)
+# def vocalizacion(request, pauta_id=None, *args, **kwargs):
+#     tipo_usuario = None
+#     pauta_seleccionada = None
+
+#     if request.user.is_authenticated:
+#         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+
+#         if pauta_id is not None:
+#             try:
+#                 pauta_seleccionada = PautaTerapeutica.objects.get(id_pauta_terapeutica=pauta_id)
+#             except PautaTerapeutica.DoesNotExist:
+#                 pauta_seleccionada = None
+
+#     if request.method == 'POST':
+#         # archivo = f"audio.wav"
+#         audio_file = request.FILES.get('file')
+#         print("Estoy llegando aqui",audio_file)
+#         #Guarda el archivo
+#         if audio_file:
+#             with open('media/audios_pacientes/audio1.wav', 'wb') as destination:
+#                 for chunk in audio_file.chunks():
+#                     destination.write(chunk)
+                 
+    
+#     return render(request, 'vista_paciente/vocalizacion.html', {'tipo_usuario': tipo_usuario,
+#                                                                'pauta_seleccionada': pauta_seleccionada})
 
 
 @user_passes_test(validate)
@@ -501,6 +554,108 @@ def intensidad(request, pauta_id=None):
 
     return render(request,'vista_paciente/intensidad.html', {'tipo_usuario': tipo_usuario,
                                                             'pauta_seleccionada': pauta_seleccionada})
+    
+    
+def esv(request):
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+
+        profesional_salud = request.user.profesionalsalud
+        relaciones_pacientes = RelacionPaPro.objects.filter(fk_profesional_salud=profesional_salud)
+
+        preguntas = [
+            "¿Tiene dificultades para llamar la atención de los demás usando su voz?",
+            "¿Tiene problemas al cantar?",
+            "¿Le duele la garganta?",
+            "¿Su voz está ronca?",
+            "En conversaciones grupales, ¿Las personas tienen dificultades para escucharlo(a)?",
+            "¿Suele perder su voz?",
+            "¿Suele toser o carraspear?",
+            "¿Considera que tiene una voz débil?",
+            "¿Tiene problemas al hablar por teléfono?",
+            "¿Se siente menos valorado o deprimido debido a su problema de la voz?",
+            "¿Siente como si tuviera algo atascado en su garganta?",
+            "¿Siente inflamación en la garganta?",
+            "¿Siente pudor al usar su voz?",
+            "¿Siente que se cansa al hablar?",
+            "¿Su problema de la voz lo hace sentir estresado y nervioso?",
+            "¿Tiene dificultades para hacerse escuchar cuando hay ruido en el ambiente?",
+            "¿Es incapaz de gritar o alzar la voz?",
+            "¿Su problema de la voz le genera complicaciones con su familia y amigos?",
+            "¿Tiene mucha flema o mucosidad en su garganta?",
+            "¿Siente que la calidad de su voz varía durante el día?",
+            "¿Siente que a las personas les molesta su voz?",
+            "¿Tiene la nariz tapada?",
+            "¿La gente le pregunta qué le pasa a su voz?",
+            "¿Siente que su voz suena ronca y seca?",
+            "¿Siente que debe esforzarse para sacar la voz?",
+            "¿Con cuánta frecuencia presenta infecciones en la garganta?",
+            "¿Su voz se “agota” mientras está hablando?",
+            "¿Su voz lo(a) hace sentir incompetente?",
+            "¿Se siente avergonzado debido a su problema de la voz?",
+            "¿Se siente aislado por sus problemas con la voz?"
+        ]
+
+        opciones_respuesta = ["Nunca", "Casi nunca", "A veces", "Casi siempre", "Siempre"]
+
+        if request.method == 'POST':
+            form = InformeForm(request.POST)
+            if form.is_valid():
+                form.instance.tp_informe = TpInforme.objects.get(tipo_informe='ESV')
+                informe = form.save()
+                informe.fecha = timezone.now()
+
+                # Inicializa los puntajes para las subescalas
+                puntaje_limitacion = 0
+                puntaje_emocional = 0
+                puntaje_fisico = 0
+
+                for i, pregunta in enumerate(preguntas):
+                    respuesta = request.POST.get(f"respuesta_{i + 1}")
+
+                    if respuesta == "Nunca":
+                        puntaje = 0
+                    elif respuesta == "Casi nunca":
+                        puntaje = 1
+                    elif respuesta == "A veces":
+                        puntaje = 2
+                    elif respuesta == "Casi siempre":
+                        puntaje = 3
+                    else:
+                        puntaje = 4
+
+                    if i + 1 in [1, 2, 4, 5, 6, 8, 9, 14, 16, 17, 20, 23, 24, 25, 27]:
+                        puntaje_limitacion += puntaje
+                    elif i + 1 in [10, 13, 15, 18, 21, 28, 29, 30]:
+                        puntaje_emocional += puntaje
+                    elif i + 1 in [3, 7, 11, 12, 19, 22, 26]:
+                        puntaje_fisico += puntaje
+
+                puntaje_limitacion = min(puntaje_limitacion, 60)
+                puntaje_emocional = min(puntaje_emocional, 32)
+                puntaje_fisico = min(puntaje_fisico, 28)
+
+                puntaje_total = puntaje_limitacion + puntaje_emocional + puntaje_fisico
+                if puntaje_total > 120:
+                    puntaje_total = 120
+
+                # Crea instancias de Informe y ESV y guarda los datos
+                esv_instance = Esv(id_informe=informe, total_esv=puntaje_total, limitacion=puntaje_limitacion,
+                                    emocional=puntaje_emocional, fisico=puntaje_fisico)
+                esv_instance.save()
+
+                return redirect('listado_informes')
+        else:
+            form = InformeForm(initial={'fecha': timezone.now()})
+            form.fields['fk_relacion_pa_pro'].queryset = relaciones_pacientes
+
+    return render(request, 'vista_profe/esv.html', {
+        'form': form,
+        'tipo_usuario': tipo_usuario,
+        'preguntas': preguntas,
+        'opciones_respuesta': opciones_respuesta,
+    })
+
 
 @user_passes_test(validate)
 def mi_fonoaudiologo(request):

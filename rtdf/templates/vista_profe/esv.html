@@ -1,0 +1,75 @@
+{% extends 'rtdf/base.html' %}
+
+{% block css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'app/css/main.css' %}" />
+{% endblock %}
+
+{% block content %}
+<body class="is-preload">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <h1>Informe ESV</h1>
+        <br>
+        <div class="form-group col-md-4">
+          <label for="{{ form.fk_relacion_pa_pro.id_for_label }}">Paciente:</label>
+          {{ form.fk_relacion_pa_pro }}
+        </div>
+      
+        <div class="form-group col-md-6">
+          <label for="{{ form.titulo.id_for_label }}">Título:</label>
+          {{ form.titulo }}
+        </div>
+      
+        <div class="form-group col-md-10">
+          <label for="{{ form.descripcion.id_for_label }}">Descripción:</label>
+          {{ form.descripcion }}
+        </div>
+      
+        <div class="form-group col-md-4">
+            <label for="fecha">Fecha:</label></br>
+            <input type="datetime-local" id="fecha" name="fecha" value="{{ form.fecha.value|date:'Y-m-d\TH:i' }}" readonly>
+        </div>
+      
+        <div class="form-group col-md-10">
+          <label for="{{ form.observacion.id_for_label }}">Observación:</label>
+          {{ form.observacion }}
+        </div>
+
+        {% for pregunta in preguntas %}
+        <div class="pregunta">
+          <p>{{ forloop.counter }}. {{ pregunta }}</p>
+          <div class="form-group col-md-4">
+            <select name="respuesta_{{ forloop.counter }}" required>
+              {% for opcion in opciones_respuesta %}
+                <option value="{{ opcion }}">{{ opcion }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        {% if forloop.counter|divisibleby:5 %}
+        <div style="page-break-after: always;"></div>
+        {% endif %}
+      {% endfor %}
+      
+        <div class="form-group col-md-4">   
+        </br>
+            <button type="submit" class="btn btn-primary btn-block">Guardar cuestionario</button>
+        </div>
+      </form>
+
+
+      <script>
+        // Función para mostrar un grupo de preguntas
+        function mostrarGrupo(grupo) {
+          const grupos = document.querySelectorAll('.grupo-preguntas');
+          for (const g of grupos) {
+            g.style.display = 'none';
+          }
+          document.getElementById('grupo' + grupo).style.display = 'block';
+        }
+      </script>
+
+
+{% endblock %}

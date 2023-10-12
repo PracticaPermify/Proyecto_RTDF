@@ -1,6 +1,13 @@
 {% extends 'rtdf/base.html' %}
+
+{% load static%}
+
 <html>
+    <script src="{% static 'app/js/jquery-3.6.1.min.js' %}"></script>
+
     {% block content %}
+
+    
     <head>
         <title>RTDF</title>
         <meta charset="utf-8" />
@@ -39,8 +46,6 @@
 
     {% if pauta_seleccionada %}
 
-    <form id="csrf-form">
-        {% csrf_token %}
         <div class="container">
             <div class="metronome">
                 <div class="metronome-info">
@@ -64,10 +69,20 @@
                     </div>
                     <div class="adjust-tempo-btn increase-tempo">+</div>
                 </div>
-                <div class="start-stop">Empezar</div>
-                <button type="button" id="start-stop">Empezar Grabación</button>
+                <div class="controlador">
+                    {% comment %} <div class="start-stop">Empezar</div> {% endcomment %}
+                    <button onclick="clickAudio(false)" id="start_stop" class="start-stop">COMENZAR EJERCITACIÓN</button>
 
-                <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                        <form method="POST" id="post-form" enctype="multipart/form-data" >
+    
+                            {% csrf_token %}
+                           
+                            <div id="tiempo" >
+                                <h3>La grabacion terminara automaticamente en<p id="segundos">{{6}}</p>segundos</h3>
+                                <input type="hidden" name="csrfmiddlewaretoken" value="{{csrf_token}}">
+                            </div>
+                        </form>
+                        
                 <div class="measures">
                     <div class="subtract-beats stepper">-</div>
                     <div class="measure-count">{{pauta_seleccionada.vocalizacion.tempo}}</div>
@@ -76,7 +91,18 @@
                 <span class="beats-per-measure-text">Beats per measure</span>
             </div>
         </div>
-    </form>
+
+
+        <div class="container-mic" style="display:none;">
+            <div class="selector-audio">
+                <select name="listaDeDispositivos" id="listaDeDispositivos"></select>
+            </div>
+            <div class="audio">
+                <audio controls playsinline></audio>
+            </div>
+        
+            <hr>
+        </div>
 
     {% else %}
         <div class="container">
@@ -97,16 +123,43 @@
                     </div>
                     <div class="adjust-tempo-btn increase-tempo">+</div>
                 </div>
-                <div class="start-stop">Empezar</div>
-                
+                <div class="controlador">
+                {% comment %} <div class="start-stop">Empezar</div> {% endcomment %}
+                <button onclick="clickAudio(false)" id="start_stop" class="start-stop">COMENZAR EJERCITACIÓN</button>
+                    <form method="POST" id="post-form" enctype="multipart/form-data" >
+
+                        {% csrf_token %}
+                       
+                        <div id="tiempo" >
+                            <h3>La grabacion terminara automaticamente en<p id="segundos">{{6}}</p>segundos</h3>
+                            <input type="hidden" name="csrfmiddlewaretoken" value="{{csrf_token}}">
+                        </div>
+                    </form>
+                    
                 <div class="measures">
                     <div class="subtract-beats stepper">-</div>
                     <div class="measure-count">4</div>
                     <div class="add-beats stepper">+</div>
                 </div>
-                <span class="beats-per-measure-text">Beats per measure</span>
+                     <span class="beats-per-measure-text">Beats per measure</span>
+                </div>
             </div>
         </div>
+
+    
+
+        <div class="container-mic" style="display:none;">
+            <div class="selector-audio">
+                <select name="listaDeDispositivos" id="listaDeDispositivos"></select>
+            </div>
+            <div class="audio">
+                <audio controls playsinline></audio>
+            </div>
+        
+            <hr>
+        </div>
+
+
     {% endif %}
         
 
@@ -115,12 +168,16 @@
     <script src="{% static 'app/js/metronomo.js' %}"></script>
     <script src="{% static 'app/js/RecordRTC.js' %}"></script>
     <script src="{% static 'app/js/microfono_utils.js' %}"></script>
-    <script src="{% static 'app/js/grabacion_vocalizacion.js' %}"></script>
+    <script src="{% static 'app/js/jquery.min.js' %}"></script>
+    <script src="{% static 'app/js/jquery.dropotron.min.js' %}"></script>
+    {% comment %} <script src="{% static 'app/js/grabacion_vocalizacion.js' %}"></script> {% endcomment %}
+
+    <script src="https://unpkg.com/wavefile"></script>
     
     <script>
-        window.bpm = {{ pauta_seleccionada.vocalizacion.bpm }};
+        {% comment %} window.bpm = {{ pauta_seleccionada.vocalizacion.bpm }};
         window.duracion_seg = {{ pauta_seleccionada.vocalizacion.duracion_seg }};
-        window.tempo = {{ pauta_seleccionada.vocalizacion.tempo }};
+        window.tempo = {{ pauta_seleccionada.vocalizacion.tempo }}; {% endcomment %}
         window.id = {{ pauta_seleccionada.id_pauta_terapeutica }};
 
         //variables de url procesadas por django        

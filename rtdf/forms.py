@@ -190,7 +190,7 @@ class InformeForm(forms.ModelForm):
 
     tp_informe = forms.ModelChoiceField(
         queryset=TpInforme.objects.filter(tipo_informe__in=['RASATI', 'GRBAS']),
-        required=True,
+        required=False,
         empty_label=None,
         widget=forms.Select(attrs={'class': 'form-control form-control-sm','id': 'tp_informe'}),
         label='Tipo de Informe'
