@@ -15,6 +15,7 @@ from django.contrib.auth.decorators import login_required
 import wave
 from django.http import JsonResponse, HttpResponse
 import os
+from django.conf import settings
 
 def validate(request):
     if request.is_anonymous:
@@ -462,6 +463,7 @@ def detalle_familiar(request, paciente_id):
 def vocalizacion(request, pauta_id=None, *args, **kwargs):
     tipo_usuario = None
     pauta_seleccionada = None
+    
 
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
@@ -471,19 +473,24 @@ def vocalizacion(request, pauta_id=None, *args, **kwargs):
         id_usuario = request.user.id_usuario
         fecha = timezone.now()
         fecha_formateada = fecha.strftime("%Y-%m-%d-%H-%M-%S")
-        terapia = 'vocalizacion'
 
         # Crea una ruta para la carpeta del usuario
-        carpeta_usuario = os.path.join('media/audios_pacientes', nombre_usuario)
+        carpeta_usuario = os.path.join(settings.MEDIA_ROOT, 'audios_pacientes', nombre_usuario)
 
         # Verifica si la carpeta del usuario existe, si no, créala
         if not os.path.exists(carpeta_usuario):
             os.makedirs(carpeta_usuario)
 
+        id_pauta = None
+        tipo_pauta = None
+
         if pauta_id is not None:
             try:
                 pauta_seleccionada = PautaTerapeutica.objects.get(id_pauta_terapeutica=pauta_id)
-                nombre_pauta =pauta_seleccionada.fk_tp_terapia         
+                id_pauta = pauta_seleccionada.id_pauta_terapeutica
+                tipo_pauta = pauta_seleccionada.fk_tp_terapia.tipo_terapia 
+                request.session['id_pauta'] = id_pauta  
+                request.session['tipo_pauta'] = tipo_pauta
             except PautaTerapeutica.DoesNotExist:
                 pauta_seleccionada = None
        
@@ -492,9 +499,36 @@ def vocalizacion(request, pauta_id=None, *args, **kwargs):
         audio_file = request.FILES.get('file')
         print("Estoy llegando aquí", audio_file)
 
+        # se obtiene variables declaradas en la sesion
+        id_pauta = request.session.get('id_pauta', None)
+        tipo_pauta = request.session.get('tipo_pauta', None)
+
         # Define el nombre del archivo con el nombre del usuario y su ID
-        nombre_archivo = f"{nombre_usuario}_{id_usuario}_{fecha_formateada}_{terapia}_audio.wav"
+        nombre_archivo = f"{nombre_usuario}_{id_usuario}_{fecha_formateada}_{tipo_pauta}_{id_pauta}_audio.wav"
         ruta_archivo = os.path.join(carpeta_usuario, nombre_archivo)
+
+        # se elimina la variable de la sesion y se guarda en la DB
+        if id_pauta is not None:
+
+            # contruccion de la url para la DB
+            if tipo_pauta == "Vocalización":
+                origen_audio = OrigenAudio.objects.get(id_origen_audio=2)
+            else:
+                origen_audio = OrigenAudio.objects.get(id_origen_audio=1)
+
+            fk_pauta = PautaTerapeutica.objects.get(id_pauta_terapeutica=id_pauta)
+
+            ruta_db = f"{nombre_usuario}/{nombre_archivo}"
+            ##print("Ruta para la db:", ruta_db)
+
+            audio_model = Audio.objects.create(url_audio=ruta_db,
+                                               fecha_audio=fecha,
+                                               fk_origen_audio=origen_audio,
+                                               fk_pauta_terapeutica=fk_pauta)
+            audio_model.save()
+
+            del request.session['id_pauta']
+            del request.session['tipo_pauta']
 
         # Guarda el archivo en la carpeta del usuario con el nuevo nombre
         if audio_file:
@@ -505,35 +539,6 @@ def vocalizacion(request, pauta_id=None, *args, **kwargs):
     return render(request, 'vista_paciente/vocalizacion.html', {'tipo_usuario': tipo_usuario,
                                                                'pauta_seleccionada': pauta_seleccionada})
 
-
-
-# @user_passes_test(validate)
-# def vocalizacion(request, pauta_id=None, *args, **kwargs):
-#     tipo_usuario = None
-#     pauta_seleccionada = None
-
-#     if request.user.is_authenticated:
-#         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
-
-#         if pauta_id is not None:
-#             try:
-#                 pauta_seleccionada = PautaTerapeutica.objects.get(id_pauta_terapeutica=pauta_id)
-#             except PautaTerapeutica.DoesNotExist:
-#                 pauta_seleccionada = None
-
-#     if request.method == 'POST':
-#         # archivo = f"audio.wav"
-#         audio_file = request.FILES.get('file')
-#         print("Estoy llegando aqui",audio_file)
-#         #Guarda el archivo
-#         if audio_file:
-#             with open('media/audios_pacientes/audio1.wav', 'wb') as destination:
-#                 for chunk in audio_file.chunks():
-#                     destination.write(chunk)
-                 
-    
-#     return render(request, 'vista_paciente/vocalizacion.html', {'tipo_usuario': tipo_usuario,
-#                                                                'pauta_seleccionada': pauta_seleccionada})
 
 
 @user_passes_test(validate)
