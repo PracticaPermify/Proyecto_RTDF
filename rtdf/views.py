@@ -472,7 +472,7 @@ def vocalizacion(request, pauta_id=None, *args, **kwargs):
         nombre_usuario = f"{request.user.primer_nombre}_{request.user.ap_paterno}"
         id_usuario = request.user.id_usuario
         fecha = timezone.now()
-        fecha_formateada = fecha.strftime("%Y-%m-%d-%H-%M-%S")
+        fecha_formateada = fecha.strftime("%Y-%m-%d_%H-%M-%S")
 
         # Crea una ruta para la carpeta del usuario
         carpeta_usuario = os.path.join(settings.MEDIA_ROOT, 'audios_pacientes', nombre_usuario)
@@ -489,8 +489,11 @@ def vocalizacion(request, pauta_id=None, *args, **kwargs):
                 pauta_seleccionada = PautaTerapeutica.objects.get(id_pauta_terapeutica=pauta_id)
                 id_pauta = pauta_seleccionada.id_pauta_terapeutica
                 tipo_pauta = pauta_seleccionada.fk_tp_terapia.tipo_terapia 
+                id_profesional = pauta_seleccionada.fk_informe.fk_relacion_pa_pro.fk_profesional_salud.id_profesional_salud
                 request.session['id_pauta'] = id_pauta  
                 request.session['tipo_pauta'] = tipo_pauta
+                request.session['id_profesional'] = id_profesional
+                #print("ID PROFESIONAL", id_profesional)
             except PautaTerapeutica.DoesNotExist:
                 pauta_seleccionada = None
        
@@ -502,9 +505,10 @@ def vocalizacion(request, pauta_id=None, *args, **kwargs):
         # se obtiene variables declaradas en la sesion
         id_pauta = request.session.get('id_pauta', None)
         tipo_pauta = request.session.get('tipo_pauta', None)
+        id_profesional = request.session.get('id_profesional', None)
 
         # Define el nombre del archivo con el nombre del usuario y su ID
-        nombre_archivo = f"{nombre_usuario}_{id_usuario}_{fecha_formateada}_{tipo_pauta}_{id_pauta}_audio.wav"
+        nombre_archivo = f"{nombre_usuario}_{id_usuario}_{fecha_formateada}_{tipo_pauta}_{id_pauta}_{id_profesional}_audio.wav"
         ruta_archivo = os.path.join(carpeta_usuario, nombre_archivo)
 
         # se elimina la variable de la sesion y se guarda en la DB
@@ -542,7 +546,7 @@ def vocalizacion(request, pauta_id=None, *args, **kwargs):
 
 
 @user_passes_test(validate)
-def intensidad(request, pauta_id=None):
+def intensidad(request, pauta_id=None, *args, **kwargs):
 
     tipo_usuario = None
     pautas_terapeuticas = None
@@ -551,11 +555,76 @@ def intensidad(request, pauta_id=None):
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
 
+        # Obtén el nombre de usuario y su ID
+        nombre_usuario = f"{request.user.primer_nombre}_{request.user.ap_paterno}"
+        id_usuario = request.user.id_usuario
+        fecha = timezone.now()
+        fecha_formateada = fecha.strftime("%Y-%m-%d-%H-%M-%S")
+
+        # Crea una ruta para la carpeta del usuario
+        carpeta_usuario = os.path.join(settings.MEDIA_ROOT, 'audios_pacientes', nombre_usuario)
+
+        # Verifica si la carpeta del usuario existe, si no, créala
+        if not os.path.exists(carpeta_usuario):
+            os.makedirs(carpeta_usuario)
+
+        id_pauta = None
+        tipo_pauta = None
+
         if pauta_id is not None:
             try:
                 pauta_seleccionada = PautaTerapeutica.objects.get(id_pauta_terapeutica=pauta_id)
+                id_pauta = pauta_seleccionada.id_pauta_terapeutica
+                tipo_pauta = pauta_seleccionada.fk_tp_terapia.tipo_terapia 
+                id_profesional = pauta_seleccionada.fk_informe.fk_relacion_pa_pro.fk_profesional_salud.id_profesional_salud
+                request.session['id_pauta'] = id_pauta  
+                request.session['tipo_pauta'] = tipo_pauta
+                request.session['id_profesional'] = id_profesional
             except PautaTerapeutica.DoesNotExist:
                 pauta_seleccionada = None
+
+    if request.method == 'POST':
+        audio_file = request.FILES.get('file')
+        print("Estoy llegando aquí", audio_file)
+
+        # se obtiene variables declaradas en la sesion
+        id_pauta = request.session.get('id_pauta', None)
+        tipo_pauta = request.session.get('tipo_pauta', None)
+        id_profesional = request.session.get('id_profesional', None)
+
+        # Define el nombre del archivo con el nombre del usuario y su ID
+        nombre_archivo = f"{nombre_usuario}_{id_usuario}_{fecha_formateada}_{tipo_pauta}_{id_pauta}_{id_profesional}_audio.wav"
+        ruta_archivo = os.path.join(carpeta_usuario, nombre_archivo)
+
+        # se elimina la variable de la sesion y se guarda en la DB
+        if id_pauta is not None:
+
+            # contruccion de la url para la DB
+            if tipo_pauta == "Intensidad":
+                origen_audio = OrigenAudio.objects.get(id_origen_audio=1)
+            else:
+                origen_audio = OrigenAudio.objects.get(id_origen_audio=2)
+
+            fk_pauta = PautaTerapeutica.objects.get(id_pauta_terapeutica=id_pauta)
+
+            ruta_db = f"{nombre_usuario}/{nombre_archivo}"
+            ##print("Ruta para la db:", ruta_db)
+
+            audio_model = Audio.objects.create(url_audio=ruta_db,
+                                               fecha_audio=fecha,
+                                               fk_origen_audio=origen_audio,
+                                               fk_pauta_terapeutica=fk_pauta)
+            audio_model.save()
+
+            del request.session['id_pauta']
+            del request.session['tipo_pauta']
+
+
+        # Guarda el archivo en la carpeta del usuario con el nuevo nombre
+        if audio_file:
+            with open(ruta_archivo, 'wb') as destination:
+                for chunk in audio_file.chunks():
+                    destination.write(chunk)
 
     return render(request,'vista_paciente/intensidad.html', {'tipo_usuario': tipo_usuario,
                                                             'pauta_seleccionada': pauta_seleccionada})
@@ -662,6 +731,7 @@ def esv(request):
     })
 
 
+
 @user_passes_test(validate)
 def mi_fonoaudiologo(request):
 
@@ -734,6 +804,7 @@ def detalle_paciente(request, paciente_id):
 
     obtener_rasati = Rasati.objects.filter(id_informe__fk_relacion_pa_pro__id_paciente=traer_paciente)
     obtener_grbas = Grbas.objects.filter(id_informe__fk_relacion_pa_pro__id_paciente=traer_paciente)
+    obtener_esv = Esv.objects.filter(id_informe__fk_relacion_pa_pro__id_paciente=traer_paciente)
 
     tipo_usuario = None
     if request.user.is_authenticated:
@@ -741,12 +812,14 @@ def detalle_paciente(request, paciente_id):
 
     informes_rasati = obtener_rasati 
     informes_grbas = obtener_grbas    
+    informes_esv= obtener_esv
 
     return render(request, 'vista_admin/detalle_paciente.html', {
         'paciente': paciente,
         'tipo_usuario': tipo_usuario,
         'paciente_info': traer_paciente,
         'fonoaudiologos_asociados': fonoaudiologos_asociados,
+        'informes_esv': informes_esv,
         'informes_rasati': informes_rasati,
         'informes_grbas': informes_grbas,
     })
@@ -1382,3 +1455,152 @@ def eliminar_pauta_admin(request, id_pauta_terapeutica_id):
     pauta.delete()
 
     return redirect('detalle_informe', informe_id=pauta.fk_informe.id_informe)
+
+
+def detalle_esv(request, informe_id):
+    tipo_usuario = None 
+
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+        informe = get_object_or_404(Informe, pk=informe_id)
+        paciente_relacionado = informe.fk_relacion_pa_pro.id_paciente
+
+    return render(request, 'vista_profe/detalle_esv.html', {'informe': informe,
+                                                            'tipo_usuario': tipo_usuario,
+                                                            'paciente_relacionado': paciente_relacionado })
+
+
+def editar_esv(request, informe_id):
+    tipo_usuario = None 
+
+    preguntas = [
+            "¿Tiene dificultades para llamar la atención de los demás usando su voz?",
+            "¿Tiene problemas al cantar?",
+            "¿Le duele la garganta?",
+            "¿Su voz está ronca?",
+            "En conversaciones grupales, ¿Las personas tienen dificultades para escucharlo(a)?",
+            "¿Suele perder su voz?",
+            "¿Suele toser o carraspear?",
+            "¿Considera que tiene una voz débil?",
+            "¿Tiene problemas al hablar por teléfono?",
+            "¿Se siente menos valorado o deprimido debido a su problema de la voz?",
+            "¿Siente como si tuviera algo atascado en su garganta?",
+            "¿Siente inflamación en la garganta?",
+            "¿Siente pudor al usar su voz?",
+            "¿Siente que se cansa al hablar?",
+            "¿Su problema de la voz lo hace sentir estresado y nervioso?",
+            "¿Tiene dificultades para hacerse escuchar cuando hay ruido en el ambiente?",
+            "¿Es incapaz de gritar o alzar la voz?",
+            "¿Su problema de la voz le genera complicaciones con su familia y amigos?",
+            "¿Tiene mucha flema o mucosidad en su garganta?",
+            "¿Siente que la calidad de su voz varía durante el día?",
+            "¿Siente que a las personas les molesta su voz?",
+            "¿Tiene la nariz tapada?",
+            "¿La gente le pregunta qué le pasa a su voz?",
+            "¿Siente que su voz suena ronca y seca?",
+            "¿Siente que debe esforzarse para sacar la voz?",
+            "¿Con cuánta frecuencia presenta infecciones en la garganta?",
+            "¿Su voz se “agota” mientras está hablando?",
+            "¿Su voz lo(a) hace sentir incompetente?",
+            "¿Se siente avergonzado debido a su problema de la voz?",
+            "¿Se siente aislado por sus problemas con la voz?"
+        ]
+
+
+    opciones_respuesta = ["Nunca", "Casi nunca", "A veces", "Casi siempre", "Siempre"]
+    
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+
+    informe = get_object_or_404(Informe, pk=informe_id)
+
+    if request.method == 'POST':
+        informe.titulo = request.POST.get('titulo')
+        informe.fecha = request.POST.get('fecha')
+        informe.descripcion = request.POST.get('descripcion')
+        informe.observacion = request.POST.get('observacion')
+        informe.save()
+
+        puntaje_limitacion = 0
+        puntaje_emocional = 0
+        puntaje_fisico = 0
+
+        for i, pregunta in enumerate(preguntas, 1):
+            respuesta = request.POST.get(f"respuesta_{i}")
+
+            if respuesta == "Nunca":
+                puntaje = 0
+            elif respuesta == "Casi nunca":
+                puntaje = 1
+            elif respuesta == "A veces":
+                puntaje = 2
+            elif respuesta == "Casi siempre":
+                puntaje = 3
+            else:
+                puntaje = 4
+
+            if i in [1, 2, 4, 5, 6, 8, 9, 14, 16, 17, 20, 23, 24, 25, 27]:
+                puntaje_limitacion += puntaje
+            elif i in [10, 13, 15, 18, 21, 28, 29, 30]:
+                puntaje_emocional += puntaje
+            elif i in [3, 7, 11, 12, 19, 22, 26]:
+                puntaje_fisico += puntaje
+
+        puntaje_limitacion = min(puntaje_limitacion, 60)
+        puntaje_emocional = min(puntaje_emocional, 32)
+        puntaje_fisico = min(puntaje_fisico, 28)
+
+        puntaje_total = puntaje_limitacion + puntaje_emocional + puntaje_fisico
+        if puntaje_total > 120:
+            puntaje_total = 120
+
+        # Actualiza los datos en la tabla ESV con los nuevos puntajes
+        esv = Esv.objects.get(id_informe=informe)
+        esv.total_esv = puntaje_total
+        esv.limitacion = puntaje_limitacion
+        esv.emocional = puntaje_emocional
+        esv.fisico = puntaje_fisico
+        esv.save()
+
+        return redirect('listado_informes')
+    else:
+        return render(request, 'vista_profe/editar_esv.html', {'informe': informe, 
+                                                            'tipo_usuario': tipo_usuario,
+                                                            'preguntas': preguntas, 
+                                                            'opciones_respuesta': opciones_respuesta})
+
+
+def eliminar_informe_esv(request, informe_id):
+    informe = get_object_or_404(Informe, id_informe=informe_id)
+    esv_instance = Esv.objects.filter(id_informe=informe)
+
+    if esv_instance.exists():
+        esv_instance.delete()
+
+    informe.delete()
+
+    return redirect('listado_informes')
+
+
+def detalle_esv_admin(request, informe_id):
+    tipo_usuario = None 
+
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+        informe = get_object_or_404(Informe, pk=informe_id)
+        paciente_relacionado = informe.fk_relacion_pa_pro.id_paciente
+
+    return render(request, 'vista_admin/detalle_esv_admin.html', {'informe': informe,
+                                                            'tipo_usuario': tipo_usuario,
+                                                            'paciente_relacionado': paciente_relacionado })
+
+def eliminar_esv_admin(request, informe_id):
+    informe = get_object_or_404(Informe, id_informe=informe_id)
+    esv_instance = Esv.objects.filter(id_informe=informe)
+
+    if esv_instance.exists():
+        esv_instance.delete()
+
+    informe.delete()
+
+    return redirect('detalle_paciente', paciente_id=esv.paciente.id)

@@ -180,6 +180,8 @@
         window.tempo = {{ pauta_seleccionada.vocalizacion.tempo }}; {% endcomment %}
         window.id = {{ pauta_seleccionada.id_pauta_terapeutica }};
 
+        window.terapia = "{{ pauta_seleccionada.fk_tp_terapia.tipo_terapia}}"; //Vocalización o Intensidad
+
         //variables de url procesadas por django        
         var vocalizacionConPautaURL = "{% url 'vocalizacion_con_pauta' pauta_id=0 %}".replace('0', {{pauta_seleccionada.id_pauta_terapeutica}});
         var vocalizacionURL = "{% url 'vocalizacion' %}";

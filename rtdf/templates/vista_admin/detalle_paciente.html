@@ -181,7 +181,44 @@
       </table>
     </div>
 
+  </br>
+  <h2><strong>Informes ESV</strong></h2>
+  </br>
+
+  <div class="table-responsive">
+    <table class="table">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">ID informe</th>
+            <th scope="col">Fecha del informe</th>
+            <th scope="col">Total ESV</th>
+            <th scope="col">Limitacion ESV</th>
+            <th scope="col">Emocional ESV</th>
+            <th scope="col">Fisico ESV</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for informe in informes_esv %}
+          <tr>
+            <td><a href="{% url 'detalle_esv_admin' informe.id_informe.id_informe %}">
+              Informe {{ informe.id_informe.id_informe}}</td>
+            <td>{{ informe.id_informe.fecha }}</td>
+            <td>{{ informe.total_esv }}</td>
+            <td>{{ informe.limitacion }}</td>
+            <td>{{ informe.emocional }}</td>
+            <td>{{ informe.fisico }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+              <td colspan="8">Este paciente aún no cuenta con informes ESV adjuntos.</td>
+          </tr>
+          {% endfor %}   
+        </tbody>
+      </table>
+    </div>
+
 </div>
+
 
 {% endblock %}
 

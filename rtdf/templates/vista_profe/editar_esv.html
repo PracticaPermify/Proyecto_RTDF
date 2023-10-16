@@ -1,0 +1,59 @@
+{% extends "rtdf/base.html" %}
+
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+
+    <a href="{% url 'detalle_esv' informe.id_informe %}">Volver al detalle del informe</a>
+    <br><br>
+
+    <h1>Editar ESV {{ informe.id_informe }} "{{ informe.fk_relacion_pa_pro.id_paciente.id_usuario.primer_nombre }}
+      {{ informe.fk_relacion_pa_pro.id_paciente.id_usuario.ap_paterno }}
+      {{ informe.fk_relacion_pa_pro.id_paciente.id_usuario.ap_materno }}"</h1>
+
+    <br>
+
+    <div class="form-group col-md-4">
+      <label for="titulo">Título:</label>
+      <input type="text" name="titulo" value="{{ informe.titulo }}">
+    </div>
+    <br>
+
+    <div class="form-group col-md-10">
+      <label for="descripcion">Descripción:</label>
+      <textarea name="descripcion">{{ informe.descripcion }}</textarea><br>
+    </div>
+
+    <div class="form-group col-md-4">
+      <label for="fecha">Fecha:</label><br>
+      <input type="datetime-local" id="fecha" name="fecha" value="{{ form.fecha.value|date:'Y-m-d\TH:i' }}"><br><br>
+    </div>
+
+    <div class="form-group col-md-10">
+      <label for="observacion">Observación:</label>
+      <textarea name="observacion">{{ informe.observacion }}</textarea><br>
+    </div>
+
+    {% for pregunta in preguntas %}
+    <div class="pregunta">
+      <p>{{ forloop.counter }}. {{ pregunta }}</p>
+      <div class="form-group col-md-4">
+        <select name="respuesta_{{ forloop.counter }}" required>
+          {% for opcion in opciones_respuesta %}
+            <option value="{{ opcion }}">{{ opcion }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    {% if forloop.counter|divisibleby:5 %}
+    <div style="page-break-after: always;"></div>
+    {% endif %}
+  {% endfor %}
+
+    <div class="form-group col-md-4">
+      <br>
+      <button type="submit" class="btn btn-primary btn-block">Guardar Cambios</button>
+    </div>
+</form>
+
+{% endblock %}

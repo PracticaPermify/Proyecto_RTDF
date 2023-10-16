@@ -7,8 +7,9 @@
 var nombre;
 var cancelled=false;
 var grabando=false;
-var csrftoken = document.querySelector('#post-form [name=csrfmiddlewaretoken]').value;
 var pauta_id = window.id;
+var terapia = window.terapia;
+
 
 function captureMicrophone(callback) {
     navigator.mediaDevices.getUserMedia({audio: true}).then(callback).catch(function(error) {
@@ -30,29 +31,65 @@ function stopRecordingCallback() {
 
             //Logica de la construcción de URL
 
-            var url;
+            var url_terapia;
+            if (terapia === "Vocalización")  {
 
-            if (pauta_id) {
-                url = vocalizacionConPautaURL;
-            } else {
-                url = '/vocalizacion/';
-            }
+                var csrftoken = document.querySelector('#post-form [name=csrfmiddlewaretoken]').value;
 
-            fetch(url, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRFToken': csrftoken
-                },
-                
-            })
-            .then(response => {
-                if (response.ok) {
-                    console.log('Grabación de audio completada y enviada al servidor.');
+                if (pauta_id) {
+                    url_terapia = vocalizacionConPautaURL;
                 } else {
-                    console.error('Error al enviar el audio al servidor.');
+                    url_terapia = vocalizacionURL;
                 }
-            });
+    
+                fetch(url_terapia, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    },
+                    
+                })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Grabación de audio completada y enviada al servidor.');
+                    } else {
+                        console.error('Error al enviar el audio al servidor.');
+                    }
+                });
+
+            } else {
+
+                var crsftoken = window.csrftoken;
+
+                if (pauta_id) {
+                    url_terapia = intensidadeConPautaURL;
+                } else {
+                    url_terapia = '/intensidad/';
+                }
+
+                
+                //console.log("Intensidad" + crsftoken);
+
+                fetch(url_terapia, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': crsftoken
+                    },
+                    
+                })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Grabación de audio completada y enviada al servidor.');
+                    } else {
+                        console.error('Error al enviar el audio al servidor.');
+                    }
+                });
+
+
+            }
+            
         }
         else{console.log("nada que guardar");}
     }

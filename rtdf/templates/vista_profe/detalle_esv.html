@@ -1,0 +1,80 @@
+{% extends "rtdf/base.html" %}
+
+{% block content%}
+
+<div>
+  <a href="{% url 'listado_informes' %}">Volver a la lista de mis informes</a>
+</div>   
+
+</br>
+
+<h1>Detalle del Informe ESV</h1>
+
+</br>
+<a href="{% url 'eliminar_informe_esv' informe.id_informe %}" class="btn btn-danger btn-derecha">Eliminar ESV 
+  <i class="fas fa-trash-alt" style="margin-left: 5px;"></i> </a>
+</a>
+<a href="{% url 'editar_esv' informe.id_informe %}" class="btn btn-primary btn-derecha">
+  Editar <i class="fas fa-pencil-alt" style="margin-left: 5px;"></i>
+</a>
+
+</br>
+
+<table>
+  <tr>
+    <th>ID del informe:</th>
+    <td>{{ informe.id_informe }}</td>
+  </tr>
+
+  <tr>
+    <th>Rut del paciente:</th>
+    <td>{{ paciente_relacionado.id_usuario.numero_identificacion }}</td>
+  </tr>
+
+  <tr>
+    <th>Paciente:</th>
+    <td>{{ paciente_relacionado.id_usuario.primer_nombre }} {{ paciente_relacionado.id_usuario.ap_paterno }}
+      {{ paciente_relacionado.id_usuario.ap_materno }}
+    </td>
+  </tr>
+
+  <tr>
+      <th>Fecha:</th>
+      <td>{{ informe.fecha }}</td>
+  </tr>
+  <tr>
+      <th>Título:</th>
+      <td>{{ informe.titulo }}</td>
+  </tr>
+  <tr>
+      <th>Descripción:</th>
+      <td>{{ informe.descripcion }}</td>
+  </tr>
+</table>
+
+</br>
+
+  <h2>Puntaje del paciente ESV</h2>
+
+</br>
+
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Total ESV</th>
+      <th scope="col">Limitacion ESV</th>
+      <th scope="col">Emocional ESV</th>
+      <th scope="col">Fisico ESV</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">{{ informe.esv.total_esv }}</th>
+      <td>{{ informe.esv.limitacion }}</td>
+      <td>{{ informe.esv.emocional }}</td>
+      <td>{{ informe.esv.fisico }}</td>
+    </tr>
+  </tbody>
+</table>
+
+{% endblock  %}
