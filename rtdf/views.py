@@ -535,6 +535,8 @@ def vocalizacion(request, pauta_id=None, *args, **kwargs):
                                                fk_pauta_terapeutica=fk_pauta)
             audio_model.save()
 
+            id_audio_registrado = audio_model.id_audio
+
 
             # Guarda el archivo en la carpeta del usuario con el nuevo nombre
             if audio_file:
@@ -549,7 +551,7 @@ def vocalizacion(request, pauta_id=None, *args, **kwargs):
             tipo_llenado = TpLlenado.objects.get(id_tipo_llenado=1)
 
             #obtencion del id del audio
-            id_audio = Audio.objects.get(fk_pauta_terapeutica=id_pauta)
+            id_audio = Audio.objects.get(id_audio=id_audio_registrado)
 
             print(ruta_db)
             res = audio_analysis(ruta_db, nombre_archivo, fecha)
@@ -584,8 +586,8 @@ def vocalizacion(request, pauta_id=None, *args, **kwargs):
                 print('analizado')
 
 
-            del request.session['id_pauta']
-            del request.session['tipo_pauta']
+            # del request.session['id_pauta']
+            # del request.session['tipo_pauta']
 
 
 
@@ -665,6 +667,8 @@ def intensidad(request, pauta_id=None, *args, **kwargs):
                                                fk_pauta_terapeutica=fk_pauta)
             audio_model.save()
 
+            #Capturo el id del audio al momento del guardado en la base de datos
+            id_audio_registrado = audio_model.id_audio
 
             # Guarda el archivo en la carpeta del usuario con el nuevo nombre
             if audio_file:
@@ -678,7 +682,7 @@ def intensidad(request, pauta_id=None, *args, **kwargs):
             tipo_llenado = TpLlenado.objects.get(id_tipo_llenado=1)
 
             #obtencion del id del audio
-            id_audio = Audio.objects.get(fk_pauta_terapeutica=id_pauta)
+            id_audio = Audio.objects.get(id_audio=id_audio_registrado)
 
             print(ruta_db)
             res = audio_analysis(ruta_db, nombre_archivo, fecha)
@@ -713,8 +717,8 @@ def intensidad(request, pauta_id=None, *args, **kwargs):
                 print('analizado')
 
 
-            del request.session['id_pauta']
-            del request.session['tipo_pauta']
+            # del request.session['id_pauta']
+            # del request.session['tipo_pauta']
 
     return render(request,'vista_paciente/intensidad.html', {'tipo_usuario': tipo_usuario,
                                                             'pauta_seleccionada': pauta_seleccionada})
