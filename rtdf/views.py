@@ -5,17 +5,20 @@ from .models import *
 from django.http import JsonResponse
 from django.contrib.auth.decorators import user_passes_test
 from django.views.decorators.cache import never_cache
-from django.views.decorators.csrf import csrf_exempt
-from django.core.files.storage import default_storage
+#from django.views.decorators.csrf import csrf_exempt
+#from django.core.files.storage import default_storage
 from django.utils import timezone
 from django.urls import reverse
 from django.core.paginator import Paginator
 from django.db.models import Count
 from django.contrib.auth.decorators import login_required
-import wave
+#import wave
 from django.http import JsonResponse, HttpResponse
 import os
 from django.conf import settings
+from rtdf.audio_coef import audio_analysis
+#from rtdf.audio_coef import *
+#import scripts as scripts
 
 def validate(request):
     if request.is_anonymous:
@@ -514,9 +517,10 @@ def vocalizacion(request, pauta_id=None, *args, **kwargs):
         # se elimina la variable de la sesion y se guarda en la DB
         if id_pauta is not None:
 
-            # contruccion de la url para la DB
+            # contruccion de la url para la tabla audio DB
             if tipo_pauta == "Vocalización":
                 origen_audio = OrigenAudio.objects.get(id_origen_audio=2)
+                
             else:
                 origen_audio = OrigenAudio.objects.get(id_origen_audio=1)
 
@@ -531,14 +535,59 @@ def vocalizacion(request, pauta_id=None, *args, **kwargs):
                                                fk_pauta_terapeutica=fk_pauta)
             audio_model.save()
 
+
+            # Guarda el archivo en la carpeta del usuario con el nuevo nombre
+            if audio_file:
+                with open(ruta_archivo, 'wb') as destination:
+                    for chunk in audio_file.chunks():
+                        destination.write(chunk)
+
+
+            #REGISTRO DE LOS COEFICIENTES DE AUDIOS DE VOCALIZACION EN LA DB
+
+            #obtencion del tipo de llenado automatico
+            tipo_llenado = TpLlenado.objects.get(id_tipo_llenado=1)
+
+            #obtencion del id del audio
+            id_audio = Audio.objects.get(fk_pauta_terapeutica=id_pauta)
+
+            print(ruta_db)
+            res = audio_analysis(ruta_db, nombre_archivo, fecha)
+            is_coefs=Audioscoeficientes.objects.all().filter(nombre_archivo=nombre_archivo)
+            # id_user=int(username.split(' ')[0])
+            if not is_coefs.exists():
+                print('analizando')
+                coefs=Audioscoeficientes.objects.create(
+                    nombre_archivo = nombre_archivo,
+                    fecha_coeficiente = res['date'],               
+                    f0  = res['f0'],
+                    f1  = res['f1'],
+                    f2  = res['f2'],
+                    f3  = res['f3'],
+                    f4  = res['f4'],
+                    intensidad  = res['Intensity'],
+                    hnr  = res['HNR'],
+                    local_jitter  = res['localJitter'],
+                    local_absolute_jitter  = res['localabsoluteJitter'],
+                    rap_jitter  = res['rapJitter'],
+                    ppq5_jitter  = res['ppq5Jitter'],
+                    ddp_jitter = res['ddpJitter'],
+                    local_shimmer = res['localShimmer'],
+                    local_db_shimmer = res['localdbShimmer'],
+                    apq3_shimmer = res['apq3Shimmer'],
+                    aqpq5_shimmer = res['aqpq5Shimmer'],
+                    apq11_shimmer = res['apq11Shimmer'],
+                    fk_tipo_llenado = tipo_llenado, 
+                    id_audio = id_audio
+                )
+                coefs.save()
+                print('analizado')
+
+
             del request.session['id_pauta']
             del request.session['tipo_pauta']
 
-        # Guarda el archivo en la carpeta del usuario con el nuevo nombre
-        if audio_file:
-            with open(ruta_archivo, 'wb') as destination:
-                for chunk in audio_file.chunks():
-                    destination.write(chunk)
+
 
     return render(request, 'vista_paciente/vocalizacion.html', {'tipo_usuario': tipo_usuario,
                                                                'pauta_seleccionada': pauta_seleccionada})
@@ -616,15 +665,56 @@ def intensidad(request, pauta_id=None, *args, **kwargs):
                                                fk_pauta_terapeutica=fk_pauta)
             audio_model.save()
 
+
+            # Guarda el archivo en la carpeta del usuario con el nuevo nombre
+            if audio_file:
+                with open(ruta_archivo, 'wb') as destination:
+                    for chunk in audio_file.chunks():
+                        destination.write(chunk)
+
+            #REGISTRO DE LOS COEFICIENTES DE AUDIOS DE INTENSIDAD EN LA DB
+
+            #obtencion del tipo de llenado automatico
+            tipo_llenado = TpLlenado.objects.get(id_tipo_llenado=1)
+
+            #obtencion del id del audio
+            id_audio = Audio.objects.get(fk_pauta_terapeutica=id_pauta)
+
+            print(ruta_db)
+            res = audio_analysis(ruta_db, nombre_archivo, fecha)
+            is_coefs=Audioscoeficientes.objects.all().filter(nombre_archivo=nombre_archivo)
+            # id_user=int(username.split(' ')[0])
+            if not is_coefs.exists():
+                print('analizando')
+                coefs=Audioscoeficientes.objects.create(
+                    nombre_archivo = nombre_archivo,
+                    fecha_coeficiente = fecha,                    
+                    f0  = res['f0'],
+                    f1  = res['f1'],
+                    f2  = res['f2'],
+                    f3  = res['f3'],
+                    f4  = res['f4'],
+                    intensidad  = res['Intensity'],
+                    hnr  = res['HNR'],
+                    local_jitter  = res['localJitter'],
+                    local_absolute_jitter  = res['localabsoluteJitter'],
+                    rap_jitter  = res['rapJitter'],
+                    ppq5_jitter  = res['ppq5Jitter'],
+                    ddp_jitter = res['ddpJitter'],
+                    local_shimmer = res['localShimmer'],
+                    local_db_shimmer = res['localdbShimmer'],
+                    apq3_shimmer = res['apq3Shimmer'],
+                    aqpq5_shimmer = res['aqpq5Shimmer'],
+                    apq11_shimmer = res['apq11Shimmer'],
+                    fk_tipo_llenado = tipo_llenado, 
+                    id_audio = id_audio
+                )
+                coefs.save()
+                print('analizado')
+
+
             del request.session['id_pauta']
             del request.session['tipo_pauta']
-
-
-        # Guarda el archivo en la carpeta del usuario con el nuevo nombre
-        if audio_file:
-            with open(ruta_archivo, 'wb') as destination:
-                for chunk in audio_file.chunks():
-                    destination.write(chunk)
 
     return render(request,'vista_paciente/intensidad.html', {'tipo_usuario': tipo_usuario,
                                                             'pauta_seleccionada': pauta_seleccionada})
