@@ -682,7 +682,7 @@ def intensidad(request, pauta_id=None, *args, **kwargs):
             tipo_llenado = TpLlenado.objects.get(id_tipo_llenado=1)
 
             #obtencion del id del audio
-            id_audio = Audio.objects.get(id_audio=id_audio_registrado)
+            # id_audio = Audio.objects.get(id_audio=id_audio_registrado)
 
             print(ruta_db)
             res = audio_analysis(ruta_db, nombre_archivo, fecha)
