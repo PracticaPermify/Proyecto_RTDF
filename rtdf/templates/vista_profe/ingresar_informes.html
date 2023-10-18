@@ -13,6 +13,16 @@
         <br>
 
         <div class="form-group col-md-4">
+            <label for="tp_informe">Tipo de Informe:</label>
+            <select id="tp_informe" name="{{ form.tp_informe.name }}" class="form-control form-control-sm">
+                <option value="" selected>Tipo de informe para diagnostico</option>
+                {% for choice in form.tp_informe.field.choices %}
+                    <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group col-md-4">
             <label for="fk_relacion_pa_pro">Paciente:</label>
             {{ form.fk_relacion_pa_pro }}
         </div>
@@ -37,15 +47,7 @@
             {{ form.observacion }}
         </div>
 
-        <div class="form-group col-md-4">
-            <label for="tp_informe">Tipo de Informe:</label>
-            <select id="tp_informe" name="{{ form.tp_informe.name }}" class="form-control form-control-sm">
-                <option value="" selected>Tipo de informe para diagnostico</option>
-                {% for choice in form.tp_informe.field.choices %}
-                    <option value="{{ choice.0 }}">{{ choice.1 }}</option>
-                {% endfor %}
-            </select>
-        </div>
+
 
     {% comment %}Aqui va campos para GRBAS{% endcomment %}
 
