@@ -34,22 +34,6 @@
       <textarea name="observacion">{{ informe.observacion }}</textarea><br>
     </div>
 
-    {% for pregunta in preguntas %}
-    <div class="pregunta">
-      <p>{{ forloop.counter }}. {{ pregunta }}</p>
-      <div class="form-group col-md-4">
-        <select name="respuesta_{{ forloop.counter }}" required>
-          {% for opcion in opciones_respuesta %}
-            <option value="{{ opcion }}">{{ opcion }}</option>
-          {% endfor %}
-        </select>
-      </div>
-    </div>
-    {% if forloop.counter|divisibleby:5 %}
-    <div style="page-break-after: always;"></div>
-    {% endif %}
-  {% endfor %}
-
     <div class="form-group col-md-4">
       <br>
       <button type="submit" class="btn btn-primary btn-block">Guardar Cambios</button>

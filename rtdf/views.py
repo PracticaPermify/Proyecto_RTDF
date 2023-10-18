@@ -1565,43 +1565,7 @@ def detalle_esv(request, informe_id):
 
 
 def editar_esv(request, informe_id):
-    tipo_usuario = None 
-
-    preguntas = [
-            "¿Tiene dificultades para llamar la atención de los demás usando su voz?",
-            "¿Tiene problemas al cantar?",
-            "¿Le duele la garganta?",
-            "¿Su voz está ronca?",
-            "En conversaciones grupales, ¿Las personas tienen dificultades para escucharlo(a)?",
-            "¿Suele perder su voz?",
-            "¿Suele toser o carraspear?",
-            "¿Considera que tiene una voz débil?",
-            "¿Tiene problemas al hablar por teléfono?",
-            "¿Se siente menos valorado o deprimido debido a su problema de la voz?",
-            "¿Siente como si tuviera algo atascado en su garganta?",
-            "¿Siente inflamación en la garganta?",
-            "¿Siente pudor al usar su voz?",
-            "¿Siente que se cansa al hablar?",
-            "¿Su problema de la voz lo hace sentir estresado y nervioso?",
-            "¿Tiene dificultades para hacerse escuchar cuando hay ruido en el ambiente?",
-            "¿Es incapaz de gritar o alzar la voz?",
-            "¿Su problema de la voz le genera complicaciones con su familia y amigos?",
-            "¿Tiene mucha flema o mucosidad en su garganta?",
-            "¿Siente que la calidad de su voz varía durante el día?",
-            "¿Siente que a las personas les molesta su voz?",
-            "¿Tiene la nariz tapada?",
-            "¿La gente le pregunta qué le pasa a su voz?",
-            "¿Siente que su voz suena ronca y seca?",
-            "¿Siente que debe esforzarse para sacar la voz?",
-            "¿Con cuánta frecuencia presenta infecciones en la garganta?",
-            "¿Su voz se “agota” mientras está hablando?",
-            "¿Su voz lo(a) hace sentir incompetente?",
-            "¿Se siente avergonzado debido a su problema de la voz?",
-            "¿Se siente aislado por sus problemas con la voz?"
-        ]
-
-
-    opciones_respuesta = ["Nunca", "Casi nunca", "A veces", "Casi siempre", "Siempre"]
+    tipo_usuario = None
     
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
@@ -1615,53 +1579,10 @@ def editar_esv(request, informe_id):
         informe.observacion = request.POST.get('observacion')
         informe.save()
 
-        puntaje_limitacion = 0
-        puntaje_emocional = 0
-        puntaje_fisico = 0
-
-        for i, pregunta in enumerate(preguntas, 1):
-            respuesta = request.POST.get(f"respuesta_{i}")
-
-            if respuesta == "Nunca":
-                puntaje = 0
-            elif respuesta == "Casi nunca":
-                puntaje = 1
-            elif respuesta == "A veces":
-                puntaje = 2
-            elif respuesta == "Casi siempre":
-                puntaje = 3
-            else:
-                puntaje = 4
-
-            if i in [1, 2, 4, 5, 6, 8, 9, 14, 16, 17, 20, 23, 24, 25, 27]:
-                puntaje_limitacion += puntaje
-            elif i in [10, 13, 15, 18, 21, 28, 29, 30]:
-                puntaje_emocional += puntaje
-            elif i in [3, 7, 11, 12, 19, 22, 26]:
-                puntaje_fisico += puntaje
-
-        puntaje_limitacion = min(puntaje_limitacion, 60)
-        puntaje_emocional = min(puntaje_emocional, 32)
-        puntaje_fisico = min(puntaje_fisico, 28)
-
-        puntaje_total = puntaje_limitacion + puntaje_emocional + puntaje_fisico
-        if puntaje_total > 120:
-            puntaje_total = 120
-
-        # Actualiza los datos en la tabla ESV con los nuevos puntajes
-        esv = Esv.objects.get(id_informe=informe)
-        esv.total_esv = puntaje_total
-        esv.limitacion = puntaje_limitacion
-        esv.emocional = puntaje_emocional
-        esv.fisico = puntaje_fisico
-        esv.save()
-
         return redirect('listado_informes')
     else:
         return render(request, 'vista_profe/editar_esv.html', {'informe': informe, 
-                                                            'tipo_usuario': tipo_usuario,
-                                                            'preguntas': preguntas, 
-                                                            'opciones_respuesta': opciones_respuesta})
+                                                                 'tipo_usuario': tipo_usuario})
 
 
 def eliminar_informe_esv(request, informe_id):
@@ -1698,3 +1619,38 @@ def eliminar_esv_admin(request, informe_id):
     informe.delete()
 
     return redirect('detalle_paciente', paciente_id=esv.paciente.id)
+
+def analisis_admin(request):
+    tipo_usuario = None
+
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+
+        # Actualiza esta consulta para incluir datos de Usuario
+        datos_audiocoeficientes = Audioscoeficientes.objects.select_related(
+            'id_audio__fk_pauta_terapeutica__fk_informe__fk_relacion_pa_pro__id_paciente__id_usuario',
+            'id_audio__fk_pauta_terapeutica__fk_informe__fk_relacion_pa_pro__fk_profesional_salud'
+        )
+
+    return render(request, 'vista_admin/analisis_admin.html', {
+        'tipo_usuario': tipo_usuario,
+        'datos_audiocoeficientes': datos_audiocoeficientes
+    })
+
+def analisis_profe(request):
+    tipo_usuario = None
+
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+
+        # Filtra datos de Audiocoeficientes para pacientes relacionados al profesional
+        datos_audiocoeficientes = Audioscoeficientes.objects.select_related(
+            'id_audio__fk_pauta_terapeutica__fk_informe__fk_relacion_pa_pro__id_paciente__id_usuario'
+        ).filter(
+            id_audio__fk_pauta_terapeutica__fk_informe__fk_relacion_pa_pro__fk_profesional_salud__id_usuario=request.user.id_usuario
+        )
+
+    return render(request, 'vista_profe/analisis_profe.html', {
+        'tipo_usuario': tipo_usuario,
+        'datos_audiocoeficientes': datos_audiocoeficientes
+    })

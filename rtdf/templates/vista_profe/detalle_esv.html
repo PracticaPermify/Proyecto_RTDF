@@ -11,10 +11,12 @@
 <h1>Detalle del Informe ESV</h1>
 
 </br>
-<a href="{% url 'eliminar_informe_esv' informe.id_informe %}" class="btn btn-danger btn-derecha">Eliminar ESV 
+<a href="{% url 'eliminar_informe_esv' informe.id_informe %}" class="btn btn-danger btn-derecha" 
+onclick="return confirm('¿Estás seguro de eliminar el informe?')">Eliminar ESV 
   <i class="fas fa-trash-alt" style="margin-left: 5px;"></i> </a>
 </a>
-<a href="{% url 'editar_esv' informe.id_informe %}" class="btn btn-primary btn-derecha">
+ <a href="{% url 'editar_esv' informe.id_informe %}" class="btn btn-primary btn-derecha" 
+ onclick="return confirm('¿Estás seguro de editar el informe ESV? solo podra editar el titulo, la descripcion, la fecha y la observación. Si desea modificar las respuestas, debera eliminar este informe y crear otro.')">
   Editar <i class="fas fa-pencil-alt" style="margin-left: 5px;"></i>
 </a>
 

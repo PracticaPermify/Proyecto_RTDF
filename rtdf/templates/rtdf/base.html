@@ -30,8 +30,9 @@
 									<li><a href={% url 'listado_pacientes' %}>Listado de pacientes</a></li>
 									<li><a href={% url 'listado_informes' %}>Listado de informes</a></li>
 									<li><a href={% url 'ingresar_informes' %}>Ingresar informe</a></li>
-									<li><a href={% url 'pacientes_disponibles' %}>Pacientes disponibles</a></li>
 									<li><a href={% url 'esv' %}>Escala de sintomas vocales (ESV)</a></li>
+									<li><a href={% url 'pacientes_disponibles' %}>Pacientes disponibles</a></li>
+									<li><a href={% url 'analisis_profe' %}>Analisis de audios</a></li>
 								{% endif %}
 								{% if tipo_usuario == 'Paciente' %}
                 						<li><a href={% url 'vocalizacion' %}>Vocalizacion</a></li>
@@ -45,6 +46,7 @@
 										<li><a href={% url 'list_neur_admin' %}>Neurologos</a></li>
 										<li><a href={% url 'list_paci_admin' %}>Pacientes</a></li>
 										<li><a href={% url 'list_fami_admin' %}>Familiares</a></li>
+										<li><a href={% url 'analisis_admin' %}>Analisis</a></li>
 								{% endif %}
 								{% if tipo_usuario == 'Familiar' %}
 										<li><a href={% url 'lista_familiar' %}>Familiar de</a></li>
