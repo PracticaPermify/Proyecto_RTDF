@@ -1632,9 +1632,40 @@ def analisis_admin(request):
             'id_audio__fk_pauta_terapeutica__fk_informe__fk_relacion_pa_pro__fk_profesional_salud'
         )
 
+
+        #datos_audio_relacion = RelacionPaPro.objects.all()
+        relaciones = RelacionPaPro.objects.all()
+        conteo_audios = []
+
+        total_intensidad = 0
+        total_vocalizacion = 0
+
+        for relacion in relaciones:
+            relacion_info = {
+                'relacion': relacion,
+                'origenes_audio': {}
+            }
+
+            for origen_id, origen_nombre in [(1, 'Intensidad'), (2, 'Vocalización')]:
+
+                audios = Audio.objects.filter(fk_origen_audio=origen_id, fk_pauta_terapeutica__fk_informe__fk_relacion_pa_pro=relacion)
+                relacion_info['origenes_audio'][origen_nombre] = len(audios)
+
+
+                if origen_id == 1:
+                    total_intensidad += len(audios)
+                else:
+                    total_vocalizacion += len(audios)
+
+            conteo_audios.append(relacion_info)
+        
+
     return render(request, 'vista_admin/analisis_admin.html', {
         'tipo_usuario': tipo_usuario,
-        'datos_audiocoeficientes': datos_audiocoeficientes
+        'datos_audiocoeficientes': datos_audiocoeficientes,
+        'datos_audio_relacion': conteo_audios,
+        'total_intensidad': total_intensidad,
+        'total_vocalizacion': total_vocalizacion
     })
 
 def analisis_profe(request):

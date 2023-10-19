@@ -109,6 +109,49 @@
         </tbody>
       </table>
     </div>
+    <br/>
+    <h1 class="card-title">Conteo de audios</h1>
+                <br/>
+                    <div class="card-text">
+                        <table class="table">
+                            <thead class="thead-dark">
+                              <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Profesional</th>
+                                <th scope="col">Paciente</th>
+                                <th scope="col">N° Audios Intensidad</th>
+                                <th scope="col">N° Audios Vocalización</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                {% for item in datos_audio_relacion %}
+                                <tr>
+                                    <td>{{ item.relacion.id_relacion_pa_pro }}</td>
+                                    <td>{{item.relacion.fk_profesional_salud.id_usuario.id_tp_usuario}}: {{ item.relacion.fk_profesional_salud.id_usuario.primer_nombre}} {{ item.relacion.fk_profesional_salud.id_usuario.ap_paterno}}</td>
+                                    <td>{{ item.relacion.id_paciente }}</td>
+                                    <td>{{ item.origenes_audio.Intensidad|default:"0" }}</td>
+                                    <td>{{ item.origenes_audio.Vocalización|default:"0" }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="4">No hay datos disponibles</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+
+                            <tfoot>
+                              <tr>
+                                  <td colspan="3">Total</td>
+                                  <td>{{ total_intensidad }}</td>
+                                  <td>{{ total_vocalizacion }}</td>
+                              </tr>
+                          </tfoot>
+                          </table> 
+                             
+
+                    </div>
+
   </div>
 
 {% endblock %}
