@@ -73,7 +73,9 @@
                 <td><a href="{% url 'detalle_paciente' usuario.id_usuario %}"> Paciente {{ usuario.id_usuario }}</a></td>
                 <td>{{ usuario.primer_nombre }} {{ usuario.ap_paterno }} {{ usuario.ap_materno }}</td>
                 <td>{{ audio_coef.id_audio_id }}</td>
-                <td>{{ audio_coef.nombre_archivo }}</td>
+                <td><a href="{% url 'detalle_audio_admin' audio_coef.id_audio_id %}">
+                  {{ audio_coef.nombre_archivo }}
+              </a></td>
                 <td>
                   <a href="{% url 'detalle_pauta_admin' audio_coef.id_audio.fk_pauta_terapeutica.id_pauta_terapeutica  %}">
                   Pauta {{ audio_coef.id_audio.fk_pauta_terapeutica.id_pauta_terapeutica }}</a>

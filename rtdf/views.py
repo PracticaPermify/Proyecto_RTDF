@@ -19,6 +19,8 @@ from django.conf import settings
 from rtdf.audio_coef import audio_analysis
 #from rtdf.audio_coef import *
 #import scripts as scripts
+from django.http import FileResponse
+from django.conf import settings
 
 def validate(request):
     if request.is_anonymous:
@@ -1685,3 +1687,28 @@ def analisis_profe(request):
         'tipo_usuario': tipo_usuario,
         'datos_audiocoeficientes': datos_audiocoeficientes
     })
+
+def detalle_audio_admin(request, audio_id):
+    tipo_usuario = None
+
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+
+
+        audio = Audio.objects.get(id_audio=audio_id)
+
+
+    return render(request, 'vista_admin/detalle_audio_admin.html', {
+        'tipo_usuario': tipo_usuario,
+        'audio': audio
+
+    })
+
+
+def reproducir_audio(request, audio_id):
+    # Obtener la instancia de Audio según el audio_id
+    audio = Audio.objects.get(id_audio=audio_id)
+    # Construir la ruta completa al archivo de audio
+    audio_path = os.path.join(settings.MEDIA_ROOT, 'audios_pacientes' , audio.url_audio)
+    # Abrir y servir el archivo de audio
+    return FileResponse(open(audio_path, 'rb'), content_type='audio/wav')
