@@ -394,3 +394,146 @@ class IntensidadForm(PautaTerapeuticaForm):
     class Meta:
         model = Intensidad
         fields = PautaTerapeuticaForm.Meta.fields + ['intensidad', 'min_db','max_db']
+
+
+class AudioscoeficientesForm(forms.ModelForm):
+
+    nombre_archivo = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Nombre del audio'}),
+        required=False,
+        label='Nombre audio'
+    )    
+
+    fk_tipo_llenado = forms.ModelChoiceField(queryset=TpLlenado.objects.all(),
+        required=False,  # Cambia esto a True si el campo es obligatorio para Familiares
+        widget=forms.Select(attrs={'class': 'form-control form-control-sm'}),
+    )
+    
+
+    id_audio = forms.ModelChoiceField(queryset=Audio.objects.all(),
+        required=False,  # Cambia esto a True si el campo es obligatorio para Familiares
+        widget=forms.Select(attrs={'class': 'form-control form-control-sm'}),
+    )
+    
+
+    fecha_coeficiente = forms.DateTimeField(
+        widget=forms.DateTimeInput(format='%d-%m-%Y', attrs={'placeholder': 'día-mes-año'}),
+        required=False
+    )
+
+    f0 = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Coeficiente f0'}),
+        required=False,
+        label='Coeficiente f0'
+    ) 
+
+    f1 = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Coeficiente f1'}),
+        required=False,
+        label='Coeficiente f1'
+    )    
+
+    f2 = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Coeficiente f2'}),
+        required=False,
+        label='Coeficiente f2'
+    )    
+
+    f3 = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Coeficiente f3'}),
+        required=False,
+        label='Coeficiente f3'
+    )    
+
+    f4 = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Coeficiente f4'}),
+        required=False,
+        label='Coeficiente f4'
+    )       
+
+    intensidad = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Intensidad'}),
+        required=False,
+        label='Intensidad'
+    )
+
+    hnr = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'HNR'}),
+        required=False,
+        label='HNR'
+    )
+
+    local_jitter = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Local Jitter'}),
+        required=False,
+        label='Local Jitter'
+    )
+
+    local_absolute_jitter = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Local Absolute Jitter'}),
+        required=False,
+        label='Local Absolute Jitter'
+    )
+
+    rap_jitter = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'RAP Jitter'}),
+        required=False,
+        label='RAP Jitter'
+    )
+
+    ppq5_jitter = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'PPQ5 Jitter'}),
+        required=False,
+        label='PPQ5 Jitter'
+    )
+
+    ddp_jitter = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'DDP Jitter'}),
+        required=False,
+        label='DDP Jitter'
+    )
+
+    local_shimmer = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Local Shimmer'}),
+        required=False,
+        label='Local Shimmer'
+    )
+
+    local_db_shimmer = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Local dB Shimmer'}),
+        required=False,
+        label='Local dB Shimmer'
+    )
+
+    apq3_shimmer = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'APQ3 Shimmer'}),
+        required=False,
+        label='APQ3 Shimmer'
+    )
+
+    aqpq5_shimmer = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'APQ5 Shimmer'}),
+        required=False,
+        label='APQ5 Shimmer'
+    )
+
+    apq11_shimmer = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'APQ11 Shimmer'}),
+        required=False,
+        label='APQ11 Shimmer'
+    )    
+
+
+
+    class Meta:
+        model = Informe  
+        fields = ['nombre_archivo','fk_tipo_llenado','id_audio','fecha_coeficiente'
+                  ,'f0','f1','f2','f3','f4','intensidad','hnr','local_jitter',
+                  'local_absolute_jitter','rap_jitter','ppq5_jitter','ddp_jitter',
+                  'local_shimmer','local_db_shimmer','apq3_shimmer','aqpq5_shimmer'
+                  ,'apq11_shimmer']
+        
+
+        widgets = {
+            'fecha': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        }

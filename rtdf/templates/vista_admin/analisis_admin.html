@@ -115,7 +115,7 @@
     <h1 class="card-title">Conteo de audios</h1>
                 <br/>
                     <div class="card-text">
-                        <table class="table">
+                        <table class="table" id="conteo-audios">
                             <thead class="thead-dark">
                               <tr>
                                 <th scope="col">ID</th>
@@ -127,7 +127,7 @@
                             </thead>
                             <tbody>
                               <tr>
-                                {% for item in datos_audio_relacion %}
+                                {% for item in conteo_audios %}
                                 <tr>
                                     <td>{{ item.relacion.id_relacion_pa_pro }}</td>
                                     <td>{{item.relacion.fk_profesional_salud.id_usuario.id_tp_usuario}}: {{ item.relacion.fk_profesional_salud.id_usuario.primer_nombre}} {{ item.relacion.fk_profesional_salud.id_usuario.ap_paterno}}</td>
@@ -143,14 +143,29 @@
                             </tbody>
 
                             <tfoot>
-                              <tr>
-                                  <td colspan="3">Total</td>
-                                  <td>{{ total_intensidad }}</td>
-                                  <td>{{ total_vocalizacion }}</td>
+                              <tr class="thead-dark">
+                                  <th colspan="3">Total</th>
+                                  <th>{{ total_intensidad }}</th>
+                                  <th>{{ total_vocalizacion }}</th>
                               </tr>
                           </tfoot>
                           </table> 
-                             
+                          
+                          <div class="pagination">
+                            <span class="step-links">
+                                {% if conteo_audios.has_previous %}
+                                    <a href="?page=1#conteo-audios">&laquo; Inicio</a>
+                                    <a href="?page={{ conteo_audios.previous_page_number }}#conteo-audios">Anterior</a>
+                                {% endif %}
+                                
+                                <span class="current-page">{{ conteo_audios.number }} of {{ conteo_audios.paginator.num_pages }}</span>
+                                
+                                {% if conteo_audios.has_next %}
+                                    <a href="?page={{ conteo_audios.next_page_number }}#conteo-audios">Siguiente</a>
+                                    <a href="?page={{ conteo_audios.paginator.num_pages }}#conteo-audios">Ultimo &raquo;</a>
+                                {% endif %}
+                            </span>
+                        </div>
 
                     </div>
 

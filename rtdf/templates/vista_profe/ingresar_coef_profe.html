@@ -1,0 +1,130 @@
+{% extends 'rtdf/base.html' %}
+
+{% block css %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'app/css/main.css' %}" />
+{% endblock %}
+
+{% block content %}
+
+<body class="is-preload">
+    <form method="post">
+        {% csrf_token %}
+        <h1>Ingresar Coeficiente</h1>
+        <br>
+        <!-- Campo: Nombre del audio -->
+        <div class="form-group col-md-4">
+            <label for="{{ form.nombre_archivo.id_for_label }}">Nombre del audio:</label>
+            {{ form.nombre_archivo }}
+        </div>
+
+        <!-- Campo: Tipo de llenado -->
+        <div class="form-group col-md-4">
+            <label for="{{ form.fk_tipo_llenado.id_for_label }}">Tipo de llenado:</label>
+            {{ form.fk_tipo_llenado }}
+        </div>
+
+        <!-- Campo: ID de audio -->
+        <div class="form-group col-md-4">
+            <label for="{{ form.id_audio.id_for_label }}">ID de audio:</label>
+            {{ form.id_audio }}
+        </div>
+
+        <!-- Campo: Fecha del coeficiente -->
+        <div class="form-group col-md-4">
+            <label for="{{ form.fecha_coeficiente.id_for_label }}">Fecha del coeficiente:</label>
+            {{ form.fecha_coeficiente }}
+        </div>
+
+
+        <div class="form-group col-md-4">
+            <label for="f0">Coeficiente f0:</label>
+            {{ form.f0 }}
+        </div>
+
+        <div class="form-group col-md-4">
+            <label for="f1">Coeficiente f1:</label>
+            {{ form.f1 }}
+        </div>
+
+        <div class="form-group col-md-4">
+            <label for="f2">Coeficiente f2:</label>
+            {{ form.f2 }}
+        </div>
+
+        <div class="form-group col-md-4">
+            <label for="f3">Coeficiente f3:</label>
+            {{ form.f3 }}
+        </div>
+
+        <div class="form-group col-md-4">
+            <label for="f4">Coeficiente f4:</label>
+            {{ form.f4 }}
+        </div>
+
+        <div class="form-group col-md-4">
+            <label for="intensidad">Intensidad:</label>
+            {{ form.intensidad }}
+        </div>
+
+        <div class="form-group col-md-4">
+            <label for="hnr">HNR:</label>
+            {{ form.hnr }}
+        </div>
+
+        <div class="form-group col-md-4">
+            <label for="local_jitter">Local Jitter:</label>
+            {{ form.local_jitter }}
+        </div>
+
+        <div class="form-group col-md-4">
+            <label for="local_absolute_jitter">Local Absolute Jitter:</label>
+            {{ form.local_absolute_jitter }}
+        </div>
+
+        <div class="form-group col-md-4">
+            <label for="rap_jitter">RAP Jitter:</label>
+            {{ form.rap_jitter }}
+        </div>
+
+        <div class="form-group col-md-4">
+            <label for="ppq5_jitter">PPQ5 Jitter:</label>
+            {{ form.ppq5_jitter }}
+        </div>
+
+        <div class= "form-group col-md-4">
+            <label for="ddp_jitter">DDP Jitter:</label>
+            {{ form.ddp_jitter }}
+        </div>
+
+        <div class="form-group col-md-4">
+            <label for="local_shimmer">Local Shimmer:</label>
+            {{ form.local_shimmer }}
+        </div>
+
+        <div class="form-group col-md-4">
+            <label for="local_db_shimmer">Local dB Shimmer:</label>
+            {{ form.local_db_shimmer }}
+        </div>
+
+        <div class="form-group col-md-4">
+            <label for="apq3_shimmer">APQ3 Shimmer:</label>
+            {{ form.apq3_shimmer }}
+        </div>
+
+        <div class="form-group col-md-4">
+            <label for="apq5_shimmer">APQ5 Shimmer:</label>
+            {{ form.aqpq5_shimmer }}
+        </div>
+
+        <div class="form-group col-md-4">
+            <label for="apq11_shimmer">APQ11 Shimmer:</label>
+            {{ form.apq11_shimmer }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </form>
+</body>
+
+
+{% endblock %}

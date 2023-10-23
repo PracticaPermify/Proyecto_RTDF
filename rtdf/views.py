@@ -21,6 +21,7 @@ from rtdf.audio_coef import audio_analysis
 #import scripts as scripts
 from django.http import FileResponse
 from django.conf import settings
+from datetime import datetime
 
 def validate(request):
     if request.is_anonymous:
@@ -1660,14 +1661,19 @@ def analisis_admin(request):
                     total_vocalizacion += len(audios)
 
             conteo_audios.append(relacion_info)
+
+        # Paginación
+        page_number = request.GET.get('page')
+        paginator = Paginator(conteo_audios, 5)  # Muestra 5 registros por página
+        page = paginator.get_page(page_number)
         
 
     return render(request, 'vista_admin/analisis_admin.html', {
         'tipo_usuario': tipo_usuario,
         'datos_audiocoeficientes': datos_audiocoeficientes,
-        'datos_audio_relacion': conteo_audios,
+        'conteo_audios': page,
         'total_intensidad': total_intensidad,
-        'total_vocalizacion': total_vocalizacion
+        'total_vocalizacion': total_vocalizacion,
     })
 
 def analisis_profe(request):
@@ -1683,9 +1689,43 @@ def analisis_profe(request):
             id_audio__fk_pauta_terapeutica__fk_informe__fk_relacion_pa_pro__fk_profesional_salud__id_usuario=request.user.id_usuario
         )
 
+         # Filtrar solo relaciones del fonoaudiólogo conectado
+        relaciones = RelacionPaPro.objects.filter(
+            fk_profesional_salud__id_usuario=request.user.id_usuario
+        )
+
+        conteo_audios = []
+
+        total_intensidad = 0
+        total_vocalizacion = 0
+
+        for relacion in relaciones:
+            relacion_info = {
+                'relacion': relacion,
+                'origenes_audio': {}
+            }
+
+            for origen_id, origen_nombre in [(1, 'Intensidad'), (2, 'Vocalización')]:
+                audios = Audio.objects.filter(
+                    fk_origen_audio=origen_id,
+                    fk_pauta_terapeutica__fk_informe__fk_relacion_pa_pro=relacion
+                )
+                relacion_info['origenes_audio'][origen_nombre] = len(audios)
+
+                if origen_id == 1:
+                    total_intensidad += len(audios)
+                else:
+                    total_vocalizacion += len(audios)
+
+            conteo_audios.append(relacion_info)
+
+
     return render(request, 'vista_profe/analisis_profe.html', {
         'tipo_usuario': tipo_usuario,
-        'datos_audiocoeficientes': datos_audiocoeficientes
+        'datos_audiocoeficientes': datos_audiocoeficientes,
+        'datos_audio_relacion': conteo_audios,
+        'total_intensidad': total_intensidad,
+        'total_vocalizacion': total_vocalizacion
     })
 
 def detalle_audio_admin(request, audio_id):
@@ -1696,17 +1736,130 @@ def detalle_audio_admin(request, audio_id):
 
 
         audio = Audio.objects.get(id_audio=audio_id)
+        audio_coeficiente_automatico = Audioscoeficientes.objects.filter(id_audio=audio_id,fk_tipo_llenado='1').first()
+        audio_coeficiente_manual = Audioscoeficientes.objects.filter(id_audio=audio_id,fk_tipo_llenado='2').first()
+
+
+        # audio = Audio.objects.select_related(
+        #     'fk_pauta_terapeutica__fk_informe__fk_relacion_pa_pro__id_paciente',
+        #     'fk_pauta_terapeutica__fk_informe__fk_relacion_pa_pro__fk_profesional_salud'
+        # ).get(id_audio=audio_id)
+
+        audio_dicc = {
+            'id_audio': audio.id_audio,
+            'fecha_audio': audio.fecha_audio,
+            'id_pauta': audio.fk_pauta_terapeutica_id,
+            'id_origen': audio.fk_origen_audio,
+            'rut_paciente': audio.fk_pauta_terapeutica.fk_informe.fk_relacion_pa_pro.id_paciente.id_usuario.numero_identificacion,
+            'primer_nombre_paciente': audio.fk_pauta_terapeutica.fk_informe.fk_relacion_pa_pro.id_paciente.id_usuario.primer_nombre,
+            'ap_paterno_paciente': audio.fk_pauta_terapeutica.fk_informe.fk_relacion_pa_pro.id_paciente.id_usuario.ap_paterno,
+            'tipo_profesional': audio.fk_pauta_terapeutica.fk_informe.fk_relacion_pa_pro.fk_profesional_salud.id_usuario.id_tp_usuario,
+            'primer_nombre_profesional':audio.fk_pauta_terapeutica.fk_informe.fk_relacion_pa_pro.fk_profesional_salud.id_usuario.primer_nombre,
+            'ap_paterno_profesional':audio.fk_pauta_terapeutica.fk_informe.fk_relacion_pa_pro.fk_profesional_salud.id_usuario.ap_paterno,
+            #Relacion con
+            'nombre_audio': audio_coeficiente_automatico.nombre_archivo if audio_coeficiente_automatico else None
+        }
+        
 
 
     return render(request, 'vista_admin/detalle_audio_admin.html', {
         'tipo_usuario': tipo_usuario,
-        'audio': audio
+        'detalle_audio': audio_dicc,
+        'coef_auto': audio_coeficiente_automatico,
+        'coef_manual': audio_coeficiente_manual,
 
     })
 
 
+def detalle_audio_profe(request, audio_id):
+    tipo_usuario = None
+
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+
+
+        audio = Audio.objects.get(id_audio=audio_id)
+        audio_coeficiente_automatico = Audioscoeficientes.objects.filter(id_audio=audio_id,fk_tipo_llenado='1').first()
+        audio_coeficiente_manual = Audioscoeficientes.objects.filter(id_audio=audio_id,fk_tipo_llenado='2').first()
+
+
+        # audio = Audio.objects.select_related(
+        #     'fk_pauta_terapeutica__fk_informe__fk_relacion_pa_pro__id_paciente',
+        #     'fk_pauta_terapeutica__fk_informe__fk_relacion_pa_pro__fk_profesional_salud'
+        # ).get(id_audio=audio_id)
+
+        audio_dicc = {
+            'id_audio': audio.id_audio,
+            'fecha_audio': audio.fecha_audio,
+            'id_pauta': audio.fk_pauta_terapeutica_id,
+            'id_origen': audio.fk_origen_audio,
+            'rut_paciente': audio.fk_pauta_terapeutica.fk_informe.fk_relacion_pa_pro.id_paciente.id_usuario.numero_identificacion,
+            'primer_nombre_paciente': audio.fk_pauta_terapeutica.fk_informe.fk_relacion_pa_pro.id_paciente.id_usuario.primer_nombre,
+            'ap_paterno_paciente': audio.fk_pauta_terapeutica.fk_informe.fk_relacion_pa_pro.id_paciente.id_usuario.ap_paterno,
+            'tipo_profesional': audio.fk_pauta_terapeutica.fk_informe.fk_relacion_pa_pro.fk_profesional_salud.id_usuario.id_tp_usuario,
+            'primer_nombre_profesional':audio.fk_pauta_terapeutica.fk_informe.fk_relacion_pa_pro.fk_profesional_salud.id_usuario.primer_nombre,
+            'ap_paterno_profesional':audio.fk_pauta_terapeutica.fk_informe.fk_relacion_pa_pro.fk_profesional_salud.id_usuario.ap_paterno,
+            #Relacion con
+            'nombre_audio': audio_coeficiente_automatico.nombre_archivo if audio_coeficiente_automatico else None
+        }
+        
+
+
+    return render(request, 'vista_profe/detalle_audio_profe.html', {
+        'tipo_usuario': tipo_usuario,
+        'detalle_audio': audio_dicc,
+        'coef_auto': audio_coeficiente_automatico,
+        'coef_manual': audio_coeficiente_manual,
+    })
+
+def ingresar_coef_profe(request, audio_id):
+
+    tipo_usuario = None
+    audio = Audio.objects.get(id_audio=audio_id)
+    timestamp=datetime.today()
+    fecha_audio= timestamp.strftime('%Y-%m-%d %H:%M')
+    
+
+    #desconcatenacion del url del audio
+
+    audio_url = audio.url_audio
+    parts = audio_url.split('/')
+    if len(parts) > 1:
+        nombre_audio = parts[1]
+    else:
+        nombre_audio = audio_url
+
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+
+        if request.method == 'POST':
+            form = AudioscoeficientesForm(request.POST)
+
+            # form.fields['nombre_archivo'].initial = nombre_audio
+            # form.fields['fecha_coeficiente'].initial = timezone.now()  # Establece la fecha y hora en el formato correcto
+            # tp_llenado= TpLlenado.objects.get(id_tipo_llenado=2)
+            # form.instance.fk_tipo_llenado = tp_llenado.id_tipo_llenado
+            # ##print(tp_llenado.id_tipo_llenado)
+            # id_wav= Audio.objects.get(id_audio=audio_id)
+            # # print (id_wav)
+            # form.instance.id_audio = id_wav
+            
+
+            if form.is_valid():
+
+                form.save()
+                return redirect('detalle_audio_profe', audio_id)
+        else:
+            form = AudioscoeficientesForm()
+
+    return render(request, 'vista_profe/ingresar_coef_profe.html', {
+    'tipo_usuario': tipo_usuario,
+    'form': form,
+    })
+
+
 def reproducir_audio(request, audio_id):
-    # Obtener la instancia de Audio según el audio_id
+
     audio = Audio.objects.get(id_audio=audio_id)
     # Construir la ruta completa al archivo de audio
     audio_path = os.path.join(settings.MEDIA_ROOT, 'audios_pacientes' , audio.url_audio)
