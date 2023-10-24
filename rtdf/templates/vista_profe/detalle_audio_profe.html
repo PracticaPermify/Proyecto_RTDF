@@ -3,14 +3,23 @@
 {% block css %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'app/css/main.css' %}" />
+
+    
 {% endblock %}
 
 {% block content %}
 
+<style>
+    .btn-container {
+        margin-top: 10px; /* Ajusta el valor según tu preferencia */
+    }
+</style>
+
+
 <div class="container">
 
     <div>
-        <a href="{% url 'analisis_profe'%}">Volver al listado de análisis de audios</a>
+        <a href="{% url 'analisis_profe' %}">Volver al listado de análisis de audios</a>
     </div>
 
     </br>
@@ -19,7 +28,10 @@
         <h1>Detalles del análisis del audio N°{{ detalle_audio.id_audio }}</h1>
     
         </br>
-        
+        <a href="{% url 'eliminar_audio_prof' detalle_audio.id_audio %}" class="btn btn-danger btn-derecha mb-3">
+            Eliminar audio<i class="fas fa-trash-alt" style="margin-left: 5px;"></i> 
+        </a>
+
         <div class="table-container">
             <table class="table">
                 <tbody>
@@ -129,11 +141,22 @@
                 </table>
             </div>
 
-            <br/>
+            </br>
             <h2>Resultado del cálculo manual de coeficientes</h2>
-            <br/>
-            <div class="table-responsive">
+
+            {% if coef_manual %}
                 
+                <a href="{% url 'eliminar_coef_manual' coef_manual.id_audiocoeficientes %}" class="btn btn-danger btn-derecha mb-3">
+                    Eliminar <i class="fas fa-trash-alt" style="margin-left: 5px;"></i> 
+                </a>
+                <a href="{% url 'editar_coef_manual' coef_manual.id_audiocoeficientes %}" class="btn btn-primary btn-derecha mb-3">
+                    Editar <i class="fas fa-pencil-alt" style="margin-left: 5px;"></i>
+                </a>
+            {% else %}
+                  </br>    
+            {% endif %}
+
+            <div class="table-responsive">
                 <table class="table" id="coef-auto-audios">
                     <thead class="thead-dark">
                         <tr>
@@ -161,25 +184,25 @@
                     <tbody>
                         {% if coef_manual %}
                         <tr>
-                            <td>{{ coef_auto.id_audiocoeficientes }}</td>
-                            <td>{{ coef_auto.fecha_coeficiente }}</td>
-                            <td>{{ coef_auto.f0 }}</td>
-                            <td>{{ coef_auto.f1 }}</td>
-                            <td>{{ coef_auto.f2 }}</td>
-                            <td>{{ coef_auto.f3 }}</td>
-                            <td>{{ coef_auto.f4 }}</td>
-                            <td>{{ coef_auto.intensidad }}</td>
-                            <td>{{ coef_auto.hnr }}</td>
-                            <td>{{ coef_auto.local_jitter }}</td>
-                            <td>{{ coef_auto.local_absolute_jitter }}</td>
-                            <td>{{ coef_auto.rap_jitter }}</td>
-                            <td>{{ coef_auto.ppq5_jitter }}</td>
-                            <td>{{ coef_auto.ddp_jitter }}</td>
-                            <td>{{ coef_auto.local_shimmer }}</td>
-                            <td>{{ coef_auto.local_db_shimmer }}</td>
-                            <td>{{ coef_auto.apq3_shimmer }}</td>
-                            <td>{{ coef_auto.aqpq5_shimmer }}</td>
-                            <td>{{ coef_auto.apq11_shimmer }}</td>
+                            <td>{{ coef_manual.id_audiocoeficientes }}</td>
+                            <td>{{ coef_manual.fecha_coeficiente }}</td>
+                            <td>{{ coef_manual.f0 }}</td>
+                            <td>{{ coef_manual.f1 }}</td>
+                            <td>{{ coef_manual.f2 }}</td>
+                            <td>{{ coef_manual.f3 }}</td>
+                            <td>{{ coef_manual.f4 }}</td>
+                            <td>{{ coef_manual.intensidad }}</td>
+                            <td>{{ coef_manual.hnr }}</td>
+                            <td>{{ coef_manual.local_jitter }}</td>
+                            <td>{{ coef_manual.local_absolute_jitter }}</td>
+                            <td>{{ coef_manual.rap_jitter }}</td>
+                            <td>{{ coef_manual.ppq5_jitter }}</td>
+                            <td>{{ coef_manual.ddp_jitter }}</td>
+                            <td>{{ coef_manual.local_shimmer }}</td>
+                            <td>{{ coef_manual.local_db_shimmer }}</td>
+                            <td>{{ coef_manual.apq3_shimmer }}</td>
+                            <td>{{ coef_manual.aqpq5_shimmer }}</td>
+                            <td>{{ coef_manual.apq11_shimmer }}</td>
                         </tr>
                         {% else %}
                             <tr>
@@ -188,6 +211,7 @@
                         {% endif %}
                     </tbody>
                 </table>
+                
             </div>
 
             

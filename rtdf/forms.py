@@ -526,7 +526,7 @@ class AudioscoeficientesForm(forms.ModelForm):
 
 
     class Meta:
-        model = Informe  
+        model = Audioscoeficientes  
         fields = ['nombre_archivo','fk_tipo_llenado','id_audio','fecha_coeficiente'
                   ,'f0','f1','f2','f3','f4','intensidad','hnr','local_jitter',
                   'local_absolute_jitter','rap_jitter','ppq5_jitter','ddp_jitter',

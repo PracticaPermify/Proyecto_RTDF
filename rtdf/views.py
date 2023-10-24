@@ -1783,6 +1783,7 @@ def detalle_audio_profe(request, audio_id):
         audio_coeficiente_manual = Audioscoeficientes.objects.filter(id_audio=audio_id,fk_tipo_llenado='2').first()
 
 
+        print(audio_coeficiente_manual)
         # audio = Audio.objects.select_related(
         #     'fk_pauta_terapeutica__fk_informe__fk_relacion_pa_pro__id_paciente',
         #     'fk_pauta_terapeutica__fk_informe__fk_relacion_pa_pro__fk_profesional_salud'
@@ -1812,12 +1813,16 @@ def detalle_audio_profe(request, audio_id):
         'coef_manual': audio_coeficiente_manual,
     })
 
+@user_passes_test(validate)
+@never_cache
 def ingresar_coef_profe(request, audio_id):
 
     tipo_usuario = None
     audio = Audio.objects.get(id_audio=audio_id)
     timestamp=datetime.today()
     fecha_audio= timestamp.strftime('%Y-%m-%d %H:%M')
+    tp_llenado= TpLlenado.objects.get(id_tipo_llenado=2)
+    audio_coeficiente_manual = Audioscoeficientes.objects.filter(id_audio=audio_id,fk_tipo_llenado='2').first()
     
 
     #desconcatenacion del url del audio
@@ -1835,6 +1840,8 @@ def ingresar_coef_profe(request, audio_id):
         if request.method == 'POST':
             form = AudioscoeficientesForm(request.POST)
 
+           
+
             # form.fields['nombre_archivo'].initial = nombre_audio
             # form.fields['fecha_coeficiente'].initial = timezone.now()  # Establece la fecha y hora en el formato correcto
             # tp_llenado= TpLlenado.objects.get(id_tipo_llenado=2)
@@ -1843,18 +1850,33 @@ def ingresar_coef_profe(request, audio_id):
             # id_wav= Audio.objects.get(id_audio=audio_id)
             # # print (id_wav)
             # form.instance.id_audio = id_wav
+
+
+            # form.fk_tipo_llenado = nombre_audio
+            # form.id_audio = audio
+            # form.fecha_coeficiente = timezone.now()
             
 
             if form.is_valid():
 
-                form.save()
+                informe = form.save(commit=False)  # No guardes inmediatamente en la base de datos
+                informe.fk_tipo_llenado = tp_llenado  # Asigna el valor a través del objeto informe
+                informe.id_audio = audio
+                informe.fecha_coeficiente = timezone.now()
+                informe.save()  # Ahora guarda en la base de dato
+
                 return redirect('detalle_audio_profe', audio_id)
         else:
-            form = AudioscoeficientesForm()
+            form = AudioscoeficientesForm(initial={'fecha_coeficiente': timezone.now(),
+                                                   'nombre_archivo': nombre_audio,
+                                                   'fk_tipo_llenado': tp_llenado,
+                                                    'id_audio': audio })
 
     return render(request, 'vista_profe/ingresar_coef_profe.html', {
     'tipo_usuario': tipo_usuario,
     'form': form,
+    'id_audio': audio_id,
+    'coef_manual': audio_coeficiente_manual,
     })
 
 
@@ -1865,3 +1887,73 @@ def reproducir_audio(request, audio_id):
     audio_path = os.path.join(settings.MEDIA_ROOT, 'audios_pacientes' , audio.url_audio)
     # Abrir y servir el archivo de audio
     return FileResponse(open(audio_path, 'rb'), content_type='audio/wav')
+
+
+def eliminar_coef_manual(request, audiocoeficientes_id):
+
+    coef_manual = get_object_or_404(Audioscoeficientes, id_audiocoeficientes=audiocoeficientes_id)
+
+    id_audio = coef_manual.id_audio_id
+
+    coef_manual.delete()
+
+    return redirect('detalle_audio_profe', audio_id=id_audio)
+
+
+def editar_coef_manual(request, audiocoeficientes_id):
+    tipo_usuario = None
+    
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+
+        coef_manual = get_object_or_404(Audioscoeficientes, id_audiocoeficientes=audiocoeficientes_id)
+        tp_llenado = coef_manual.fk_tipo_llenado
+        fecha = coef_manual.fecha_coeficiente
+        id_audio = coef_manual.id_audio_id
+        audio = Audio.objects.get(id_audio=id_audio)
+
+        if request.method == 'POST':
+            form = AudioscoeficientesForm(request.POST, instance=coef_manual)
+
+            if form.is_valid():
+                informe = form.save(commit=False)
+                informe.fk_tipo_llenado = tp_llenado  
+                informe.id_audio = audio
+                informe.fecha_coeficiente = fecha
+                informe.save() 
+
+                return redirect('detalle_audio_profe', audio_id=id_audio)
+            
+        else:
+            form = AudioscoeficientesForm(instance=coef_manual)
+    
+    return render(request, 'vista_profe/editar_coef_manual.html', 
+                      {'form': form, 
+                     'tipo_usuario': tipo_usuario,
+                     'id_audio': id_audio})
+
+
+def eliminar_audio_prof(request, audio_id):
+
+    audio_registro = get_object_or_404(Audio, id_audio=audio_id)
+
+    ruta = audio_registro.url_audio
+
+    os.remove(os.path.join(settings.MEDIA_ROOT, 'audios_pacientes', ruta))
+
+    audio_registro.delete()
+
+    return redirect('analisis_profe')
+
+
+def eliminar_audio_admin(request, audio_id):
+
+    audio_registro = get_object_or_404(Audio, id_audio=audio_id)
+
+    ruta = audio_registro.url_audio
+
+    os.remove(os.path.join(settings.MEDIA_ROOT, 'audios_pacientes', ruta))
+
+    audio_registro.delete()
+
+    return redirect('analisis_admin')

@@ -56,6 +56,10 @@ urlpatterns = [
     path('detalle_audio_profe/<int:audio_id>/', views.detalle_audio_profe, name='detalle_audio_profe'),
     path('reproducir_audio/<int:audio_id>/', views.reproducir_audio, name='reproducir_audio'),
     path('ingresar_coef_profe/<int:audio_id>/', views.ingresar_coef_profe, name='ingresar_coef_profe'),
+    path('eliminar_coef_manual/<int:audiocoeficientes_id>/', views.eliminar_coef_manual, name='eliminar_coef_manual'),
+    path('editar_coef_manual/<int:audiocoeficientes_id>/', views.editar_coef_manual, name='editar_coef_manual'),
+    path('eliminar_audio_prof/<int:audio_id>/', views.eliminar_audio_prof, name='eliminar_audio_prof'),
+    path('eliminar_audio_admin/<int:audio_id>/', views.eliminar_audio_admin, name='eliminar_audio_admin'),
 ]
 
 ##urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -7,7 +7,7 @@
 
 {% block content %}
 
-<style>
+<!-- <style>
     .table-container {
       max-height: 400px; /* Establece la altura máxima del contenedor */
       overflow-y: auto; /* Agrega una barra de desplazamiento vertical cuando sea necesario */
@@ -27,7 +27,7 @@
     .table thead {
       background-color: #f2f2f2; /* Establece un color de fondo para el encabezado de la tabla */
     }
-    </style>
+    </style> -->
 
 
     <div class="container">
@@ -42,6 +42,9 @@
             <h1>Detalles del análisis del audio N°{{ detalle_audio.id_audio }}</h1>
         
             </br>
+            <a href="{% url 'eliminar_audio_admin' detalle_audio.id_audio  %}" class="btn btn-danger btn-derecha mb-3">
+                Eliminar audio<i class="fas fa-trash-alt" style="margin-left: 5px;"></i> 
+            </a>
             
             <div class="table-container">
                 <table class="table">
@@ -184,25 +187,25 @@
                         <tbody>
                             {% if coef_manual %}
                             <tr>
-                                <td>{{ coef_auto.id_audiocoeficientes }}</td>
-                                <td>{{ coef_auto.fecha_coeficiente }}</td>
-                                <td>{{ coef_auto.f0 }}</td>
-                                <td>{{ coef_auto.f1 }}</td>
-                                <td>{{ coef_auto.f2 }}</td>
-                                <td>{{ coef_auto.f3 }}</td>
-                                <td>{{ coef_auto.f4 }}</td>
-                                <td>{{ coef_auto.intensidad }}</td>
-                                <td>{{ coef_auto.hnr }}</td>
-                                <td>{{ coef_auto.local_jitter }}</td>
-                                <td>{{ coef_auto.local_absolute_jitter }}</td>
-                                <td>{{ coef_auto.rap_jitter }}</td>
-                                <td>{{ coef_auto.ppq5_jitter }}</td>
-                                <td>{{ coef_auto.ddp_jitter }}</td>
-                                <td>{{ coef_auto.local_shimmer }}</td>
-                                <td>{{ coef_auto.local_db_shimmer }}</td>
-                                <td>{{ coef_auto.apq3_shimmer }}</td>
-                                <td>{{ coef_auto.aqpq5_shimmer }}</td>
-                                <td>{{ coef_auto.apq11_shimmer }}</td>
+                                <td>{{ coef_manual.id_audiocoeficientes }}</td>
+                                <td>{{ coef_manual.fecha_coeficiente }}</td>
+                                <td>{{ coef_manual.f0 }}</td>
+                                <td>{{ coef_manual.f1 }}</td>
+                                <td>{{ coef_manual.f2 }}</td>
+                                <td>{{ coef_manual.f3 }}</td>
+                                <td>{{ coef_manual.f4 }}</td>
+                                <td>{{ coef_manual.intensidad }}</td>
+                                <td>{{ coef_manual.hnr }}</td>
+                                <td>{{ coef_manual.local_jitter }}</td>
+                                <td>{{ coef_manual.local_absolute_jitter }}</td>
+                                <td>{{ coef_manual.rap_jitter }}</td>
+                                <td>{{ coef_manual.ppq5_jitter }}</td>
+                                <td>{{ coef_manual.ddp_jitter }}</td>
+                                <td>{{ coef_manual.local_shimmer }}</td>
+                                <td>{{ coef_manual.local_db_shimmer }}</td>
+                                <td>{{ coef_manual.apq3_shimmer }}</td>
+                                <td>{{ coef_manual.aqpq5_shimmer }}</td>
+                                <td>{{ coef_manual.apq11_shimmer }}</td>
                             </tr>
                             {% else %}
                                 <tr>
