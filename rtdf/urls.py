@@ -7,6 +7,7 @@ urlpatterns = [
     path('', views.index, name='index'), 
     path('login/', views.login_view, name="login"),
     path('registro/', views.registro, name='registro'),
+    path('pre_registro/', views.pre_registro, name='pre_registro'),
     path('logout/', views.logout_view, name='logout'), 
     path('listado_pacientes/', views.listado_pacientes, name='listado_pacientes'),
     path('vocalizacion/', views.vocalizacion, name='vocalizacion'),
@@ -28,6 +29,7 @@ urlpatterns = [
     path('mi_fonoaudiologo/',views.mi_fonoaudiologo,name='mi_fonoaudiologo'),
     path('obtener_provincias/', views.obtener_provincias, name='obtener_provincias'),
     path('obtener_comunas/', views.obtener_comunas, name='obtener_comunas'),
+    path('obtener_instituciones/', views.obtener_instituciones, name='obtener_instituciones'),
     path('ingresar_informes/', views.ingresar_informes, name='ingresar_informes'),
     path('editar_informe/<int:informe_id>/', views.editar_informe, name='editar_informe'),
     path('eliminar_informe/<int:informe_id>/', views.eliminar_informe, name='eliminar_informe'),
@@ -60,6 +62,8 @@ urlpatterns = [
     path('editar_coef_manual/<int:audiocoeficientes_id>/', views.editar_coef_manual, name='editar_coef_manual'),
     path('eliminar_audio_prof/<int:audio_id>/', views.eliminar_audio_prof, name='eliminar_audio_prof'),
     path('eliminar_audio_admin/<int:audio_id>/', views.eliminar_audio_admin, name='eliminar_audio_admin'),
+    path('listado_preregistros',views.listado_preregistros, name='listado_preregistros'),
+    path('detalle_preregistro/<int:preregistro_id>/', views.detalle_preregistro, name='detalle_preregistro'),
 ]
 
 ##urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

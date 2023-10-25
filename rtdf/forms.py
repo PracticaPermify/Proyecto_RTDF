@@ -537,3 +537,75 @@ class AudioscoeficientesForm(forms.ModelForm):
         widgets = {
             'fecha': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
+
+
+#Inicio de la pesadilla
+
+class PreRegistroForm(forms.ModelForm):
+
+    numero_identificacion = forms.CharField(
+        required=True,
+        widget=forms.TextInput(attrs={'placeholder': '12345678-9'}),
+        help_text='Ingrese su RUT válido (Ejemplo: 12345678-9)',
+        label='Rut'
+    )
+
+    fecha_nacimiento = forms.DateField(
+        widget=forms.DateInput(format='%d-%m-%Y', attrs={'type': 'date'}),
+        required=True
+    )
+
+    email = forms.EmailField(
+        widget=forms.TextInput(attrs={'placeholder': 'usuario@gmail.com'}),
+        validators=[EmailValidator(message="Ingrese una dirección de correo electrónico válida")],
+        required=False
+    )
+
+    numero_telefonico = forms.CharField(
+        required=True,
+        widget=forms.TextInput(attrs={'placeholder': '+56912345678'}),
+        help_text='Ingrese un número de teléfono válido (Ejemplo: +56912345678)'
+    )
+
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'placeholder': '********'}),
+        required=True,
+        help_text='La contraseña debe contener al menos una mayúscula, una minúscula, un número y un carácter especial.'
+    )
+
+    tipo_usuario = forms.ModelChoiceField(
+        queryset=TpUsuario.objects.filter(tipo_usuario__in=['Fonoaudiologo', 'Neurologo', 'Enfermera']),
+        empty_label=None,
+        widget=forms.Select(attrs={'class': 'form-control form-control-sm', 'id': 'tipo_usuario'}),
+        label='Tipo de usuario'
+    )
+
+    id_comuna = forms.ModelChoiceField(
+        queryset=Comuna.objects.all(),
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-control form-control-sm'}),
+        label='Comuna'
+    )
+
+    id_institucion = forms.ModelChoiceField(
+        queryset=Institucion.objects.all(),
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-control form-control-sm'}),
+        label='Institución'
+    )
+
+    class Meta:
+        model = PreRegistro
+        fields = ['numero_identificacion', 
+                  'primer_nombre', 
+                  'segundo_nombre', 
+                  'ap_paterno', 
+                  'ap_materno', 
+                  'fecha_nacimiento', 
+                  'email', 
+                  'numero_telefonico', 
+                  'id_comuna',
+                  'password',
+                  'tipo_usuario',
+                  'id_institucion',
+                  ]

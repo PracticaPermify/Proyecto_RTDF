@@ -2,16 +2,16 @@ document.getElementById('region').addEventListener('change', function() {
     const regionId = this.value;
     const provinciaSelect = document.getElementById('provincia');
     const comunaSelect = document.getElementById('comuna');
-    const institucionSelect = document.getElementById('institucion');
+    const institucionSelect = document.getElementById('id_institucion');
 
     provinciaSelect.removeAttribute('disabled');
     comunaSelect.removeAttribute('disabled');
-
+    institucionSelect.removeAttribute('disabled');
 
     
     provinciaSelect.innerHTML = '<option value="" selected>Selecciona una provincia</option>';
     comunaSelect.innerHTML = '<option value="" selected>Selecciona una comuna</option>';
-
+    institucionSelect.innerHTML = '<option value="" selected>Selecciona una institución</option>'
 
     if (regionId) {
         // Al seleccionar una región, cargar todas las provincias y la primera provincia seleccionada por defecto
@@ -60,3 +60,24 @@ function cargarComunasPorProvincia(provinciaId) {
     }
 }
 
+document.getElementById('comuna').addEventListener('change', function() {
+    const comunaId = this.value;
+    const institucionSelect = document.getElementById('id_institucion');
+
+    institucionSelect.innerHTML = '<option value="" selected>Selecciona una institución</option>';
+
+    if (comunaId) {
+        // Al seleccionar una comuna, cargar las instituciones relacionadas con esa comuna
+        fetch(`/obtener_instituciones/?comuna_id=${comunaId}`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(institucion => {
+                    const option = document.createElement('option');
+                    option.value = institucion.id_institucion;
+                    option.textContent = institucion.nombre_institucion;
+                    institucionSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    }
+});

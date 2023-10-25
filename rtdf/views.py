@@ -9,19 +9,17 @@ from django.views.decorators.cache import never_cache
 #from django.core.files.storage import default_storage
 from django.utils import timezone
 from django.urls import reverse
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Count
 from django.contrib.auth.decorators import login_required
-#import wave
 from django.http import JsonResponse, HttpResponse
 import os
 from django.conf import settings
 from rtdf.audio_coef import audio_analysis
-#from rtdf.audio_coef import *
-#import scripts as scripts
 from django.http import FileResponse
 from django.conf import settings
 from datetime import datetime
+from django.contrib.auth.hashers import make_password
 
 def validate(request):
     if request.is_anonymous:
@@ -136,6 +134,166 @@ def registro(request):
     return render(request, 'registro/registro.html', {'registro_form': registro_form, 
                                                       'regiones': regiones})
 
+
+def pre_registro(request):
+    regiones = Region.objects.all()
+
+    if request.method == 'POST':
+        pre_registro_form = PreRegistroForm(request.POST)
+
+
+        if pre_registro_form.is_valid():
+
+            usuario = pre_registro_form.save(commit=False)
+            # usuario.set_password(usuario.password)
+            tipo_usuario = pre_registro_form.cleaned_data['tipo_usuario']
+            usuario.id_tp_usuario = tipo_usuario
+            usuario.save()
+
+            return redirect('login')
+
+    else:
+        pre_registro_form = PreRegistroForm()
+
+    return render(request, 'registro/pre_registro.html', 
+                  {'registro_form': pre_registro_form,
+                   'regiones': regiones})
+
+def listado_preregistros(request):
+
+    tipo_usuario = None 
+
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+        pre_registrados = PreRegistro.objects.filter(validado='0').order_by('-id_pre_registro')
+        validados = PreRegistro.objects.filter(validado='1').order_by('-id_pre_registro')
+
+
+        elementos_por_pagina = 5  
+
+        paginator = Paginator(pre_registrados, elementos_por_pagina)
+        paginator2 = Paginator(validados, elementos_por_pagina)
+
+
+        page = request.GET.get('page')
+
+        #PAGINATOR 1
+        try:
+            pre_registrados = paginator.page(page)
+            
+        except PageNotAnInteger:
+           
+            pre_registrados = paginator.page(1)
+        except EmptyPage:
+
+            pre_registrados = paginator.page(paginator.num_pages)
+
+        #PAGINATOR 2
+        try:
+            validados = paginator2.page(page)
+        except PageNotAnInteger:
+            
+            validados = paginator2.page(1)
+        except EmptyPage:
+
+            validados = paginator2.page(paginator.num_pages)
+
+
+    return render(request, 'vista_admin/listado_preregistros.html', 
+                  {'tipo_usuario': tipo_usuario,
+                   'pre_registrados': pre_registrados,
+                   'validados': validados,
+                     })
+
+
+@never_cache
+def detalle_preregistro(request, preregistro_id):
+
+    tipo_usuario = None 
+
+    # se verifica que el usuario este registrado como profesional salud
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+        id_admin = request.user.id_usuario
+        nombre_admin = None
+        fecha_validacion = None
+
+        pre_registro = PreRegistro.objects.get(id_pre_registro=preregistro_id)
+
+        if pre_registro.validado == '1':
+            validacion = Validacion.objects.get(id_pre_registro=preregistro_id)
+            nombre_admin = f"{validacion.id_usuario.primer_nombre} {validacion.id_usuario.segundo_nombre if validacion.id_usuario.segundo_nombre is not None else ''} {validacion.id_usuario.ap_paterno} {validacion.id_usuario.ap_materno if validacion.id_usuario.ap_materno is not None else ''}"
+            fecha_validacion = validacion.fecha_validacion
+
+
+        nombre_completo = f"{pre_registro.primer_nombre} {pre_registro.segundo_nombre} {pre_registro.ap_paterno} {pre_registro.ap_materno}"
+        
+        
+        pre_dicc = {
+            'id_preregistro': pre_registro.id_pre_registro,
+            'rut': pre_registro.numero_identificacion,
+            'primer_nombre': pre_registro.primer_nombre,
+            'segundo_nombre': pre_registro.segundo_nombre,
+            'ap_paterno': pre_registro.ap_paterno,
+            'ap_materno': pre_registro.ap_materno,
+            'fecha_nacimiento': pre_registro.fecha_nacimiento,
+            'email': pre_registro.email,
+            'contraseña': pre_registro.password,
+            'celular': pre_registro.numero_telefonico,
+            'validado': pre_registro.validado,
+            'comuna': pre_registro.id_comuna,
+            'rol': pre_registro.id_tp_usuario,
+            'intitucion': pre_registro.id_institucion,
+            'nombre_completo': nombre_completo,
+            'admin': nombre_admin,
+            'fecha_validacion': fecha_validacion,
+        }
+
+        if request.method == 'POST':
+            pre_registro = PreRegistro.objects.get(id_pre_registro=preregistro_id)
+
+            usuario = Usuario.objects.create(
+                numero_identificacion=pre_registro.numero_identificacion,
+                primer_nombre=pre_registro.primer_nombre,
+                segundo_nombre=pre_registro.segundo_nombre,
+                ap_paterno= pre_registro.ap_paterno,
+                ap_materno= pre_registro.ap_materno,
+                fecha_nacimiento = pre_registro.fecha_nacimiento,
+                email = pre_registro.email,
+                password = make_password(pre_registro.password),
+                numero_telefonico = pre_registro.numero_telefonico,
+                id_tp_usuario = pre_registro.id_tp_usuario,
+                id_comuna = pre_registro.id_comuna,
+
+            )
+            profesional_salud = ProfesionalSalud.objects.create(
+                # titulo_profesional=pre_registro.titulo_profesional,
+                id_institucion=pre_registro.id_institucion,
+                id_usuario=usuario
+            )            
+
+            pre_registro.validado = 1
+            pre_registro.save()
+
+            id_admin = request.user.id_usuario
+            admin_usuario = Usuario.objects.get(id_usuario=id_admin)
+
+            # registro en la tabla Validacion
+            Validacion.objects.create(
+                id_pre_registro=pre_registro,
+                id_usuario=admin_usuario,
+                fecha_validacion=timezone.now()
+            )
+
+
+            return redirect('detalle_preregistro', preregistro_id )
+
+    return render(request, 'vista_admin/detalle_preregistro.html', 
+                  {'tipo_usuario': tipo_usuario,
+                   'pre_registro': pre_dicc,
+                     })
+
+
 def obtener_provincias(request):
     region_id = request.GET.get('region_id')
     provincias = Provincia.objects.filter(id_region=region_id).values('id_provincia', 'provincia')
@@ -145,6 +303,11 @@ def obtener_comunas(request):
     provincia_id = request.GET.get('provincia_id')
     comunas = Comuna.objects.filter(id_provincia=provincia_id).values('id_comuna', 'comuna')
     return JsonResponse(list(comunas), safe=False)
+
+def obtener_instituciones(request):
+    comuna_id = request.GET.get('comuna_id')
+    intituciones = Institucion.objects.filter(id_comuna=comuna_id).values('id_institucion', 'nombre_institucion')
+    return JsonResponse(list(intituciones), safe=False)
 
 ##Login para el usuario
 
@@ -1629,7 +1792,6 @@ def analisis_admin(request):
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
 
-        # Actualiza esta consulta para incluir datos de Usuario
         datos_audiocoeficientes = Audioscoeficientes.objects.select_related(
             'id_audio__fk_pauta_terapeutica__fk_informe__fk_relacion_pa_pro__id_paciente__id_usuario',
             'id_audio__fk_pauta_terapeutica__fk_informe__fk_relacion_pa_pro__fk_profesional_salud'
@@ -1760,6 +1922,7 @@ def detalle_audio_admin(request, audio_id):
             'nombre_audio': audio_coeficiente_automatico.nombre_archivo if audio_coeficiente_automatico else None
         }
         
+        print()
 
 
     return render(request, 'vista_admin/detalle_audio_admin.html', {
