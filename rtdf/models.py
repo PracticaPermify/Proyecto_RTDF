@@ -314,7 +314,7 @@ class Registros(models.Model):
     id_registros = models.AutoField(primary_key=True)
     numero_identificacion = models.CharField(max_length=100)
     nombre_completo = models.CharField(max_length=100)
-    region_laboral = models.CharField(max_length=50)
+    region_laboral = models.CharField(max_length=100)
     titulo_profesional = models.CharField(max_length=100)
 
     class Meta:
