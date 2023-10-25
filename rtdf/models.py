@@ -84,6 +84,19 @@ class Comuna(models.Model):
 
     def __str__(self):
         return self.comuna
+    
+
+class EscalaVocales(models.Model):
+    id_pauta_terapeutica = models.OneToOneField('PautaTerapeutica', on_delete=models.CASCADE, db_column='id_pauta_terapeutica', primary_key=True)
+    palabras = models.TextField()
+
+    class Meta:
+        db_table = 'escala_vocales'
+        verbose_name_plural = 'escala vocales'
+
+    def __str__(self):
+        return self.palabras
+
 
 class Esv(models.Model):
     id_informe = models.OneToOneField('Informe', on_delete=models.CASCADE, db_column='id_informe', primary_key=True)
@@ -170,6 +183,8 @@ class Intensidad(models.Model):
         db_table = 'intensidad'
         verbose_name_plural = "intensidad"
 
+
+
     # def __str__(self):
     #     return self.id_pauta_terapeutica
 
@@ -210,6 +225,18 @@ class Pais(models.Model):
 
     def __str__(self):
         return self.pais
+    
+    
+class PalabrasPacientes(models.Model):
+    id_palabras_pacientes = models.AutoField(primary_key=True)
+    palabras_paciente = models.TextField()
+
+    class Meta:
+        db_table = 'palabras_pacientes'
+        verbose_name_plural = 'palabras pacientes'
+
+    def __str__(self):
+        return self.palabras_paciente
 
 
 class PautaTerapeutica(models.Model):
@@ -230,6 +257,9 @@ class PautaTerapeutica(models.Model):
 
     def __str__(self):
         return f'Pauta: {self.id_pauta_terapeutica} | Paciente: {self.fk_informe.fk_relacion_pa_pro.id_paciente.id_usuario.primer_nombre} {self.fk_informe.fk_relacion_pa_pro.id_paciente.id_usuario.ap_paterno}'
+
+
+
 
 class PreRegistro(models.Model):
     id_pre_registro = models.AutoField(primary_key=True)

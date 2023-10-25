@@ -1,4 +1,3 @@
-
 //funciones de Microfono
 
 
@@ -58,7 +57,7 @@ function stopRecordingCallback() {
                     }
                 });
 
-            } else {
+            } else if (terapia === "Intensidad") {
 
                 var crsftoken = window.csrftoken;
 
@@ -86,6 +85,37 @@ function stopRecordingCallback() {
                         console.error('Error al enviar el audio al servidor.');
                     }
                 });
+
+
+            } else if (terapia === "Escala_vocal") {
+
+                var crsftoken = window.csrftoken;
+
+                if (pauta_id) {
+                    url_terapia = escalavocalesConPautaURL;
+                } else {
+                    url_terapia = '/escalas_vocales/';
+                }
+
+                
+                //console.log("Intensidad" + crsftoken);
+
+                fetch(url_terapia, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': crsftoken
+                    },
+                    
+                })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Grabación de audio completada y enviada al servidor.');
+                    } else {
+                        console.error('Error al enviar el audio al servidor.');
+                    }
+                });
+
 
 
             }
@@ -224,3 +254,7 @@ clickAudio = (a) => {
         }
     }
 }
+
+
+
+

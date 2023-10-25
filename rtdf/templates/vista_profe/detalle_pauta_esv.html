@@ -1,0 +1,64 @@
+{% extends "rtdf/base.html" %}
+
+{% block content %}
+
+<div>
+  <a href="{{ url_regreso }}">Volver a listado de informes</a>
+</div>
+
+</br>
+
+<h1>Detalle de Pauta Terapéutica de Escala Vocal</h1>
+
+<table>
+  <tr>
+    <th>ID de la pauta:</th>
+    <td>{{ pauta.id_pauta_terapeutica }}</td>
+  </tr>
+  <tr>
+    <th>Nombre del paciente:</th>
+    <td>{{ paciente.primer_nombre }} {{ paciente.ap_paterno }}</td>
+  </tr>
+  <tr>
+    <th>Rut del paciente:</th>
+    <td>{{ paciente.numero_identificacion }}</td>
+  </tr>
+  <tr>
+    <th>N° veces al día:</th>
+    <td>{{ pauta.cant_veces_dia }}</td>
+  </tr>
+  <tr>
+    <th>Fecha de inicio:</th>
+    <td>{{ pauta.fecha_inicio }}</td>
+  </tr>
+  <tr>
+    <th>Fecha de fin:</th>
+    <td>{{ pauta.fecha_fin }}</td>
+  </tr>
+  <tr>
+    <th>Descripción:</th>
+    <td>{{ pauta.descripcion }}</td>
+  </tr>
+  <tr>
+    <th>Comentario:</th>
+    <td>{{ pauta.comentario }}</td>
+  </tr>
+</table>
+
+<h2>Palabras que debe decir su paciente:</h2>
+
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Palabra</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        {{ palabras }}
+      </td>
+  </tbody>
+</table>
+
+{% endblock %}

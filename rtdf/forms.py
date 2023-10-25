@@ -334,7 +334,7 @@ class PautaTerapeuticaForm(forms.ModelForm):
 
     fk_tp_terapia = forms.ModelChoiceField(
         queryset=TpTerapia.objects.filter(tipo_terapia__in=['Vocalización', 'Intensidad']),
-        required=True,
+        required=False,
         widget=forms.Select(attrs={'class': 'form-control form-control-sm'}),
         label='Tipo de terapia'
     )

@@ -52,6 +52,11 @@
                                                         {% if pauta_terapeutica.intensidad %}
                                                         <a href="{% url 'intensidad_con_pauta' pauta_terapeutica.id_pauta_terapeutica %}" class="btn btn-primary">Empezar</a>
                                                         {% endif %}
+
+                                                    {% elif pauta_terapeutica.escalavocales %}
+                                                        {% if pauta_terapeutica.escalavocales %}
+                                                            <a href="{% url 'escalas_vocales_con_pauta' pauta_terapeutica.id_pauta_terapeutica %}" class="btn btn-primary">Empezar</a>
+                                                        {% endif %}
                                                     {% endif %}
                                             </td>
                                         </tr>

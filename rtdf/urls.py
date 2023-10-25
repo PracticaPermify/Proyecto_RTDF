@@ -64,6 +64,10 @@ urlpatterns = [
     path('eliminar_audio_admin/<int:audio_id>/', views.eliminar_audio_admin, name='eliminar_audio_admin'),
     path('listado_preregistros',views.listado_preregistros, name='listado_preregistros'),
     path('detalle_preregistro/<int:preregistro_id>/', views.detalle_preregistro, name='detalle_preregistro'),
+    path('detalle_pauta_esv/<int:pauta_id>/', views.detalle_pauta_esv, name='detalle_pauta_esv'),
+    path('escalas_vocales/', views.escalas_vocales, name='escalas_vocales'),
+    path('escalas_vocales/<int:pauta_id>/', views.escalas_vocales, name='escalas_vocales_con_pauta'),
+
 ]
 
 ##urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
