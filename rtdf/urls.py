@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('', views.index, name='index'), 
@@ -67,6 +68,12 @@ urlpatterns = [
     path('detalle_pauta_esv/<int:pauta_id>/', views.detalle_pauta_esv, name='detalle_pauta_esv'),
     path('escalas_vocales/', views.escalas_vocales, name='escalas_vocales'),
     path('escalas_vocales/<int:pauta_id>/', views.escalas_vocales, name='escalas_vocales_con_pauta'),
+
+    #RECUPERAR CONTRASEÑA
+    path('recuperar_pw/', views.CustomPasswordResetView.as_view(), name='custom_password_reset'),
+    path('recuperar_pw/listo/', views.CustomPasswordResetDoneView.as_view(), name='custom_password_reset_done'),
+    path('reiniciar/<uidb64>/<token>/', views.CustomPasswordResetConfirmView.as_view(), name='custom_password_reset_confirm'),
+    path('reiniciar/listo/', views.CustomPasswordResetCompleteView.as_view(), name='custom_password_reset_complete'),
 
 ]
 

@@ -57,12 +57,12 @@
             </div>
         </div>
     
-        <div class="form-row">
+        <!-- <div class="form-row">
             <div class="form-group col-md-3">
                 <label for="id_fecha_nacimiento">Fecha nacimiento</label></br>
                 {{ registro_form.fecha_nacimiento }}
             </div>
-        </div>        
+        </div>         -->
 
         <div class="form-row">
             <div class="form-group col-md-4">
@@ -71,7 +71,7 @@
             </div>
         </div>  
 
-        <div class="form-row">
+        <!-- <div class="form-row">
             <div class="form-group col-md-4">
                 <label for="id_numero_telefonico">Numero de contacto</label>
                 {{ registro_form.numero_telefonico }}
@@ -130,28 +130,16 @@
                     una minúscula, un número y un carácter especial.</p>
                 </small>
             </div>
-        </div>
-<!-- 
-        <div class="form-row">
-            <div class="form-group col-md-4">
-                <label for="tipo_usuario">Tipo de usuario</label>
-                <select id="tipo_usuario" name="{{ registro_form.tipo_usuario.name }}" class="form-control form-control-sm">
-                    <option value="" selected>Selecciona un tipo de usuario</option>
-                    {% for choice in registro_form.tipo_usuario.field.choices %}
-                        <option value="{{ choice.0 }}">{{ choice.1 }}</option>
-                    {% endfor %}
-                </select>
-            </div>
         </div> -->
     
 
-
+    </BR>
     <button type="submit" class="btn btn-primary btn-block">Registrar</button>
 
 </form>
 
-<script src="{% static 'app/js/ubicacion_preregistro.js' %}"></script>
-<!-- <script src="{% static 'app/js/registro_final.js' %}"></script> -->
+<!-- <script src="{% static 'app/js/ubicacion_preregistro.js' %}"></script> -->
+
 
 </body>
 

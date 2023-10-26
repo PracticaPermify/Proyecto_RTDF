@@ -20,6 +20,26 @@ from django.http import FileResponse
 from django.conf import settings
 from datetime import datetime
 from django.contrib.auth.hashers import make_password
+from django.utils.crypto import get_random_string
+from django.contrib.auth.views import PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
+from django.urls import reverse_lazy
+
+
+class CustomPasswordResetView(PasswordResetView):
+    template_name = 'registro/password_reset_form.html'
+    email_template_name = 'registro/reset_email.html'
+    success_url = reverse_lazy('custom_password_reset_done')
+
+class CustomPasswordResetDoneView(PasswordResetDoneView):
+    template_name = 'registro/password_reset_done.html'
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    template_name = 'registro/password_reset_confirm.html'
+    success_url = reverse_lazy('custom_password_reset_complete')
+
+class CustomPasswordResetCompleteView(PasswordResetCompleteView):
+    template_name = 'registro/password_reset_complete.html'
+
 
 def validate(request):
     if request.is_anonymous:
@@ -137,15 +157,22 @@ def registro(request):
 
 def pre_registro(request):
     regiones = Region.objects.all()
+    password = get_random_string(length=8)
 
     if request.method == 'POST':
         pre_registro_form = PreRegistroForm(request.POST)
-
 
         if pre_registro_form.is_valid():
 
             usuario = pre_registro_form.save(commit=False)
             # usuario.set_password(usuario.password)
+            
+            usuario.fecha_nacimiento = '2000-01-01'
+            usuario.numero_telefonico = 'No informado'
+            usuario.password = password
+            usuario.id_comuna = Comuna.objects.get(id_comuna=1) 
+            usuario.id_institucion = Institucion.objects.get(id_institucion=1)
+
             tipo_usuario = pre_registro_form.cleaned_data['tipo_usuario']
             usuario.id_tp_usuario = tipo_usuario
             usuario.save()
@@ -153,7 +180,16 @@ def pre_registro(request):
             return redirect('login')
 
     else:
+        # pre_registro_form = PreRegistroForm()
+
+        # Crea una instancia del formulario y elimina los campos no deseados
         pre_registro_form = PreRegistroForm()
+        del pre_registro_form.fields['fecha_nacimiento']
+        del pre_registro_form.fields['numero_telefonico']
+        del pre_registro_form.fields['password']
+        del pre_registro_form.fields['id_comuna']
+        del pre_registro_form.fields['id_institucion']
+            
 
     return render(request, 'registro/pre_registro.html', 
                   {'registro_form': pre_registro_form,
@@ -210,6 +246,7 @@ def listado_preregistros(request):
 def detalle_preregistro(request, preregistro_id):
 
     tipo_usuario = None 
+    registro_precargado = None
 
     # se verifica que el usuario este registrado como profesional salud
     if request.user.is_authenticated:
@@ -219,6 +256,7 @@ def detalle_preregistro(request, preregistro_id):
         fecha_validacion = None
 
         pre_registro = PreRegistro.objects.get(id_pre_registro=preregistro_id)
+
 
         if pre_registro.validado == '1':
             validacion = Validacion.objects.get(id_pre_registro=preregistro_id)
@@ -248,6 +286,30 @@ def detalle_preregistro(request, preregistro_id):
             'admin': nombre_admin,
             'fecha_validacion': fecha_validacion,
         }
+
+        numero_identificacion= pre_dicc['rut']
+        #print(pre_dicc['rut'])
+
+        # se divide el número de identificación en dos partes: antes y después del guión
+        partes = numero_identificacion.split('-')
+        numero_parte_antes_del_guion = partes[0]
+        numero_parte_despues_del_guion = partes[1]
+
+        # formateo de  la parte antes del guion
+        numero_parte_antes_del_guion = '{:,}'.format(int(numero_parte_antes_del_guion.replace('.', ''))).replace(',', '.')
+
+        # se concatena las dos partes
+        numero_identificacion_formateado = f'{numero_parte_antes_del_guion}-{numero_parte_despues_del_guion}'
+
+        #print(numero_identificacion_formateado)
+
+        try:
+            registro_precargado = Registros.objects.get(numero_identificacion=numero_identificacion_formateado)
+            print(registro_precargado)          
+        except Registros.DoesNotExist:
+            print("El registro no fue encontrado en la base de datos.")
+        except Exception as e:
+            print(f"Ocurrió un error al buscar el registro: {e}")
 
         if request.method == 'POST':
             pre_registro = PreRegistro.objects.get(id_pre_registro=preregistro_id)
@@ -291,6 +353,7 @@ def detalle_preregistro(request, preregistro_id):
     return render(request, 'vista_admin/detalle_preregistro.html', 
                   {'tipo_usuario': tipo_usuario,
                    'pre_registro': pre_dicc,
+                   'registro_precargado':  registro_precargado,
                      })
 
 

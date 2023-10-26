@@ -552,24 +552,24 @@ class PreRegistroForm(forms.ModelForm):
 
     fecha_nacimiento = forms.DateField(
         widget=forms.DateInput(format='%d-%m-%Y', attrs={'type': 'date'}),
-        required=True
+        required=False
     )
 
     email = forms.EmailField(
         widget=forms.TextInput(attrs={'placeholder': 'usuario@gmail.com'}),
         validators=[EmailValidator(message="Ingrese una dirección de correo electrónico válida")],
-        required=False
+        required=True
     )
 
     numero_telefonico = forms.CharField(
-        required=True,
+        required=False,
         widget=forms.TextInput(attrs={'placeholder': '+56912345678'}),
         help_text='Ingrese un número de teléfono válido (Ejemplo: +56912345678)'
     )
 
     password = forms.CharField(
         widget=forms.PasswordInput(attrs={'placeholder': '********'}),
-        required=True,
+        required=False,
         help_text='La contraseña debe contener al menos una mayúscula, una minúscula, un número y un carácter especial.'
     )
 
@@ -582,14 +582,14 @@ class PreRegistroForm(forms.ModelForm):
 
     id_comuna = forms.ModelChoiceField(
         queryset=Comuna.objects.all(),
-        required=True,
+        required=False,
         widget=forms.Select(attrs={'class': 'form-control form-control-sm'}),
         label='Comuna'
     )
 
     id_institucion = forms.ModelChoiceField(
         queryset=Institucion.objects.all(),
-        required=True,
+        required=False,
         widget=forms.Select(attrs={'class': 'form-control form-control-sm'}),
         label='Institución'
     )
@@ -609,3 +609,12 @@ class PreRegistroForm(forms.ModelForm):
                   'tipo_usuario',
                   'id_institucion',
                   ]
+        
+    # def clean(self):
+    #     cleaned_data = super().clean()
+
+    #     fecha_nacimiento = cleaned_data.get('fecha_nacimiento')
+    #     if not fecha_nacimiento:
+    #         raise forms.ValidationError("La fecha de nacimiento es requerida.")
+
+    #     return cleaned_data

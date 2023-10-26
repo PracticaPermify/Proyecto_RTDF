@@ -31,17 +31,17 @@
                     <th>Nombre completo:</th>
                     <td scope="row">{{ pre_registro.nombre_completo }}</td>
                   </tr>
-                  <tr>
+                  <!-- <tr>
                     <th>Fecha de nacimiento:</th>
                     <td scope="row">{{ pre_registro.fecha_nacimiento }}</td>
-                  </tr>
+                  </tr> -->
 
                   <tr>
                     <th>Correo:</th>
                     <td scope="row">{{ pre_registro.email }}</td>
                   </tr>
 
-                  <tr>
+                  <!-- <tr>
                     <th>Numero celular:</th>
                     <td scope="row">{{ pre_registro.celular }}</td>
                   </tr>
@@ -49,15 +49,15 @@
                   <tr>
                     <th>Comuna:</th>
                     <td scope="row">{{ pre_registro.comuna }}</td>
-                  </tr>
+                  </tr> -->
                   <tr>
                     <th>Profesión:</th>
                     <td scope="row">{{ pre_registro.rol }}</td>
                   </tr>
-                  <tr>
+                  <!-- <tr>
                     <th>Institución:</th>
                     <td scope="row">{{ pre_registro.intitucion }}</td>
-                  </tr>
+                  </tr> -->
                   {% if pre_registro.validado == '0' %}
                     <tr>
                       <th>¿Está validado?:</th>
@@ -89,7 +89,6 @@
                   <!-- <button type="button" class="btn btn-primary btn-block" id="validar" onclick="validarRegistro({{ pre_registro.id_preregistro }})">Validar</button> -->
                   <form method="post" action="{% url 'detalle_preregistro' pre_registro.id_preregistro %}">
                         {% csrf_token %}
-                        <!-- ... Otros campos del formulario ... -->
                         <button type="submit" class="btn btn-primary btn-block">Validar</button>
                     </form>
                 
@@ -98,7 +97,39 @@
             {% endif %}
         </div>
 
-            
+        <br/>
+        <h2>Coincidencia con registros precargados</h2>
+
+
+        <br/>
+        <div class="table-responsive">
+            <table class="table" id="coef-auto-audios">
+                <thead class="thead-dark">
+                    <tr>
+                        <th >ID</th>
+                        <th >Numero identificación</th>
+                        <th >Nombre completo</th>
+                        <th >Región laboral</th>
+                        <th >Titulo profesional</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if registro_precargado %}
+                    <tr>
+                        <td>{{ registro_precargado.id_registros }}</td>
+                        <td>{{ registro_precargado.numero_identificacion }}</td>
+                        <td>{{ registro_precargado.nombre_completo }}</td>
+                        <td>{{ registro_precargado.region_laboral }}</td>
+                        <td>{{ registro_precargado.titulo_profesional }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5">No existe coincidencia con nuestra base de datos.</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+                </table>
+            </div>
 
             
 
