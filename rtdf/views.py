@@ -2000,6 +2000,67 @@ def detalle_pauta_esv(request, pauta_id):
                                                                       'tipo_usuario': tipo_usuario})
     else:
         return render(request, 'vista_profe/error.html', {'message': 'La pauta no es del tipo "Escala Vocal."'})
+    
+
+
+def editar_pauta_esv(request, pauta_id):
+
+    tipo_usuario = None
+
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+
+ 
+    pauta = get_object_or_404(PautaTerapeutica, pk=pauta_id)
+
+    if pauta.fk_tp_terapia.tipo_terapia == 'Escala_vocal':
+        if request.method == 'POST':
+            # Procesar el formulario
+            form = PautaTerapeuticaForm(request.POST, instance=pauta)
+            if form.is_valid():
+                # Guardar los cambios en la pauta
+                form.instance.fk_tp_terapia_id = 3 
+                form.save()
+
+                # Procesar las palabras
+                palabras = [request.POST.get(f'palabra{i}', '') for i in range(1, 11)]
+                palabras = [palabra for palabra in palabras if palabra]
+                palabras_concatenadas = ", ".join(palabras)
+
+                # Actualizar o crear el registro de EscalaVocales
+                if pauta.escalavocales:
+                    pauta.escalavocales.palabras = palabras_concatenadas
+                    pauta.escalavocales.save()
+                else:
+                    escala_vocales = EscalaVocales(palabras=palabras_concatenadas)
+                    escala_vocales.id_pauta_terapeutica = pauta
+                    escala_vocales.save()
+
+                return redirect('detalle_pauta_esv', pauta_id)
+        else:
+            form = PautaTerapeuticaForm(instance=pauta)
+            palabras = pauta.escalavocales.palabras.split(', ') if pauta.escalavocales else []
+
+        return render(request, 'vista_profe/editar_pauta_esv.html', {'form': form, 'pauta': pauta, 'palabras': palabras,
+                                                                     'tipo_usuario': tipo_usuario})
+    else:
+        return render(request, 'vista_profe/error.html', {'message': 'Error: Esta pauta no es de Escala Vocal.'})
+    
+
+
+
+def eliminar_pauta_esv(request, pauta_id):
+
+    pauta = get_object_or_404(PautaTerapeutica, pk=pauta_id)
+
+    if pauta.fk_tp_terapia.tipo_terapia == 'Escala_vocal':
+        pauta.delete()
+
+    # Redirigir a la vista de detalle_esv
+    return redirect('detalle_esv', informe_id=pauta.fk_informe.id_informe)
+
+
+
 
 
 

@@ -69,6 +69,9 @@ urlpatterns = [
     path('escalas_vocales/', views.escalas_vocales, name='escalas_vocales'),
     path('escalas_vocales/<int:pauta_id>/', views.escalas_vocales, name='escalas_vocales_con_pauta'),
 
+    path('editar_pauta_esv/<int:pauta_id>/', views.editar_pauta_esv, name='editar_pauta_esv'),
+    path('eliminar_pauta_esv/<int:pauta_id>/', views.eliminar_pauta_esv, name='eliminar_pauta_esv'),
+
     #RECUPERAR CONTRASEÑA
     path('recuperar_pw/', views.CustomPasswordResetView.as_view(), name='custom_password_reset'),
     path('recuperar_pw/listo/', views.CustomPasswordResetDoneView.as_view(), name='custom_password_reset_done'),

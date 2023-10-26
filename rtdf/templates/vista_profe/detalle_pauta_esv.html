@@ -10,6 +10,17 @@
 
 <h1>Detalle de Pauta Terapéutica de Escala Vocal</h1>
 
+
+<a href="{% url 'eliminar_pauta_esv' pauta.id_pauta_terapeutica %}" class="btn btn-danger btn-derecha" 
+onclick="return confirm('¿Estás seguro de eliminar el informe?')">
+   Eliminar <i class="fas fa-trash" style="margin-left: 5px;"></i>
+</a>
+
+<a href="{% url 'editar_pauta_esv' pauta.id_pauta_terapeutica %}" class="btn btn-primary btn-derecha" >Editar
+  <i class="fas fa-pencil-alt" style="margin-left: 5px;"></i>
+</a>
+
+
 <table>
   <tr>
     <th>ID de la pauta:</th>
