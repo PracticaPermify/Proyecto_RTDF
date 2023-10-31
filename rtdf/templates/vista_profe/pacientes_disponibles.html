@@ -30,7 +30,8 @@
                 <td>{{ paciente.id_usuario.email }}</td>
                 <td>{{ paciente.telegram }}</td>
                 <td>
-                  <a href="{% url 'agregar_paciente' paciente.id_paciente %}" class="btn btn-primary">Añadir</a>
+                  <a href="{% url 'agregar_paciente' paciente.id_paciente %}" class="btn btn-primary"
+                  onclick="return confirm('¿Estás seguro de añadir a este paciente?')">Añadir</a>
               </td>
             </tr>
         {% empty %}

@@ -23,6 +23,8 @@ from django.contrib.auth.hashers import make_password
 from django.utils.crypto import get_random_string
 from django.contrib.auth.views import PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
 from django.urls import reverse_lazy
+from django.http import HttpResponseRedirect
+
 
 
 class CustomPasswordResetView(PasswordResetView):
@@ -1914,7 +1916,6 @@ def eliminar_pauta_admin(request, id_pauta_terapeutica_id):
     return redirect('detalle_informe', informe_id=pauta.fk_informe.id_informe)
 
 
-##DETALLE ESV
 @user_passes_test(validate)
 def detalle_esv(request, informe_id):
     tipo_usuario = None
@@ -1925,7 +1926,7 @@ def detalle_esv(request, informe_id):
         paciente_relacionado = informe.fk_relacion_pa_pro.id_paciente
 
         pautas_terapeuticas = PautaTerapeutica.objects.filter(
-            fk_informe=informe,  # Filtra por el informe actual
+            fk_informe=informe,
             fk_informe__fk_relacion_pa_pro__id_paciente=paciente_relacionado,
             fk_tp_terapia__tipo_terapia='Escala_vocal'
         )
@@ -1936,36 +1937,53 @@ def detalle_esv(request, informe_id):
         if pauta_terapeutica_form.is_valid():
             pauta_terapeutica = pauta_terapeutica_form.save(commit=False)
             pauta_terapeutica.fk_informe = informe
-
-            # Asignar el tipo de terapia "Escala vocal" directamente
             pauta_terapeutica.fk_tp_terapia = TpTerapia.objects.get(tipo_terapia='Escala_vocal')
             pauta_terapeutica.save()
 
             # Procesar palabras para EscalaVocales
             palabras = []
-            for i in range(1, 11):
-                palabra = request.POST.get(f'palabra{i}', '')
-                if palabra:
-                    palabras.append(palabra)
-            
+            for i in range(1, 21):  # Modificar a 21 para tener 20 selects
+                palabra_id = request.POST.get(f'palabra{i}', '')  # Obtén el valor seleccionado en el formulario
+                if palabra_id:
+                    palabra = PalabrasPacientes.objects.get(pk=palabra_id)  # Obtén el objeto de PalabrasPacientes
+                    palabras.append(palabra.palabras_paciente)
+
             # Concatenar palabras en una sola cadena
             palabras_concatenadas = ", ".join(palabras)
 
             # Crear una instancia de EscalaVocales y guardar las palabras
             escala_vocales = EscalaVocales(palabras=palabras_concatenadas)
-            escala_vocales.id_pauta_terapeutica = pauta_terapeutica  # Establece la relación con la pauta terapéutica
+            escala_vocales.id_pauta_terapeutica = pauta_terapeutica
             escala_vocales.save()
+
+            # Después de guardar la pauta, redirige a la misma página para evitar mantener los datos en los campos
+            return HttpResponseRedirect(request.path_info)
 
     else:
         pauta_terapeutica_form = PautaTerapeuticaForm()
+
+    # Obtén todas las palabras de la tabla PalabrasPacientes
+    palabras_pacientes = PalabrasPacientes.objects.all()
+
+    # Crea una lista de selecciones (selects) con 20 selects
+    selects = []
+    for i in range(1, 21):
+        palabras_select = PalabrasPacientes.objects.filter().order_by('id_palabras_pacientes')[i-1]
+        selects.append({
+            'id': i,
+            'palabras_pacientes': palabras_pacientes,
+            'palabras_select': palabras_select,
+        })
 
     return render(request, 'vista_profe/detalle_esv.html', {
         'informe': informe,
         'tipo_usuario': tipo_usuario,
         'paciente_relacionado': paciente_relacionado,
         'pauta_terapeutica_form': pauta_terapeutica_form,
-        'pautas_terapeuticas': pautas_terapeuticas
+        'pautas_terapeuticas': pautas_terapeuticas,
+        'selects': selects,
     })
+
 
 
 @user_passes_test(validate)
@@ -2009,42 +2027,113 @@ def editar_pauta_esv(request, pauta_id):
 
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
-
- 
+    
     pauta = get_object_or_404(PautaTerapeutica, pk=pauta_id)
-
-    if pauta.fk_tp_terapia.tipo_terapia == 'Escala_vocal':
-        if request.method == 'POST':
-            # Procesar el formulario
-            form = PautaTerapeuticaForm(request.POST, instance=pauta)
-            if form.is_valid():
-                # Guardar los cambios en la pauta
-                form.instance.fk_tp_terapia_id = 3 
-                form.save()
-
-                # Procesar las palabras
-                palabras = [request.POST.get(f'palabra{i}', '') for i in range(1, 11)]
-                palabras = [palabra for palabra in palabras if palabra]
-                palabras_concatenadas = ", ".join(palabras)
-
-                # Actualizar o crear el registro de EscalaVocales
-                if pauta.escalavocales:
-                    pauta.escalavocales.palabras = palabras_concatenadas
-                    pauta.escalavocales.save()
-                else:
-                    escala_vocales = EscalaVocales(palabras=palabras_concatenadas)
-                    escala_vocales.id_pauta_terapeutica = pauta
-                    escala_vocales.save()
-
-                return redirect('detalle_pauta_esv', pauta_id)
-        else:
-            form = PautaTerapeuticaForm(instance=pauta)
-            palabras = pauta.escalavocales.palabras.split(', ') if pauta.escalavocales else []
-
-        return render(request, 'vista_profe/editar_pauta_esv.html', {'form': form, 'pauta': pauta, 'palabras': palabras,
-                                                                     'tipo_usuario': tipo_usuario})
-    else:
+    
+    if pauta.fk_tp_terapia.tipo_terapia != 'Escala_vocal':
         return render(request, 'vista_profe/error.html', {'message': 'Error: Esta pauta no es de Escala Vocal.'})
+
+    palabras_pacientes = PalabrasPacientes.objects.all()
+    palabras_pauta = pauta.escalavocales.palabras.split(', ') if pauta.escalavocales else []
+
+    if request.method == 'POST':
+        form = PautaTerapeuticaForm(request.POST, instance=pauta)
+
+        if form.is_valid():
+            form.instance.fk_tp_terapia_id = 3  # Asegúrate de configurar el ID del tipo de terapia adecuado
+            form.save()
+
+            palabras = []
+            for i in range(1, 21):
+                palabra_id = request.POST.get(f'palabra{i}', '')
+                if palabra_id:
+                    palabra = PalabrasPacientes.objects.get(pk=palabra_id)
+                    palabras.append(palabra.palabras_paciente)
+
+            palabras_concatenadas = ", ".join(palabras)
+
+            if pauta.escalavocales:
+                pauta.escalavocales.palabras = palabras_concatenadas
+                pauta.escalavocales.save()
+            else:
+                escala_vocales = EscalaVocales(palabras=palabras_concatenadas)
+                escala_vocales.id_pauta_terapeutica = pauta
+                escala_vocales.save()
+
+            return redirect('detalle_pauta_esv', pauta_id)
+    else:
+        form = PautaTerapeuticaForm(instance=pauta)
+
+        selects = []
+        for i in range(1, 21):
+            selects.append({
+                'id': i,
+                'palabras_pacientes': palabras_pacientes,
+                'palabra_seleccionada': palabras_pauta[i - 1] if i <= len(palabras_pauta) else None,
+            })
+
+    return render(request, 'vista_profe/editar_pauta_esv.html', {
+        'form': form,
+        'pauta': pauta,
+        'selects': selects,
+        'tipo_usuario': tipo_usuario
+    })
+
+
+# def editar_pauta_esv(request, pauta_id):
+#     tipo_usuario = None
+#     if request.user.is_authenticated:
+#         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+
+#     pauta = get_object_or_404(PautaTerapeutica, pk=pauta_id)
+
+#     if pauta.fk_tp_terapia.tipo_terapia == 'Escala_vocal':
+#         if request.method == 'POST':
+#             form = PautaTerapeuticaForm(request.POST, instance=pauta)
+#             if form.is_valid():
+#                 # Guardar los cambios en la pauta
+#                 form.instance.fk_tp_terapia_id = 3  # Asegúrate de configurar el ID del tipo de terapia adecuado
+#                 form.save()
+
+#                 # Procesar las palabras
+#                 palabras = []
+#                 for i in range(1, 21):
+#                     palabra_id = request.POST.get(f'palabra{i}', '')
+#                     if palabra_id:
+#                         palabra = PalabrasPacientes.objects.get(pk=palabra_id)
+#                         palabras.append(palabra.palabras_paciente)
+
+#                 palabras_concatenadas = ", ".join(palabras)
+
+#                 # Actualizar o crear el registro de EscalaVocales
+#                 if pauta.escalavocales:
+#                     pauta.escalavocales.palabras = palabras_concatenadas
+#                     pauta.escalavocales.save()
+#                 else:
+#                     escala_vocales = EscalaVocales(palabras=palabras_concatenadas)
+#                     escala_vocales.id_pauta_terapeutica = pauta
+#                     escala_vocales.save()
+
+#                 return redirect('detalle_pauta_esv', pauta_id)
+#         else:
+#             form = PautaTerapeuticaForm(instance=pauta)
+#             palabras = pauta.escalavocales.palabras.split(', ') if pauta.escalavocales else []
+
+#             # Obtén todas las palabras para cargar los select
+#             palabras_pacientes = PalabrasPacientes.objects.all()
+
+#             # Crea una lista de selecciones para 20 select
+#             selects = []
+#             for i in range(1, 21):
+#                 selects.append({
+#                     'id': i,
+#                     'palabras_pacientes': palabras_pacientes,
+#                     'palabra_seleccionada': palabras[i - 1] if i <= len(palabras) else None,
+#                 })
+
+#         return render(request, 'vista_profe/editar_pauta_esv.html', {'form': form, 'pauta': pauta, 'palabras': palabras, 'tipo_usuario': tipo_usuario, 'selects': selects})
+#     else:
+#         return render(request, 'vista_profe/error.html', {'message': 'Error: Esta pauta no es de Escala Vocal.'})
     
 
 

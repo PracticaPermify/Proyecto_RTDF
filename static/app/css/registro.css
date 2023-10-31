@@ -1,0 +1,74 @@
+/* registro.css */
+.registro-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f7f7f7;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.registro-title {
+  font-size: 30px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.registro-field {
+  margin-bottom: 15px;
+}
+
+.registro-field label {
+  display: block;
+  font-weight: bold;
+}
+
+.registro-field select,
+.registro-field input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.registro-error {
+  color: #ff0000;
+  font-size: 14px;
+}
+
+.registro-submit {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #007BFF;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s;
+}
+
+.registro-submit:hover {
+  background-color: #0056b3;
+}
+
+/* Estilo para separar campos Primer Nombre y Segundo Nombre */
+.registro-form .form-group .primer-nombre {
+  margin-right: 10px;
+}
+
+.registro-form .form-group .segundo-nombre {
+  margin-left: 10px;
+}
+
+/* Estilo para separar campos Apellido Paterno y Apellido Materno */
+.registro-form .form-group .ap-paterno {
+  margin-right: 10px;
+}
+
+.registro-form .form-group .ap-materno {
+  margin-left: 10px;
+}

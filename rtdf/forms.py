@@ -4,6 +4,7 @@ from django.core.validators import EmailValidator
 from django.core.exceptions import ValidationError
 import re
 from django.core import validators
+from datetime import date
 
 ##Numero de telefono
 
@@ -13,50 +14,61 @@ def es_numero_telefonico_valido(numero_telefonico):
     return re.match(patron, numero_telefonico) is not None
 
 def es_password_valido(password):
+    errores = []
 
     if not re.search(r'[A-Z]', password):
-        raise ValidationError('La contraseña debe contener al menos una letra mayúscula.')
+        errores.append('La contraseña debe contener al menos una letra mayúscula.')
 
     if not re.search(r'[a-z]', password):
-        raise ValidationError('La contraseña debe contener al menos una letra minúscula.')
+        errores.append('La contraseña debe contener al menos una letra minúscula.')
 
     if not re.search(r'[0-9]', password):
-        raise ValidationError('La contraseña debe contener al menos un número.')
+        errores.append('La contraseña debe contener al menos un número.')
 
     if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
-        raise ValidationError('La contraseña debe contener al menos un carácter especial.')
+        errores.append('La contraseña debe contener al menos un carácter especial.')
 
     if len(password) < 8:
-        raise ValidationError('La contraseña debe tener al menos 8 caracteres.')
+        errores.append('La contraseña debe tener al menos 8 caracteres.')
+
+    if errores:
+        raise forms.ValidationError(errores)
     
 def clean_rut_paciente(self):
         rut = self.cleaned_data['rut_paciente']
-        # Realiza aquí las validaciones del RUT y devuelve el valor limpio o lanza ValidationError si es inválido
         if not re.match(r'^\d{7,8}-[Kk\d]$', rut):
             raise forms.ValidationError('El RUT ingresado no es válido.')
         return rut
 
-##Caracteres obligatorios para la contraseña
+def validate_fecha_nacimiento(value):
+    today = date.today()
+    if value == today:
+        raise ValidationError('La fecha de nacimiento no puede ser la fecha actual, ingrese su fecha de nacimiento correcto.')
+
 
 class RegistroForm(forms.ModelForm):
 
     numero_identificacion = forms.CharField(
         required=True,
         widget=forms.TextInput(attrs={'placeholder': '12345678-9'}),
-        help_text='Ingrese su RUT válido (Ejemplo: 12345678-9)',
         label='Rut',
         validators=[
             validators.RegexValidator(
                 regex=r'^\d{7,8}-[Kk\d]$',  # Validador para RUTs en formato válido
-                message='Ingrese un RUT válido en formato 12345678-9.'
+                message='Ingrese un RUT válido para el registro.'
             ),
-            validators.MinLengthValidator(limit_value=9, message='El rut debe contar con los caracteres especificados'),  
-        ]
+            validators.MinLengthValidator(limit_value=9, message='El RUT debe ir sin puntos y con guion.'),  
+        ],
+        error_messages={
+            'required': 'Este campo es obligatorio.'
+        },
     )
 
     fecha_nacimiento = forms.DateField(
         widget=forms.DateInput(format='%d-%m-%Y', attrs={'type': 'date'}),
-        required=True
+        required=True,
+        validators=[validate_fecha_nacimiento]
+        
     )
 
     email = forms.EmailField(
@@ -69,14 +81,17 @@ class RegistroForm(forms.ModelForm):
         validators=[es_numero_telefonico_valido],
         required=False,
         widget=forms.TextInput(attrs={'placeholder': '+56912345678'}),
-        help_text='Ingrese un número de teléfono válido (Ejemplo: +56912345678)'
+        help_text='Ingrese un número de teléfono válido (Ejemplo: +56912345678)',
+        error_messages={
+            'regex': 'Ingresa un número de teléfono válido en formato +56912345678.',
+        }
     )
 
     password = forms.CharField(
         widget=forms.PasswordInput(attrs={'placeholder': '********'}),
         validators=[es_password_valido],
         required=True,
-        help_text='La contraseña debe contener al menos una mayúscula, una minúscula, un número y un carácter especial.'
+        help_text='La contraseña debe contener al menos una mayúscula, una minúscula, un número y un carácter especial.',
     )
 
     tipo_usuario = forms.ModelChoiceField(

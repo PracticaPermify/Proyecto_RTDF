@@ -40,61 +40,24 @@
 
 
 <h2>Palabras para la Pauta</h2>
+</br>
 <div class="row">
-  <div class="col-sm-6">
-    <div class="form-group">
-      <label for="palabra1">Palabra 1:</label>
-      <input type="text" name="palabra1" id="palabra1" value="{{ palabras.0}}" required>
-    </div>
-
-    <div class="form-group">
-      <label for="palabra2">Palabra 2:</label>
-      <input type="text" name="palabra2" id="palabra2" value="{{ palabras.1}}" required>
-    </div>
-
-    <div class="form-group">
-      <label for="palabra3">Palabra 3:</label>
-      <input type="text" name="palabra3" id="palabra3" value="{{ palabras.2}}" required>
-    </div>
-
-    <div class="form-group">
-      <label for="palabra4">Palabra 4:</label>
-      <input type="text" name="palabra4" id="palabra4" value="{{ palabras.3}}" required>
-    </div>
-
-    <div class="form-group">
-      <label for="palabra5">Palabra 5:</label>
-      <input type="text" name="palabra5" id="palabra5" value="{{ palabras.4 }}" required>
-    </div>
-  </div>
-  <div class="col-sm-6">
-    <div class="form-group">
-      <label for="palabra6">Palabra 6:</label>
-      <input type="text" name="palabra6" id="palabra6" value="{{ palabras.5 }}" required>
-    </div>
-
-    <div class="form-group">
-      <label for="palabra7">Palabra 7:</label>
-      <input type="text" name="palabra7" id="palabra7" value="{{ palabras.6}}" required>
-    </div>
-
-    <div class="form-group">
-      <label for="palabra8">Palabra 8:</label>
-      <input type="text" name="palabra8" id="palabra8" value="{{ palabras.7}}" required>
-    </div>
-
-    <div class="form-group">
-      <label for="palabra9">Palabra 9:</label>
-      <input type="text" name="palabra9" id="palabra9" value="{{ palabras.8}}" required>
-    </div>
-
-    <div class="form-group">
-      <label for="palabra10">Palabra 10:</label>
-      <input type="text" name="palabra10" id="palabra10" value="{{ palabras.9}}" required>
-    </div>
-  </div>
+  {% for select in selects %}
+      <div class="col-md-3">
+          <label for="palabra{{ select.id }}">Selecciona una palabra {{ select.id }}:</label>
+          <select name="palabra{{ select.id }}" id="palabra{{ select.id }}">
+              <option value="">Selecciona una palabra</option>
+              {% for palabra in select.palabras_pacientes %}
+                  <option value="{{ palabra.id_palabras_pacientes }}"
+                      {% if select.palabra_seleccionada and palabra.palabras_paciente == select.palabra_seleccionada %}selected{% endif %}>
+                      {{ palabra.palabras_paciente }}
+                  </option>
+              {% endfor %}
+          </select>
+      </div>
+  {% endfor %}
 </div>
-
+</br>
 
 
   <button type="submit" class="btn btn-primary">Guardar Cambios</button>

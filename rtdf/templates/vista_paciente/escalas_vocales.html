@@ -55,11 +55,11 @@
                     <p style="text-align: center;"></strong>Esta semana debes trabajar con las <b> Escalas vocales</b>.</p>
                     <p style="text-align: center;">Deberas realizar el ejercicio <b>{{ pauta_seleccionada.cant_veces_dia }} </b> veces al día </p>
                     <p>Al ejercitar, debes respirar por la nariz y tus ejercicios deben durar aproximadamente <b>50 segundos</b>.</p>
-                    <p style="text-align: center;">Deberas repetir las palabras que se te mostraran en pantalla una por una <b>(se mostraran cada 5 segundos)</b></p>
+                    <p style="text-align: center;">Deberas repetir las palabras que se te mostraran a continuación:</p>
                     </br>
                     <h3 style="text-align: center;"><b>
                         <div id="palabras-container">
-                            <!-- Deja este div vacío, se llenará con palabras dinámicamente -->
+                            {{ pauta_seleccionada.escalavocales.palabras }}
                         </div>
                     </b></h3>
                    
@@ -97,7 +97,7 @@
                 <p style="text-align: center;"></strong>Esta semana debes trabajar con las <b> Escalas vocales</b>.</p>
                 <p style="text-align: center;">Deberas realizar el ejercicio <b>{{ pauta_seleccionada.cant_veces_dia }} </b> veces al día </p>
                 <p>Al ejercitar, debes respirar por la nariz y tus ejercicios deben durar aproximadamente <b>0 segundos</b>.</p>
-                <p style="text-align: center;">Deberas repetir las palabras que se te mostraran en pantalla una por una, las cuales seran:</p>
+                <p style="text-align: center;">Deberas repetir las palabras que se te mostraran a continuación:</p>
                 </br>
                 <h3 style="text-align: center;"><b>{{ pauta_seleccionada.escalavocales.palabras }}</b></h3>
                
@@ -134,49 +134,11 @@
     
     <script>
         window.id = {{ pauta_seleccionada.id_pauta_terapeutica }};
-    
-        window.terapia = "{{ pauta_seleccionada.fk_tp_terapia.tipo_terapia }}"; //Vocalización o Intensidad
+        window.terapia = "{{ pauta_seleccionada.fk_tp_terapia.tipo_terapia }}";
         window.csrftoken = "{{ csrf_token }}";
-    
-        //variables de url procesadas por Django
         var escalavocalesConPautaURL = "{% url 'escalas_vocales_con_pauta' pauta_id=0 %}".replace('0', {{ pauta_seleccionada.id_pauta_terapeutica }});
-    
-    
-        document.addEventListener("DOMContentLoaded", function () {
-            const palabrasContainer = document.getElementById("palabras-container");
-            const palabrasStr = "{{ pauta_seleccionada.escalavocales.palabras }}";
-            const palabras = palabrasStr.split(', '); // Supongamos que las palabras están separadas por comas y espacio
-            let currentIndex = 0;
-            let isComenzar = false;
-        
-            function mostrarSiguientePalabra() {
-                if (currentIndex < palabras.length) {
-                    const palabraElement = document.createElement("span");
-                    palabraElement.textContent = palabras[currentIndex];
-                    palabrasContainer.appendChild(palabraElement);
-                    currentIndex++;
-        
-                    if (currentIndex < palabras.length && isComenzar) {
-                        setTimeout(function () {
-                            palabraElement.style.display = "none"; // Oculta la palabra actual
-                            mostrarSiguientePalabra(); // Muestra la siguiente palabra
-                        }, 5000); // Intervalo de 5 segundos entre palabras
-                    }
-                }
-            }
-        
-            const comenzarButton = document.getElementById("start_stop");
-        
-            comenzarButton.addEventListener("click", function () {
-                isComenzar = true;
-                comenzarButton.disabled = false; // Deshabilita el botón mientras se muestran las palabras
-                mostrarSiguientePalabra(); // Comienza a mostrar las palabras
-            });
-        });
-    
-    
+
     </script>
-    
     
 {% endblock %}
 </html>
