@@ -24,12 +24,21 @@ from django.utils.crypto import get_random_string
 from django.contrib.auth.views import PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
 from django.urls import reverse_lazy
 from django.http import HttpResponseRedirect
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth import update_session_auth_hash
+from django.contrib import messages
+from django.core.mail import send_mail
+
+from django.core.mail import EmailMessage
+from django.shortcuts import render
+from django.template.loader import render_to_string
+
 
 
 
 class CustomPasswordResetView(PasswordResetView):
     template_name = 'registro/password_reset_form.html'
-    email_template_name = 'registro/reset_email.html'
+    email_template_name = 'correos/reset_email.html'
     success_url = reverse_lazy('custom_password_reset_done')
 
 class CustomPasswordResetDoneView(PasswordResetDoneView):
@@ -244,6 +253,363 @@ def listado_preregistros(request):
                      })
 
 
+def perfil(request, usuario_id):
+
+    tipo_usuario = None 
+    datos_paciente = None
+    datos_familiar = None
+    datos_profesional = None
+
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+
+        datos_usuario = Usuario.objects.get(id_usuario=usuario_id)
+        nombre_completo = f"{datos_usuario.primer_nombre} {datos_usuario.segundo_nombre if datos_usuario.segundo_nombre is not None else '' } {datos_usuario.ap_paterno} {datos_usuario.ap_materno if datos_usuario.ap_materno is not None else ''}"
+        
+        
+        usuario_dicc = {
+            'id_usuario': datos_usuario.id_usuario,
+            'rut': datos_usuario.numero_identificacion,
+            'primer_nombre': datos_usuario.primer_nombre,
+            'segundo_nombre': datos_usuario.segundo_nombre,
+            'ap_paterno': datos_usuario.ap_paterno,
+            'ap_materno': datos_usuario.ap_materno,
+            'fecha_nacimiento': datos_usuario.fecha_nacimiento,
+            'email': datos_usuario.email,
+            #'contraseña': datos_usuario.password,
+            'celular': datos_usuario.numero_telefonico,
+            'comuna': datos_usuario.id_comuna,
+            'rol': datos_usuario.id_tp_usuario,
+            'nombre_completo': nombre_completo,
+        }
+
+        if tipo_usuario == "Paciente":
+            datos_paciente = Paciente.objects.get(id_usuario=usuario_id)
+            print('Soy Paciente 😷')
+
+        elif tipo_usuario == "Familiar":
+            datos_familiar = FamiliarPaciente.objects.get(id_usuario=usuario_id)
+            print('Soy Familiar 🤦‍♂️')
+
+        elif tipo_usuario == "Admin":
+            print('Soy admin 😎')
+
+        else:
+            datos_profesional = ProfesionalSalud.objects.get(id_usuario=usuario_id)    
+
+    return render(request, 'rtdf/perfil.html', {'tipo_usuario': tipo_usuario, 
+                                                'request':request,
+                                                'datos_paciente': datos_paciente,
+                                                'datos_familiar': datos_familiar,
+                                                'datos_profesional': datos_profesional,
+                                                'datos_usuario': usuario_dicc})
+
+@login_required
+@never_cache
+def editar_perfil(request, usuario_id):
+    regiones = Region.objects.all()
+    admin = None
+    tipo_usuario = None
+    paciente = None
+    familiar = None
+    profesional_salud = None
+    comunas = Comuna.objects.all()
+    instituciones = Institucion.objects.all()
+
+
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+        id_tipo_usuario = request.user.id_tp_usuario_id
+
+        tp_usuario_id = TpUsuario.objects.get(id_tp_usuario=id_tipo_usuario)
+        #print(tp_usuario_id)
+
+        usuario = Usuario.objects.get(id_usuario=usuario_id)
+        
+        if tipo_usuario == "Paciente":
+            paciente = Paciente.objects.get(id_usuario=usuario_id)
+            print('Soy Paciente 😷')
+
+            fecha_nacimiento_original = usuario.fecha_nacimiento
+            print(fecha_nacimiento_original)
+            
+            if request.method == "POST":
+                tipo_usuario = tp_usuario_id.tipo_usuario  
+                form = EditarPerfilForm(request.POST or None, tipo_usuario=tipo_usuario)
+                
+
+                if form.is_valid():
+                    primer_nombre = form.cleaned_data['primer_nombre']
+                    segundo_nombre = form.cleaned_data['segundo_nombre']
+                    ap_paterno = form.cleaned_data['ap_paterno']
+                    ap_materno = form.cleaned_data['ap_materno']
+                    fecha_nacimiento = form.cleaned_data['fecha_nacimiento']
+                    numero_telefonico = form.cleaned_data['numero_telefonico']
+                    id_comuna = form.cleaned_data['id_comuna']
+                    telegram = form.cleaned_data['telegram']
+                    fk_tipo_diabetes = form.cleaned_data['fk_tipo_diabetes']
+                    fk_tipo_hipertension = form.cleaned_data['fk_tipo_hipertension']
+                    password = form.cleaned_data['password']
+                    confirm_password = form.cleaned_data['confirm_password']
+                    original_password = form.cleaned_data['original_password']
+
+                    if password:
+                        if request.user.check_password(original_password):
+                            if password == confirm_password:
+                                request.user.set_password(password)
+                                request.user.save()
+                                messages.success(request, "Contraseña actualizada con éxito.")
+
+                                # Mantener inicio de sesion
+                                update_session_auth_hash(request, request.user)
+                            else:
+                                messages.error(request, "Las contraseñas no coinciden.")
+                        else:
+                            messages.error(request, "La contraseña original es incorrecta")
+                    else:
+                        usuario.primer_nombre = primer_nombre
+                        usuario.segundo_nombre = segundo_nombre
+                        usuario.ap_paterno = ap_paterno
+                        usuario.ap_materno = ap_materno
+                        usuario.fecha_nacimiento = fecha_nacimiento
+                        usuario.numero_telefonico = numero_telefonico
+                        usuario.id_comuna = id_comuna
+                        usuario.save()
+
+                        paciente.telegram = telegram
+                        paciente.fk_tipo_diabetes = fk_tipo_diabetes
+                        paciente.fk_tipo_hipertension= fk_tipo_hipertension
+                        paciente.save()
+
+                    messages.success(request, "Datos actualizados con éxito.")
+                    return redirect('perfil', usuario_id=usuario_id)
+                else:
+                    messages.error(request, "Hubo errores en el formulario. Por favor, corrige los campos con errores.")
+            else:
+                data = {
+                    'primer_nombre': usuario.primer_nombre,
+                    'segundo_nombre': usuario.segundo_nombre,
+                    'ap_paterno': usuario.ap_paterno,
+                    'ap_materno': usuario.ap_materno,
+                    'fecha_nacimiento': fecha_nacimiento_original,
+                    'numero_telefonico': usuario.numero_telefonico,
+                    'id_comuna': usuario.id_comuna,
+                    'telegram': paciente.telegram,
+                    'fk_tipo_hipertension': paciente.fk_tipo_hipertension,
+                    'fk_tipo_diabetes': paciente.fk_tipo_diabetes,
+                }
+                form = EditarPerfilForm(initial=data)
+
+        elif tipo_usuario == "Familiar":
+            familiar = FamiliarPaciente.objects.get(id_usuario=usuario_id)
+            print('Soy Familiar 🤦‍♂️')
+
+            fecha_nacimiento_original = usuario.fecha_nacimiento
+            print(fecha_nacimiento_original)
+            
+            if request.method == "POST":
+                tipo_usuario = tp_usuario_id.tipo_usuario  
+                form = EditarPerfilForm(request.POST or None, tipo_usuario=tipo_usuario)
+                
+
+                if form.is_valid():
+                    primer_nombre = form.cleaned_data['primer_nombre']
+                    segundo_nombre = form.cleaned_data['segundo_nombre']
+                    ap_paterno = form.cleaned_data['ap_paterno']
+                    ap_materno = form.cleaned_data['ap_materno']
+                    fecha_nacimiento = form.cleaned_data['fecha_nacimiento']
+                    numero_telefonico = form.cleaned_data['numero_telefonico']
+                    id_comuna = form.cleaned_data['id_comuna']
+                    password = form.cleaned_data['password']
+                    confirm_password = form.cleaned_data['confirm_password']
+                    original_password = form.cleaned_data['original_password']
+
+                    if password:
+                        if request.user.check_password(original_password):
+                            if password == confirm_password:
+                                request.user.set_password(password)
+                                request.user.save()
+                                messages.success(request, "Contraseña actualizada con éxito.")
+
+                                # Mantener inicio de sesion
+                                update_session_auth_hash(request, request.user)
+                            else:
+                                messages.error(request, "Las contraseñas no coinciden.")
+                        else:
+                            messages.error(request, "La contraseña original es incorrecta")
+                    else:
+                        usuario.primer_nombre = primer_nombre
+                        usuario.segundo_nombre = segundo_nombre
+                        usuario.ap_paterno = ap_paterno
+                        usuario.ap_materno = ap_materno
+                        usuario.fecha_nacimiento = fecha_nacimiento
+                        usuario.numero_telefonico = numero_telefonico
+                        usuario.id_comuna = id_comuna
+                        usuario.save()
+
+                    messages.success(request, "Datos actualizados con éxito.")
+                    return redirect('perfil', usuario_id=usuario_id)
+                else:
+                    messages.error(request, "Hubo errores en el formulario. Por favor, corrige los campos con errores.")
+            else:
+                data = {
+                    'primer_nombre': usuario.primer_nombre,
+                    'segundo_nombre': usuario.segundo_nombre,
+                    'ap_paterno': usuario.ap_paterno,
+                    'ap_materno': usuario.ap_materno,
+                    'fecha_nacimiento': fecha_nacimiento_original,
+                    'numero_telefonico': usuario.numero_telefonico,
+                    'id_comuna': usuario.id_comuna,
+                }
+                form = EditarPerfilForm(initial=data)
+
+        elif tipo_usuario == "Admin":
+            print('Soy admin 😎')
+            admin = True
+
+            fecha_nacimiento_original = usuario.fecha_nacimiento
+            print(fecha_nacimiento_original)
+            
+            if request.method == "POST":
+                tipo_usuario = tp_usuario_id.tipo_usuario  
+                form = EditarPerfilForm(request.POST or None, tipo_usuario=tipo_usuario)
+                
+
+                if form.is_valid():
+                    primer_nombre = form.cleaned_data['primer_nombre']
+                    segundo_nombre = form.cleaned_data['segundo_nombre']
+                    ap_paterno = form.cleaned_data['ap_paterno']
+                    ap_materno = form.cleaned_data['ap_materno']
+                    fecha_nacimiento = form.cleaned_data['fecha_nacimiento']
+                    numero_telefonico = form.cleaned_data['numero_telefonico']
+                    id_comuna = form.cleaned_data['id_comuna']
+                    password = form.cleaned_data['password']
+                    confirm_password = form.cleaned_data['confirm_password']
+                    original_password = form.cleaned_data['original_password']
+
+                    if password:
+                        if request.user.check_password(original_password):
+                            if password == confirm_password:
+                                request.user.set_password(password)
+                                request.user.save()
+                                messages.success(request, "Contraseña actualizada con éxito.")
+
+                                # Mantener inicio de sesion
+                                update_session_auth_hash(request, request.user)
+                            else:
+                                messages.error(request, "Las contraseñas no coinciden.")
+                        else:
+                            messages.error(request, "La contraseña original es incorrecta")
+                    else:
+                        usuario.primer_nombre = primer_nombre
+                        usuario.segundo_nombre = segundo_nombre
+                        usuario.ap_paterno = ap_paterno
+                        usuario.ap_materno = ap_materno
+                        usuario.fecha_nacimiento = fecha_nacimiento
+                        usuario.numero_telefonico = numero_telefonico
+                        usuario.id_comuna = id_comuna
+                        usuario.save()
+
+                    messages.success(request, "Datos actualizados con éxito.")
+                    return redirect('perfil', usuario_id=usuario_id)
+                else:
+                    messages.error(request, "Hubo errores en el formulario. Por favor, corrige los campos con errores.")
+            else:
+                data = {
+                    'primer_nombre': usuario.primer_nombre,
+                    'segundo_nombre': usuario.segundo_nombre,
+                    'ap_paterno': usuario.ap_paterno,
+                    'ap_materno': usuario.ap_materno,
+                    'fecha_nacimiento': fecha_nacimiento_original,
+                    'numero_telefonico': usuario.numero_telefonico,
+                    'id_comuna': usuario.id_comuna,
+                }
+                form = EditarPerfilForm(initial=data)
+
+        else:
+            profesional_salud = ProfesionalSalud.objects.get(id_usuario=usuario) 
+            fecha_nacimiento_original = usuario.fecha_nacimiento
+            print(fecha_nacimiento_original)
+            
+
+            if request.method == "POST":
+                tipo_usuario = tp_usuario_id.tipo_usuario  
+                form = EditarPerfilForm(request.POST or None, tipo_usuario=tipo_usuario)
+                
+
+                if form.is_valid():
+                    primer_nombre = form.cleaned_data['primer_nombre']
+                    segundo_nombre = form.cleaned_data['segundo_nombre']
+                    ap_paterno = form.cleaned_data['ap_paterno']
+                    ap_materno = form.cleaned_data['ap_materno']
+                    fecha_nacimiento = form.cleaned_data['fecha_nacimiento']
+                    numero_telefonico = form.cleaned_data['numero_telefonico']
+                    id_comuna = form.cleaned_data['id_comuna']
+                    titulo_profesional = form.cleaned_data['titulo_profesional']
+                    id_institucion = form.cleaned_data['id_institucion']
+                    password = form.cleaned_data['password']
+                    confirm_password = form.cleaned_data['confirm_password']
+                    original_password = form.cleaned_data['original_password']
+
+                    if password:
+                        if request.user.check_password(original_password):
+                            if password == confirm_password:
+                                request.user.set_password(password)
+                                request.user.save()
+                                messages.success(request, "Contraseña actualizada con éxito.")
+
+                                # Mantener inicio de sesion
+                                update_session_auth_hash(request, request.user)
+                            else:
+                                messages.error(request, "Las contraseñas no coinciden.")
+                        else:
+                            messages.error(request, "La contraseña original es incorrecta")
+                    else:
+                        usuario.primer_nombre = primer_nombre
+                        usuario.segundo_nombre = segundo_nombre
+                        usuario.ap_paterno = ap_paterno
+                        usuario.ap_materno = ap_materno
+                        usuario.fecha_nacimiento = fecha_nacimiento
+                        usuario.numero_telefonico = numero_telefonico
+                        usuario.id_comuna = id_comuna
+                        usuario.save()
+
+                        profesional_salud.titulo_profesional = titulo_profesional
+                        profesional_salud.id_institucion = id_institucion
+                        profesional_salud.save()
+
+                    messages.success(request, "Datos actualizados con éxito.")
+                    return redirect('perfil', usuario_id=usuario_id)
+                else:
+                    messages.error(request, "Hubo errores en el formulario. Por favor, corrige los campos con errores.")
+            else:
+                data = {
+                    'primer_nombre': usuario.primer_nombre,
+                    'segundo_nombre': usuario.segundo_nombre,
+                    'ap_paterno': usuario.ap_paterno,
+                    'ap_materno': usuario.ap_materno,
+                    'fecha_nacimiento': fecha_nacimiento_original,
+                    'numero_telefonico': usuario.numero_telefonico,
+                    'id_comuna': usuario.id_comuna,
+                    'titulo_profesional': profesional_salud.titulo_profesional,
+                    'id_institucion': profesional_salud.id_institucion.id_institucion,
+                }
+                form = EditarPerfilForm(initial=data)
+        
+
+    return render(request, 'rtdf/editar_perfil.html', {'tipo_usuario': tipo_usuario,
+                                                       'usuario': usuario,
+                                                       'profesional_salud':profesional_salud,
+                                                       'comunas':comunas,
+                                                       'instituciones':instituciones,
+                                                       'paciente': paciente,
+                                                       'familiar': familiar,
+                                                       'admin': admin,
+                                                       'form': form,
+                                                       'regiones':regiones})
+
+
+
 @never_cache
 def detalle_preregistro(request, preregistro_id):
 
@@ -328,8 +694,8 @@ def detalle_preregistro(request, preregistro_id):
                 numero_telefonico = pre_registro.numero_telefonico,
                 id_tp_usuario = pre_registro.id_tp_usuario,
                 id_comuna = pre_registro.id_comuna,
-
             )
+
             profesional_salud = ProfesionalSalud.objects.create(
                 # titulo_profesional=pre_registro.titulo_profesional,
                 id_institucion=pre_registro.id_institucion,
@@ -343,11 +709,27 @@ def detalle_preregistro(request, preregistro_id):
             admin_usuario = Usuario.objects.get(id_usuario=id_admin)
 
             # registro en la tabla Validacion
-            Validacion.objects.create(
+            validacion = Validacion.objects.create(
                 id_pre_registro=pre_registro,
                 id_usuario=admin_usuario,
                 fecha_validacion=timezone.now()
             )
+
+            #print(usuario.email)
+            # Enviar correo al usuario registrado
+            subject = 'Pre-Registro confirmado'
+            from_email = 'permify.practica@gmail.com'
+            recipient_list = [usuario.email]
+            context = {'usuario': usuario, 'profesional_salud': profesional_salud, 'validacion': validacion, 'pre_registro': pre_registro}  # Datos para la plantilla
+
+            # contenido del correo
+            html_content = render_to_string('correos/confirmacion_preregistro.html', context)
+            email = EmailMessage(subject, html_content, from_email, recipient_list)
+            email.content_subtype = 'html' 
+
+            email.send()
+
+
 
 
             return redirect('detalle_preregistro', preregistro_id )
@@ -357,6 +739,7 @@ def detalle_preregistro(request, preregistro_id):
                    'pre_registro': pre_dicc,
                    'registro_precargado':  registro_precargado,
                      })
+
 
 
 def obtener_provincias(request):

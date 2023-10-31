@@ -633,3 +633,98 @@ class PreRegistroForm(forms.ModelForm):
     #         raise forms.ValidationError("La fecha de nacimiento es requerida.")
 
     #     return cleaned_data
+
+
+class EditarPerfilForm(forms.Form):
+    primer_nombre = forms.CharField(max_length=30, required=True)
+    ap_paterno = forms.CharField(max_length=30, required=True)
+    segundo_nombre = forms.CharField(max_length=30, required=False, widget=forms.TextInput(attrs={'placeholder': 'Opcional'}))
+    ap_materno = forms.CharField(max_length=30, required=False, widget=forms.TextInput(attrs={'placeholder': 'Opcional'}))
+    fecha_nacimiento = forms.DateField(widget=forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date'}), required=True)
+    numero_telefonico = forms.CharField(max_length=20, required=True)
+    id_comuna = forms.ModelChoiceField(queryset=Comuna.objects.all(), required=True)
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Dejar en blanco si no se desea modificar'}),max_length=128, required=False)
+    confirm_password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': '********'}),max_length=128, required=False)
+    original_password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': '********'}),max_length=128, required=False)
+
+    #campos de paciente
+    telegram= forms.CharField(max_length=30, required=False)
+    fk_tipo_hipertension = forms.ModelChoiceField(queryset=TipoHipertension.objects.all() , required=False)
+    fk_tipo_diabetes = forms.ModelChoiceField(queryset=TipoDiabetes.objects.all() , required=False)
+
+    #campo de profesional
+    titulo_profesional = forms.CharField(max_length=30, required=False)
+    id_institucion = forms.ModelChoiceField(queryset=Institucion.objects.all() , required=False)
+
+
+
+    # id_tp_usuario = forms.ModelChoiceField(queryset=TpUsuario.objects.all(), required=True)
+
+    def __init__(self, *args, **kwargs):
+
+        tipo_usuario = kwargs.pop('tipo_usuario', None)
+        super(EditarPerfilForm, self).__init__(*args, **kwargs)
+
+        if tipo_usuario == "Paciente":
+            self.fields['telegram'].required = True
+            self.fields['fk_tipo_hipertension'].required = True
+            self.fields['fk_tipo_diabetes'].required = True
+
+        elif tipo_usuario == "Familiar":
+
+            pass
+
+        elif tipo_usuario == "Fonoaudiologo":
+            # self.fields['segundo_nombre'].required = True
+            self.fields['titulo_profesional'].required = True
+            self.fields['id_institucion'].required = True
+
+        elif tipo_usuario == "Neurologo":
+            # self.fields['segundo_nombre'].required = True
+            self.fields['titulo_profesional'].required = True
+            self.fields['id_institucion'].required = True
+
+        elif tipo_usuario == "Enfermera":
+            # self.fields['segundo_nombre'].required = True
+            self.fields['titulo_profesional'].required = True
+            self.fields['id_institucion'].required = True
+
+ 
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get('password')
+        confirm_password = cleaned_data.get('confirm_password')
+        original_password = cleaned_data.get('original_password')
+
+
+        if password:
+            if not (confirm_password and original_password):
+                self.add_error(None, "Debe completar los campos de confirmar contraseña y contraseña original.")
+
+        return cleaned_data
+    
+
+    # class Meta:
+    #     model = Usuario
+
+    #     fields = ['numero_identificacion', 
+    #               'primer_nombre', 
+    #               #'segundo_nombre', 
+    #               'ap_paterno', 
+    #               #'ap_materno', 
+    #               'fecha_nacimiento', 
+    #               'email', 
+    #               'numero_telefonico', 
+    #               #'id_comuna',
+    #               'password',
+    #               #'tipo_usuario',
+    #               #'telegram',  # Campo para Paciente
+    #               #'fk_tipo_hipertension',  # Campo para Paciente
+    #               #'fk_tipo_diabetes',  # Campo para Paciente
+    #               #'fk_tipo_familiar', #Campo para familiar
+    #               #'rut_paciente'
+    #               ]
+        
+    #     widgets = {
+    #         'fecha': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+    #     }

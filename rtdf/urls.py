@@ -78,6 +78,9 @@ urlpatterns = [
     path('reiniciar/<uidb64>/<token>/', views.CustomPasswordResetConfirmView.as_view(), name='custom_password_reset_confirm'),
     path('reiniciar/listo/', views.CustomPasswordResetCompleteView.as_view(), name='custom_password_reset_complete'),
 
+    path('perfil/<int:usuario_id>/', views.perfil, name='perfil'),
+    path('editar_perfil/<int:usuario_id>/', views.editar_perfil, name='editar_perfil'),
+
 ]
 
 ##urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
