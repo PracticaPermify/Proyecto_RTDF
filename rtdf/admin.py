@@ -130,6 +130,15 @@ class VocalizacionAdmin(admin.ModelAdmin):
     list_display = ['id_pauta_terapeutica','duracion_seg','bpm']
     search_fields = ['id_pauta_terapeutica','duracion_seg','bpm']
 
+class EscalaVocalAdmin(admin.ModelAdmin):
+    list_display = ['id_pauta_terapeutica','palabras']
+    search_fields = ['id_pauta_terapeutica','palabras']
+
+class PalabrasPacientesAdmin(admin.ModelAdmin):
+    list_display = ['id_palabras_pacientes','palabras_paciente']
+    search_fields = ['id_palabras_pacientes','palabras_paciente']
+
+
 admin.site.register(Usuario, UsuarioAdmin)
 admin.site.register(Audio, AudioAdmin)
 admin.site.register(Audioscoeficientes, AudioscoeficientesAdmin)
@@ -161,3 +170,5 @@ admin.site.register(Vocalizacion, VocalizacionAdmin)
 admin.site.register(TpUsuario, TpUsuarioAdmin)
 admin.site.register(TpFamiliar, TpFamiliarAdmin)
 admin.site.register(Intensidad, IntensidadAdmin)
+admin.site.register(EscalaVocales, EscalaVocalAdmin)
+admin.site.register(PalabrasPacientes, PalabrasPacientesAdmin)
