@@ -1,77 +1,92 @@
 {% extends 'rtdf/base.html' %}
 
-{% block css %}
-{% load static%}
-<link rel="stylesheet" href="{% static 'app/css/main.css' %}" />
-{% endblock %}
+
 
 {% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'app/css/pre_registro.css' %}" />
 
-<body class="is-preload">
-    <form method="post">
 
-        {% csrf_token %}
+<body class="custom-background">
+    <div class="global-container">
+        <div class="card login-form">
+            <div class="card-body">
+                <h3 class="card-title text-center">Pre-registro de profesional</h3>
+                <div class="card-text">
 
-    <h1>Pre-registro de profesional</h1>
+                    {% if error_message %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error_message }}
+                    </div>
+                    {% endif %}
 
-    </br>
+                    <p class="required-message">
+                        <span class="asterisk">* </span> Campos requeridos
+                    </p>
 
-        <div class="form-row">
-            <div class="form-group col-md-4">
-                <label for="">Tipo de usuario</label>
-                <select id="" name="{{ registro_form.tipo_usuario.name }}" class="form-control form-control-sm">
-                    <option value="" selected>Selecciona un tipo de usuario</option>
-                    {% for choice in registro_form.tipo_usuario.field.choices %}
-                        <option value="{{ choice.0 }}">{{ choice.1 }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        </div>
+                    <form method="post">
 
-        <div class="form-row">
-            <div class="form-group col-md-3">
-                <label for="id_rut">Rut</label>
-                {{ registro_form.numero_identificacion }}
-            </div>
-        </div>
+                        {% csrf_token %}
 
-        <div class="form-row">
-            <div class="form-group col-md-3">
-                <label for="id_primer_nombre">Primer nombre</label>
-                {{ registro_form.primer_nombre }}
-            </div>
-            <div class="form-group col-md-3">
-                <label for="id_segundo_nombre">Segundo nombre</label>
-                {{ registro_form.segundo_nombre }}
-            </div>
-        </div>
-        
-        <div class="form-row">
-            <div class="form-group col-md-3">
-                <label for="id_ap_paterno">Apellido paterno</label>
-                {{ registro_form.ap_paterno }}
-            </div>
-            <div class="form-group col-md-3">
-                <label for="{{ registro_form.ap_materno.id_for_label }}">Apellido materno</label>
-                {{ registro_form.ap_materno }}
-            </div>
-        </div>
-    
-        <!-- <div class="form-row">
+                    
+
+                        <div class="form-row">
+                            <div class="form-group col">
+                                <label for="tipo_usuario"> <i class="fa-solid fa-user-doctor"></i>Profesión <span class="required">*</span></label>
+                                <select id="" name="{{ registro_form.tipo_usuario.name }}"
+                                    class="form-control form-control-sm">
+                                    <option value="" selected>Selecciona un tipo de usuario</option>
+                                    {% for choice in registro_form.tipo_usuario.field.choices %}
+                                    <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col">
+                                <label for="id_rut"><i class="fas fa-user"></i>Rut <span class="required">*</span></label>
+                                {{ registro_form.numero_identificacion }}
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-6 col-sm-6">
+                                <label for="id_primer_nombre"><i class="fas fa-user"></i>Primer nombre <span class="required">*</span></label>
+                                {{ registro_form.primer_nombre }}
+                            </div>
+                            <div class="form-group col-md-6 col-sm-6">
+                                <label for="id_segundo_nombre"><i class="fas fa-user"></i>Segundo nombre</label>
+                                {{ registro_form.segundo_nombre }}
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-6 col-sm-6">
+                                <label for="id_ap_paterno"><i class="fas fa-user"></i>Apellido paterno <span class="required">*</span></label>
+                                {{ registro_form.ap_paterno }}
+                            </div>
+                            <div class="form-group col-md-6 col-sm-6">
+                                <label for="{{ registro_form.ap_materno.id_for_label }}"><i class="fas fa-user"></i>Apellido materno</label>
+                                {{ registro_form.ap_materno }}
+                            </div>
+                        </div>
+
+                        <!-- <div class="form-row">
             <div class="form-group col-md-3">
                 <label for="id_fecha_nacimiento">Fecha nacimiento</label></br>
                 {{ registro_form.fecha_nacimiento }}
             </div>
         </div>         -->
 
-        <div class="form-row">
-            <div class="form-group col-md-4">
-                <label for="id_email">Correo electronico</label>
-                {{ registro_form.email }}
-            </div>
-        </div>  
+                        <div class="form-row">
+                            <div class="form-group col">
+                                <label for="id_email"><i class="fas fa-envelope"></i>Correo electrónico <span class="required">*</span></label>
+                                {{ registro_form.email }}
+                            </div>
+                        </div>
 
-        <!-- <div class="form-row">
+                        <!-- <div class="form-row">
             <div class="form-group col-md-4">
                 <label for="id_numero_telefonico">Numero de contacto</label>
                 {{ registro_form.numero_telefonico }}
@@ -131,12 +146,18 @@
                 </small>
             </div>
         </div> -->
-    
 
-    </BR>
-    <button type="submit" class="btn btn-primary btn-block">Registrar</button>
 
-</form>
+                        <button type="submit" class="btn btn-primary btn-block mx-auto">Pre-Registrarse</button>
+
+                </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+</body>
 
 <!-- <script src="{% static 'app/js/ubicacion_preregistro.js' %}"></script> -->
 

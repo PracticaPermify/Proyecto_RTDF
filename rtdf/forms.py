@@ -65,7 +65,7 @@ class RegistroForm(forms.ModelForm):
     )
 
     fecha_nacimiento = forms.DateField(
-        widget=forms.DateInput(format='%d-%m-%Y', attrs={'type': 'date'}),
+        widget=forms.DateInput(format='%d-%m-%Y', attrs={'type': 'date' , 'class': 'campo_fecha'}),
         required=True,
         validators=[validate_fecha_nacimiento]
         
@@ -97,6 +97,7 @@ class RegistroForm(forms.ModelForm):
     tipo_usuario = forms.ModelChoiceField(
         queryset=TpUsuario.objects.filter(tipo_usuario__in=['Paciente', 'Familiar']),
         empty_label=None,
+        required=True,
         widget=forms.Select(attrs={'class': 'form-control form-control-sm', 'id': 'tipo_usuario'}),
         label='Tipo de usuario'
     )

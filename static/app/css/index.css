@@ -1,0 +1,104 @@
+/* BLOQUE DEL CSS SIN INICIAR SESIÓN */
+
+#content {
+  width: 100% !important;
+
+}
+
+/* Asegúrate de que no haya estilos que limiten el ancho */
+.titulo_index {
+  font-size: 50px;
+}
+
+.span_title{
+  color:#c94663 ;
+}
+
+.custom-margin {
+  margin-bottom: 80px; 
+}
+
+.container{
+  max-width: 100%;
+}
+
+.row {
+  margin-right: 0;
+  margin-left: 0;
+}
+.col-md-6 {
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.fondo-negro {
+  background-color: black !important;
+  color: white;
+}
+
+.titulo {
+  text-align: left;
+  padding: 20px;
+}
+
+.titulo h1 {
+  font-size: 2.5em;
+  margin-bottom: 10px;
+}
+
+.titulo p {
+  font-size: 1.2em;
+  margin-bottom: 20px;
+}
+
+.contenido {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.texto {
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.carrusel {
+  width: calc(100% - 300px);
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Define el tamaño para las imágenes dentro del carrusel */
+.carousel-item img {
+  object-fit: contain; /* 'cover' */
+  height: 50vh;
+  width: 100%;
+}
+
+#texto {
+  font-size: 18px;
+  margin-top: 20px;
+}
+
+#sub-titulo{
+  font-size: 40px;
+}
+
+
+
+@media (max-width: 992px) {
+  .custom-margin {
+      margin-bottom: 40px; 
+  }
+
+}
+
+
+@media (max-width: 768px) {
+  .custom-margin {
+      margin-bottom: 50px;
+  }
+}
+
+/* FIN DEL BLOQUE DE CSS SIN INICIAR SESIÓN */

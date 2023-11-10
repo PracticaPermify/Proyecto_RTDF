@@ -52,6 +52,15 @@ class CustomPasswordResetCompleteView(PasswordResetCompleteView):
     template_name = 'registro/password_reset_complete.html'
 
 
+
+def require_no_session(view_func):
+    def wrapped(request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('index') 
+        return view_func(request, *args, **kwargs)
+    return wrapped
+
+
 def validate(request):
     if request.is_anonymous:
         print(request)
@@ -60,6 +69,7 @@ def validate(request):
         print(request)
         return True
 
+@never_cache
 def index(request):
     tipo_usuario = None 
     usuarios = Usuario.objects.all()
@@ -111,6 +121,8 @@ def base(request):
 
     return render(request, 'rtdf/base.html', {'tipo_usuario': tipo_usuario})
 
+@require_no_session
+@never_cache
 def registro(request):
     regiones = Region.objects.all()
     if request.method == 'POST':
@@ -165,7 +177,8 @@ def registro(request):
     return render(request, 'registro/registro.html', {'registro_form': registro_form, 
                                                       'regiones': regiones})
 
-
+@require_no_session
+@never_cache
 def pre_registro(request):
     regiones = Region.objects.all()
     password = get_random_string(length=8)
@@ -760,6 +773,7 @@ def obtener_instituciones(request):
 ##Login para el usuario
 
 @never_cache
+@require_no_session
 def login_view(request):
     if request.method == 'POST':
         email = request.POST['email']
@@ -770,6 +784,7 @@ def login_view(request):
             login(request, user)
             response = redirect('index')
             response.set_cookie('logged_in', 'true')
+
             return response
         else:
             error_message = "Credenciales inválidas. Inténtalo de nuevo."
