@@ -1090,7 +1090,7 @@ def detalle_familiar(request, paciente_id):
 
 ##Ejercicios de vocalización-----------------------------------
 
-
+@never_cache
 @user_passes_test(validate)
 def vocalizacion(request, pauta_id=None, *args, **kwargs):
     tipo_usuario = None
@@ -1644,6 +1644,7 @@ def mi_fonoaudiologo(request):
 
 ##LISTADO DE LOS PACIENTES PARA ADMINSITRADOR
 
+@never_cache
 @user_passes_test(validate)
 def list_paci_admin(request):
     pacientes = Usuario.objects.filter(id_tp_usuario__tipo_usuario='Paciente')
@@ -1652,6 +1653,7 @@ def list_paci_admin(request):
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
     return render(request, 'vista_admin/list_paci_admin.html',{'tipo_usuario': tipo_usuario, 'pacientes': pacientes})
 
+@never_cache
 @user_passes_test(validate)
 def detalle_paciente(request, paciente_id):
     paciente = get_object_or_404(Usuario, id_usuario=paciente_id, id_tp_usuario__tipo_usuario='Paciente')
@@ -1919,7 +1921,7 @@ def eliminar_informe_admin(request, informe_id):
 
     return redirect('detalle_paciente')
 
-
+@never_cache
 @user_passes_test(validate)
 def detalle_informe(request, informe_id):
 
@@ -2006,7 +2008,7 @@ def detalle_informe(request, informe_id):
         'tipo_usuario': tipo_usuario 
     })
 
-
+@never_cache
 def editar_informe_admin(request, informe_id):
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
@@ -2058,7 +2060,7 @@ def editar_informe_admin(request, informe_id):
                                                                         'grbas_form': grbas_form,
                                                                         'rasati_form': rasati_form,
                                                                         'tipo_usuario': tipo_usuario})
-    
+@never_cache    
 def pacientes_disponibles(request):
     tipo_usuario = None 
 
@@ -2069,7 +2071,8 @@ def pacientes_disponibles(request):
 
         return render(request, 'vista_profe/pacientes_disponibles.html', {'tipo_usuario': tipo_usuario, 
                                                                           'pacientes_disponibles': pacientes_disponibles})
-    
+
+@never_cache
 def agregar_paciente(request, paciente_id):
     if request.user.is_authenticated and request.user.id_tp_usuario.tipo_usuario == 'Fonoaudiologo':
         profesional_salud = request.user.profesionalsalud
@@ -2088,7 +2091,8 @@ def agregar_paciente(request, paciente_id):
             return render(request, 'vista_profe/error.html', {'error_message': 'Has alcanzado el límite de 10 pacientes asignados.'})
     else:
         return render(request, 'vista_profe/error.html', {'error_message': 'No tienes permiso para realizar esta acción.'})
-    
+
+@never_cache   
 def desvincular_paciente(request, paciente_id):
 
     paciente = get_object_or_404(Paciente, id_paciente=paciente_id)
@@ -2102,7 +2106,7 @@ def desvincular_paciente(request, paciente_id):
     else:
         return redirect('listado_pacientes')
     
-
+@never_cache
 def detalle_prof_pauta(request, id_pauta_terapeutica_id):
 
     if request.user.is_authenticated:
@@ -2144,7 +2148,7 @@ def detalle_prof_pauta(request, id_pauta_terapeutica_id):
 
     })
 
-
+@never_cache
 def editar_prof_pauta(request, id_pauta_terapeutica_id):
  
     if request.user.is_authenticated:
@@ -2195,7 +2199,8 @@ def editar_prof_pauta(request, id_pauta_terapeutica_id):
 
 
     })
-    
+
+@never_cache
 def eliminar_prof_pauta(request, id_pauta_terapeutica_id):
 
     pauta = get_object_or_404(PautaTerapeutica, id_pauta_terapeutica=id_pauta_terapeutica_id)
@@ -2210,7 +2215,7 @@ def eliminar_prof_pauta(request, id_pauta_terapeutica_id):
 
     return redirect('detalle_prof_infor', informe_id=pauta.fk_informe.id_informe)
 
-
+@never_cache
 def detalle_pauta_admin(request, id_pauta_terapeutica_id):
 
     if request.user.is_authenticated:
@@ -2251,6 +2256,7 @@ def detalle_pauta_admin(request, id_pauta_terapeutica_id):
         'url_regreso': url_regreso,
         })
 
+@never_cache
 def editar_pauta_admin(request, id_pauta_terapeutica_id):
 
     if request.user.is_authenticated:
@@ -2299,6 +2305,7 @@ def editar_pauta_admin(request, id_pauta_terapeutica_id):
         'vocalizacion_form': vocalizacion_form,
     })
 
+@never_cache
 def eliminar_pauta_admin(request, id_pauta_terapeutica_id):
 
     pauta = get_object_or_404(PautaTerapeutica, id_pauta_terapeutica=id_pauta_terapeutica_id)
@@ -2313,7 +2320,7 @@ def eliminar_pauta_admin(request, id_pauta_terapeutica_id):
 
     return redirect('detalle_informe', informe_id=pauta.fk_informe.id_informe)
 
-
+@never_cache
 @user_passes_test(validate)
 def detalle_esv(request, informe_id):
     tipo_usuario = None
@@ -2383,7 +2390,7 @@ def detalle_esv(request, informe_id):
     })
 
 
-
+@never_cache
 @user_passes_test(validate)
 def detalle_pauta_esv(request, pauta_id):
 
@@ -2596,16 +2603,60 @@ def detalle_esv_admin(request, informe_id):
                                                             'tipo_usuario': tipo_usuario,
                                                             'paciente_relacionado': paciente_relacionado })
 
+def editar_esv_admin(request, informe_id):
+    tipo_usuario = None
+
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+
+        if tipo_usuario == 'Admin':
+            informe = get_object_or_404(Informe, pk=informe_id)
+
+            # Obtener la fecha y hora actual
+            fecha_actual = timezone.now()
+
+            valores_actuales = {
+                'titulo': informe.titulo,
+                'fecha': fecha_actual,  # Establecer la fecha actual
+                'descripcion': informe.descripcion,
+                'observacion': informe.observacion,
+            }
+
+            if request.method == 'POST':
+                informe.titulo = request.POST.get('titulo')
+                informe.fecha = request.POST.get('fecha')
+                informe.descripcion = request.POST.get('descripcion')
+                informe.observacion = request.POST.get('observacion')
+                informe.save()
+
+                return redirect('detalle_esv_admin', informe_id=informe.id_informe)
+
+            return render(request, 'vista_admin/editar_esv_admin.html', {
+                'informe': informe,
+                'tipo_usuario': tipo_usuario,
+                'valores_actuales': valores_actuales,
+            })
+
+    return redirect('index')
+    
+
 def eliminar_esv_admin(request, informe_id):
-    informe = get_object_or_404(Informe, id_informe=informe_id)
-    esv_instance = Esv.objects.filter(id_informe=informe)
+    if request.user.is_authenticated and request.user.id_tp_usuario.tipo_usuario == 'Admin':
+        informe = get_object_or_404(Informe, id_informe=informe_id)
 
-    if esv_instance.exists():
-        esv_instance.delete()
+        # Borra cualquier relación específica del informe que desees antes de eliminar el informe
+        # En este caso, elimina el objeto relacionado 'Esv'
+        if informe.tp_informe and informe.tp_informe.tipo_informe == 'ESV':
+            informe.esv.delete()
 
-    informe.delete()
+        # Elimina el informe
+        informe.delete()
 
-    return redirect('detalle_paciente', paciente_id=esv.paciente.id)
+        # Ajusta la redirección según tus necesidades
+        return redirect('detalle_paciente', paciente_id=informe.fk_relacion_pa_pro.id_paciente.id_usuario.id_usuario)
+
+    return redirect('index')
+
 
 def analisis_admin(request):
     tipo_usuario = None

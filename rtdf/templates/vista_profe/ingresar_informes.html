@@ -1,13 +1,13 @@
 {% extends 'rtdf/base.html' %}
 
-{% block css %}
-{% load static %}
-<link rel="stylesheet" href="{% static 'app/css/main.css' %}" />
-{% endblock %}
-
 {% block content %}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'app/css/ingresar_informe.css' %}" />
+
+
 <body class="is-preload">
-    <form method="post">
+    <form method="post" id="ingresar-informe-form">
         {% csrf_token %}
         <h1>Ingresar Informe</h1>
         <br>
@@ -123,7 +123,6 @@
     {% comment %} Aca termina campos para RASATI {% endcomment %}
 
     <div class="form-group col-md-4">   
-    </br>
         <button type="submit" class="btn btn-primary btn-block">Registrar informe</button>
     </div>
 </form>

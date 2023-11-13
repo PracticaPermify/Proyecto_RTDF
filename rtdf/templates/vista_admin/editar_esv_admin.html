@@ -1,0 +1,47 @@
+{% extends "rtdf/base.html" %}
+
+{% block content %}
+
+<div>
+  <a href="{% url 'detalle_esv_admin' informe.id_informe %}">Volver al detalle del informe ESV</a>
+</div>
+
+<br>
+
+<h1>Editar Informe ESV</h1>
+
+<br>
+
+<form method="post">
+  {% csrf_token %}
+
+  <div class="form-group col-md-4">
+    <label for="titulo">Título:</label>
+    <input type="text" id="titulo" name="titulo" value="{{ valores_actuales.titulo }}">
+  </div>
+
+  <div class="form-group col-md-10">
+    <label for="descripcion">Descripción:</label>
+    <textarea id="descripcion" name="descripcion">{{ valores_actuales.descripcion }}</textarea>
+  </div>
+
+  <div class="form-group col-md-4">
+    <label for="fecha">Fecha:</label><br>
+    <input type="datetime-local" id="fecha" name="fecha" value="{{ valores_actuales.fecha|date:'Y-m-d\TH:i' }}"> <br>
+  </div>
+
+  <br>
+
+  <div class="form-group col-md-10">
+    <label for="observacion">Observación:</label>
+    <textarea id="observacion" name="observacion">{{ valores_actuales.observacion }}</textarea>
+  </div>
+
+  <br>
+  <div class="form-group col-md-4">
+    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+  </div
+  >
+</form>
+
+{% endblock %}

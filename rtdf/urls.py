@@ -52,7 +52,9 @@ urlpatterns = [
     path('editar_esv/<int:informe_id>/', views.editar_esv, name='editar_esv'),
     path('eliminar_informe_esv/<int:informe_id>/', views.eliminar_informe_esv, name='eliminar_informe_esv'),
     path('detalle_esv_admin/<int:informe_id>/', views.detalle_esv_admin, name='detalle_esv_admin'),
+
     path('eliminar_esv_admin/<int:informe_id>/', views.eliminar_esv_admin, name='eliminar_esv_admin'),
+    
     path('analisis_admin/', views.analisis_admin, name='analisis_admin'),
     path('analisis_profe/', views.analisis_profe, name='analisis_profe'),
     path('detalle_audio_admin/<int:audio_id>/', views.detalle_audio_admin, name='detalle_audio_admin'),
@@ -71,6 +73,8 @@ urlpatterns = [
 
     path('editar_pauta_esv/<int:pauta_id>/', views.editar_pauta_esv, name='editar_pauta_esv'),
     path('eliminar_pauta_esv/<int:pauta_id>/', views.eliminar_pauta_esv, name='eliminar_pauta_esv'),
+
+    path('editar_esv_admin/<int:informe_id>/', views.editar_esv_admin, name='editar_esv_admin'),
 
     #RECUPERAR CONTRASEÑA
     path('recuperar_pw/', views.CustomPasswordResetView.as_view(), name='custom_password_reset'),

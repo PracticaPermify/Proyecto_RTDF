@@ -55,7 +55,7 @@
                         Esta semana debes trabajar con <b>{{ pauta_seleccionada.vocalizacion.bpm }} BPM</b>. Este sera ajustado automaticamente.</p>
                     <p>Deberas realizar el ejercicio <b>{{ pauta_seleccionada.cant_veces_dia }} </b> veces al día </p>
                     <p>Al ejercitar, debes respirar por la nariz y tus ejercicios deben durar aproximadamente <b>{{ pauta_seleccionada.vocalizacion.duracion_seg }} segundos</b>.</p>
-                    <p>El tempo de este ejercicio es de <b>{{ pauta_seleccionada.vocalizacion.tempo }} segundos</b>.</p>
+                    <p>El tempo de este ejercicio es de <b>{{ pauta_seleccionada.vocalizacion.tempo }} golpes por segundo</b>.</p>
                 </div>
                 <div class="bpm-display">
                     <span class="tempo">{{ pauta_seleccionada.vocalizacion.bpm }}</span>
@@ -78,7 +78,8 @@
                             {% csrf_token %}
                            
                             <div id="tiempo" >
-                                <h3>La grabacion terminara automaticamente en<p id="segundos">{{6}}</p>segundos</h3>
+                            </br>
+                                <h3>La grabacion terminara automaticamente en<p id="segundos">{{pauta_seleccionada.vocalizacion.duracion_seg}}</p>segundos</h3>
                                 <input type="hidden" name="csrfmiddlewaretoken" value="{{csrf_token}}">
                             </div>
                         </form>
