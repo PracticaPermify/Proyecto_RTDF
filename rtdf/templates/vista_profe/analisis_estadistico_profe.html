@@ -1,0 +1,30 @@
+{% extends 'rtdf/base.html' %}
+
+
+{% block content %}
+
+{% load static%}
+<link rel="stylesheet" href="{% static 'app/css/css_profesionales/analisis_estadistico_profe.css' %}" />
+
+
+<body class="is-preload">
+    <div class="global-container">
+
+        <div>
+            <a href="{% url 'detalle_prof_infor' informe_id %}">Volver al detalle del informe</a>
+        </div>
+
+        </br>
+
+
+        <h1 class="">Análisis estadístico para informe {{informe_id}}</h1>
+
+
+        <div id="grafico">
+            {{ plot_div | safe }}
+        </div>
+    </div>
+</body>
+
+
+{% endblock %}

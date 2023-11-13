@@ -34,7 +34,9 @@ from django.shortcuts import render
 from django.template.loader import render_to_string
 
 
-
+from plotly.offline import plot
+import plotly.graph_objs as go
+from plotly.colors import DEFAULT_PLOTLY_COLORS
 
 class CustomPasswordResetView(PasswordResetView):
     template_name = 'registro/password_reset_form.html'
@@ -2992,3 +2994,48 @@ def eliminar_audio_admin(request, audio_id):
     audio_registro.delete()
 
     return redirect('analisis_admin')
+
+
+def analisis_estadistico_profe(request, informe_id):
+
+    tipo_usuario = None
+    plot_div = None
+
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+        plot_div = generar_grafico(informe_id)
+
+
+    return render(request, 'vista_profe/analisis_estadistico_profe.html', 
+                    {'tipo_usuario': tipo_usuario,
+                     'informe_id': informe_id,
+                     'plot_div': plot_div})
+
+
+
+def generar_grafico(informe_id):
+    fig = go.Figure()
+
+    pautas = PautaTerapeutica.objects.filter(fk_informe=informe_id)
+
+    for pauta in pautas:
+        fechas_audios = Audio.objects.filter(fk_pauta_terapeutica=pauta) \
+            .values('fecha_audio') \
+            .annotate(num_audios=Count('id_audio'))
+
+        x = [fecha['fecha_audio'] for fecha in fechas_audios]
+        y = [fecha['num_audios'] for fecha in fechas_audios]
+
+        pauta_id = pauta.id_pauta_terapeutica  
+        pauta_nombre = f"Pauta ID: {pauta_id}" 
+
+        fig.add_trace(go.Scatter(x=x, y=y, mode='lines+markers', name=pauta_nombre, marker=dict(size=8)))
+
+    fig.update_layout(
+        legend=dict(orientation='h', yanchor='top', y=1.15, xanchor='left', x=0),
+        title='Línea de Tiempo de Pautas Terapéuticas',
+        xaxis=dict(title='Fecha'),
+        yaxis=dict(title='Número de Audios')
+    )
+
+    return plot(fig, output_type='div', include_plotlyjs=False)

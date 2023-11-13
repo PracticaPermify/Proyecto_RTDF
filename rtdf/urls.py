@@ -84,6 +84,7 @@ urlpatterns = [
 
     path('perfil/<int:usuario_id>/', views.perfil, name='perfil'),
     path('editar_perfil/<int:usuario_id>/', views.editar_perfil, name='editar_perfil'),
+    path('analisis_estadistico_profe/<int:informe_id>/', views.analisis_estadistico_profe, name='analisis_estadistico_profe'),
 
 ]
 
