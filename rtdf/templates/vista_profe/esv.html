@@ -1,75 +1,89 @@
 {% extends 'rtdf/base.html' %}
 
-{% block css %}
-{% load static %}
-<link rel="stylesheet" href="{% static 'app/css/main.css' %}" />
-{% endblock %}
-
 {% block content %}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'app/css/esv.css' %}"/>
+
 <body class="is-preload">
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data" class="general-form">
         {% csrf_token %}
 
-        <h1>Informe ESV</h1>
-        <br>
+        <h1 class="card-title">Informe ESV</h1>
+        
         <div class="form-group col-md-4">
-          <label for="{{ form.fk_relacion_pa_pro.id_for_label }}">Paciente:</label>
-          {{ form.fk_relacion_pa_pro }}
+            <label for="{{ form.fk_relacion_pa_pro.id_for_label }}">Paciente:</label>
+            {{ form.fk_relacion_pa_pro }}
         </div>
-      
+        
         <div class="form-group col-md-6">
-          <label for="{{ form.titulo.id_for_label }}">Título:</label>
-          {{ form.titulo }}
+            <label for="{{ form.titulo.id_for_label }}">Título:</label>
+            {{ form.titulo }}
         </div>
-      
+        
         <div class="form-group col-md-10">
-          <label for="{{ form.descripcion.id_for_label }}">Descripción:</label>
-          {{ form.descripcion }}
+            <label for="{{ form.descripcion.id_for_label }}">Descripción:</label>
+            {{ form.descripcion }}
         </div>
-      
+        
         <div class="form-group col-md-4">
             <label for="fecha">Fecha:</label></br>
-            <input type="datetime-local" id="fecha" name="fecha" value="{{ form.fecha.value|date:'Y-m-d\TH:i' }}" readonly>
+            <input type="datetime-local" id="fecha" name="fecha" value="{{ form.fecha.value|date:'Y-m-d\TH:i' }}" readonly class="campo_fecha">
         </div>
-      
+        
         <div class="form-group col-md-10">
-          <label for="{{ form.observacion.id_for_label }}">Observación:</label>
-          {{ form.observacion }}
+            <label for="{{ form.observacion.id_for_label }}">Observación:</label>
+            {{ form.observacion }}
         </div>
 
-        {% for pregunta in preguntas %}
-        <div class="pregunta">
-          <p>{{ forloop.counter }}. {{ pregunta }}</p>
-          <div class="form-group col-md-4">
-            <select name="respuesta_{{ forloop.counter }}" required>
-              {% for opcion in opciones_respuesta %}
-                <option value="{{ opcion }}">{{ opcion }}</option>
-              {% endfor %}
-            </select>
-          </div>
+        <div class="preguntas-container form-group col-md-12">
+            {% for pregunta in preguntas %}
+                <div class="pregunta" style="display: none;">
+                    <p>{{ forloop.counter }}. {{ pregunta }}</p>
+                    <div class="form-group col-md-4">
+                        <select name="respuesta_{{ forloop.counter }}" required class="form-control">
+                            {% for opcion in opciones_respuesta %}
+                                <option value="{{ opcion }}">{{ opcion }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
-        {% if forloop.counter|divisibleby:5 %}
-        <div style="page-break-after: always;"></div>
-        {% endif %}
-      {% endfor %}
-      
-        <div class="form-group col-md-4">   
-        </br>
+        
+        <div class="form-group col-md-8 button-container">
+            <button type="button" class="btn btn-primary btn-block" onclick="cambiarPreguntas(-5)" id="anterior-btn">Anterior</button>
+            <button type="button" class="btn btn-primary btn-block" onclick="cambiarPreguntas(5)" id="siguiente-btn">Siguiente</button>
+        </div>
+
+    </br>
+
+        <div class="form-group col-md-4">
             <button type="submit" class="btn btn-primary btn-block">Guardar cuestionario</button>
         </div>
-      </form>
 
+        <script>
+            var preguntas = document.querySelectorAll('.pregunta');
+            var index = 0;
+            var siguienteBtn = document.getElementById('siguiente-btn');
+            var anteriorBtn = document.getElementById('anterior-btn');
 
-      <script>
-        // Función para mostrar un grupo de preguntas
-        function mostrarGrupo(grupo) {
-          const grupos = document.querySelectorAll('.grupo-preguntas');
-          for (const g of grupos) {
-            g.style.display = 'none';
-          }
-          document.getElementById('grupo' + grupo).style.display = 'block';
-        }
-      </script>
+            function mostrarPreguntas() {
+                preguntas.forEach(function (pregunta, i) {
+                    pregunta.style.display = i >= index && i < index + 5 ? 'block' : 'none';
+                });
 
+                siguienteBtn.style.display = index + 5 < preguntas.length ? 'block' : 'none';
+                anteriorBtn.style.display = index > 0 ? 'block' : 'none';
+            }
 
+            function cambiarPreguntas(cantidad) {
+                index += cantidad;
+                mostrarPreguntas();
+            }
+
+            mostrarPreguntas();
+        </script>
+    </form>
+</body>
 {% endblock %}

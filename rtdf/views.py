@@ -921,6 +921,7 @@ def listado_informes(request):
     
 
 @user_passes_test(validate)
+@never_cache
 def detalle_prof_infor(request, informe_id):
 
     source = request.GET.get('source')
@@ -1646,8 +1647,9 @@ def mi_fonoaudiologo(request):
 
 ##LISTADO DE LOS PACIENTES PARA ADMINSITRADOR
 
-@never_cache
+
 @user_passes_test(validate)
+@never_cache
 def list_paci_admin(request):
     pacientes = Usuario.objects.filter(id_tp_usuario__tipo_usuario='Paciente')
     tipo_usuario = None
@@ -1910,6 +1912,7 @@ def eliminar_informe(request, informe_id):
 
     return redirect('listado_informes')
 
+
 def eliminar_informe_admin(request, informe_id):
     informe = get_object_or_404(Informe, id_informe=informe_id)
     tipo_informe = informe.tp_informe
@@ -1921,7 +1924,7 @@ def eliminar_informe_admin(request, informe_id):
 
     informe.delete()
 
-    return redirect('detalle_paciente')
+    return redirect('detalle_paciente', paciente_id=informe.fk_relacion_pa_pro.id_paciente.id_usuario.id_usuario)
 
 @never_cache
 @user_passes_test(validate)
@@ -2593,6 +2596,8 @@ def eliminar_informe_esv(request, informe_id):
     return redirect('listado_informes')
 
 
+
+@user_passes_test(validate)
 def detalle_esv_admin(request, informe_id):
     tipo_usuario = None 
 
@@ -2601,9 +2606,65 @@ def detalle_esv_admin(request, informe_id):
         informe = get_object_or_404(Informe, pk=informe_id)
         paciente_relacionado = informe.fk_relacion_pa_pro.id_paciente
 
-    return render(request, 'vista_admin/detalle_esv_admin.html', {'informe': informe,
-                                                            'tipo_usuario': tipo_usuario,
-                                                            'paciente_relacionado': paciente_relacionado })
+        pautas_terapeuticas = PautaTerapeutica.objects.filter(
+            fk_informe=informe,
+            fk_informe__fk_relacion_pa_pro__id_paciente=paciente_relacionado,
+            fk_tp_terapia__tipo_terapia='Escala_vocal'
+        )
+
+        if request.method == 'POST':
+            pauta_terapeutica_form = PautaTerapeuticaForm(request.POST)
+
+            if pauta_terapeutica_form.is_valid():
+                pauta_terapeutica = pauta_terapeutica_form.save(commit=False)
+                pauta_terapeutica.fk_informe = informe
+                pauta_terapeutica.fk_tp_terapia = TpTerapia.objects.get(tipo_terapia='Escala_vocal')
+                pauta_terapeutica.save()
+
+                # Procesar palabras para EscalaVocales
+                palabras = []
+                for i in range(1, 21):  # Modificar a 21 para tener 20 selects
+                    palabra_id = request.POST.get(f'palabra{i}', '')  # Obtén el valor seleccionado en el formulario
+                    if palabra_id:
+                        palabra = PalabrasPacientes.objects.get(pk=palabra_id)  # Obtén el objeto de PalabrasPacientes
+                        palabras.append(palabra.palabras_paciente)
+
+                # Concatenar palabras en una sola cadena
+                palabras_concatenadas = ", ".join(palabras)
+
+                # Crear una instancia de EscalaVocales y guardar las palabras
+                escala_vocales = EscalaVocales(palabras=palabras_concatenadas)
+                escala_vocales.id_pauta_terapeutica = pauta_terapeutica
+                escala_vocales.save()
+
+                # Después de guardar la pauta, redirige a la misma página para evitar mantener los datos en los campos
+                return HttpResponseRedirect(request.path_info)
+
+        else:
+            pauta_terapeutica_form = PautaTerapeuticaForm()
+
+        # Obtén todas las palabras de la tabla PalabrasPacientes
+        palabras_pacientes = PalabrasPacientes.objects.all()
+
+        # Crea una lista de selecciones (selects) con 20 selects
+        selects = []
+        for i in range(1, 21):
+            palabras_select = PalabrasPacientes.objects.filter().order_by('id_palabras_pacientes')[i-1]
+            selects.append({
+                'id': i,
+                'palabras_pacientes': palabras_pacientes,
+                'palabras_select': palabras_select,
+            })
+
+        return render(request, 'vista_admin/detalle_esv_admin.html', {
+            'informe': informe,
+            'tipo_usuario': tipo_usuario,
+            'paciente_relacionado': paciente_relacionado,
+            'pauta_terapeutica_form': pauta_terapeutica_form,
+            'selects': selects,
+            'pautas_terapeuticas': pautas_terapeuticas
+        })
+    
 
 def editar_esv_admin(request, informe_id):
     tipo_usuario = None
@@ -2646,15 +2707,13 @@ def eliminar_esv_admin(request, informe_id):
     if request.user.is_authenticated and request.user.id_tp_usuario.tipo_usuario == 'Admin':
         informe = get_object_or_404(Informe, id_informe=informe_id)
 
-        # Borra cualquier relación específica del informe que desees antes de eliminar el informe
-        # En este caso, elimina el objeto relacionado 'Esv'
         if informe.tp_informe and informe.tp_informe.tipo_informe == 'ESV':
             informe.esv.delete()
 
         # Elimina el informe
         informe.delete()
 
-        # Ajusta la redirección según tus necesidades
+  
         return redirect('detalle_paciente', paciente_id=informe.fk_relacion_pa_pro.id_paciente.id_usuario.id_usuario)
 
     return redirect('index')

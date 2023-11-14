@@ -2,6 +2,7 @@
 
 {% block content%}
 
+{% load static %}
 
 <div>
   <a href="{% url 'detalle_paciente' paciente_relacionado.id_usuario.id_usuario %}">Volver a la información del paciente</a>
@@ -51,6 +52,83 @@
   </tr>
 </table>
 
+
+</br>
+
+
+<button type="button" class="btn btn-primary btn-block" id="mostrar-formulario-btn">Agregar nueva pauta terapéutica</button>
+
+</br>
+
+<div class="container">
+    <div id="formulario-pauta" style="display: none;">
+        <form method="post">
+            {% csrf_token %}
+
+            <h2>Ingresar pauta terapeutica de escala vocal</h2>
+
+            <div class="form-group">
+                <label for="cant_veces_dia">Cantidad de veces al día:</label>
+                {{ pauta_terapeutica_form.cant_veces_dia }}
+            </div>
+
+            <div class="form-group">
+                <label for="descripcion">Descripción:</label>
+                {{ pauta_terapeutica_form.descripcion }}
+            </div>
+
+            <div class="form-group">
+                <label for="fecha_inicio">Fecha de inicio:</label></br>
+                <input type="datetime-local" id="fecha_inicio" name="fecha_inicio">
+            </div>
+
+            <div class="form-group">
+                <label for="fecha_fin">Fecha de fin:</label></br>
+                <input type="datetime-local" id="fecha_fin" name="fecha_fin">
+            </div>
+
+            <div class="form-group">
+                <label for="comentario">Comentarios:</label>
+                {{ pauta_terapeutica_form.comentario }}
+            </div>
+
+            <h2>Ingresar las palabras para las pautas terapeuticas</h2>
+
+          </br>
+
+            <div class="form-row">
+                {% for select in selects %}
+                    <div class="col-md-3 select-separado">
+                        <label for="palabra{{ select.id }}">Selecciona una palabra {{ select.id }}:</label>
+                        <select name="palabra{{ select.id }}" id="palabra{{ select.id }}" class="form-control">
+                            <option value="">Selecciona una palabra</option>
+                            {% for palabra in select.palabras_pacientes %}
+                                <option value="{{ palabra.id_palabras_pacientes }}"
+                                    {% if palabra.id_palabras_pacientes == select.palabras_select.id_palabras_pacientes %}selected{% endif %}>
+                                    {{ palabra.palabras_paciente }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                      </br>
+                    </div>
+                {% endfor %}
+            </div>
+
+          </br>
+
+            <div class="row">
+                <div class="col-sm-6 mb-2">
+                    <button type="button" class="btn btn-danger w-100" id="ocultar-formulario-btn">Descartar la nueva pauta terapéutica</button>
+                </div>
+                <div class="col-sm-6 mb-2 custom-div">
+                    <button type="submit" class="btn btn-primary w-100">Guardar la nueva pauta terapéutica</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
 </br>
 
   <h2>Puntaje del paciente ESV</h2>
@@ -76,4 +154,44 @@
   </tbody>
 </table>
 
-{% endblock  %}
+
+</br>
+
+<h2>Pauta terapeutica: Escala vocal</h2>
+
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">ID de la pauta</th>
+      <th scope="col">N° veces al día</th>
+      <th scope="col">Fecha de inicio</th>
+      <th scope="col">Fecha de fin</th>
+      <th scope="col">Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for pauta in pautas_terapeuticas %}
+      <tr>
+        <th scope="row">
+          Pauta {{ pauta.id_pauta_terapeutica }}
+        </th>
+        <td>{{ pauta.cant_veces_dia }}</td>
+        <td>{{ pauta.fecha_inicio }}</td>
+        <td>{{ pauta.fecha_fin }}</td>
+        <td>{{ pauta.descripcion }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+          <td colspan="8">Este informe aún no cuenta con pautas terapéuticas de vocalización adjuntas.</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{% static 'app/js/template/pauta_terapeutica.js' %}"></script>
+
+</br>
+
+{% endblock %}
