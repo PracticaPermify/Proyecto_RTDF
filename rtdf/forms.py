@@ -189,18 +189,18 @@ class InformeForm(forms.ModelForm):
 
     descripcion = forms.CharField(
         required=True,
-        widget=forms.Textarea(attrs={'placeholder': 'Descripción'}),
+        widget=forms.Textarea(attrs={'placeholder': 'Descripción' , 'class': 'campo_descripcion'}),
         label='Descripción'
     )
 
     fecha = forms.DateTimeField(
-        widget=forms.DateTimeInput(format='%d-%m-%Y', attrs={'placeholder': 'día-mes-año'}),
+        widget=forms.DateTimeInput(format='%d-%m-%Y', attrs={'placeholder': 'día-mes-año', 'class': 'campo_fecha'}),
         required=True
     )
 
     observacion = forms.CharField(
         required=True,
-        widget=forms.Textarea(attrs={'placeholder': 'Añadir detalles de los síntomas.'}),
+        widget=forms.Textarea(attrs={'placeholder': 'Añadir detalles de los síntomas.', 'class': 'campo_observacion'}),
         label='Observación'
     )
 
@@ -211,6 +211,14 @@ class InformeForm(forms.ModelForm):
         widget=forms.Select(attrs={'class': 'form-control form-control-sm','id': 'tp_informe'}),
         label='Tipo de Informe'
     )
+
+    def __init__(self, *args, **kwargs):
+
+        vista_contexto = kwargs.pop('vista_contexto', None)
+        super(InformeForm, self).__init__(*args, **kwargs)
+
+        if vista_contexto == "editar_informe":
+            self.fields['fk_relacion_pa_pro'].required = False
 
     class Meta:
         model = Informe  
@@ -226,6 +234,7 @@ class InformeForm(forms.ModelForm):
         widgets = {
             'fecha': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
+
 
 OPCIONES_GRBAS = [
         (0, 'Normal'),

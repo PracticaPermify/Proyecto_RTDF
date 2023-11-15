@@ -1860,8 +1860,10 @@ def editar_informe(request, informe_id):
         profesional_salud = request.user.profesionalsalud
         relaciones_pacientes = RelacionPaPro.objects.filter(fk_profesional_salud=profesional_salud)
 
+        paciente = informe.fk_relacion_pa_pro
         rasati_form = None
         grbas_form = None
+        vista= "editar_informe"
 
         try:
             if informe.rasati:
@@ -1876,14 +1878,20 @@ def editar_informe(request, informe_id):
             grbas_form = GrbasForm()
 
         if request.method == 'POST':
-            form = InformeForm(request.POST, instance=informe)
-            form.fields['fk_relacion_pa_pro'].queryset = relaciones_pacientes
+            form = InformeForm(request.POST, instance=informe, vista_contexto=vista)
+            # form.fields['fk_relacion_pa_pro'].queryset = relaciones_pacientes
 
             if form.is_valid():
-                informe.fecha = timezone.now()
+
+                print(f"Valor después de asignar: {form.cleaned_data['fk_relacion_pa_pro']}")
+                form = form.save(commit=False)
+                form.fk_relacion_pa_pro = paciente
+                form.fecha = timezone.now()
                 form.save()
+                print(f"Informe guardado: {informe.fk_relacion_pa_pro}")
 
             if rasati_form and rasati_form.is_valid():
+                print(f"Informe.rasati: {rasati_form}")
                 rasati_form.save()
 
             if grbas_form and grbas_form.is_valid():
@@ -1893,12 +1901,15 @@ def editar_informe(request, informe_id):
         else:
             form = InformeForm(instance=informe)
             form.fields['fk_relacion_pa_pro'].queryset = relaciones_pacientes
-
+        
+        
         return render(request, 'vista_profe/editar_informe.html', {'form': form, 
                                                                 'informe': informe,
                                                                 'grbas_form': grbas_form,
                                                                 'rasati_form': rasati_form,
-                                                                'tipo_usuario': tipo_usuario})
+                                                                'tipo_usuario': tipo_usuario,
+                                                                })
+
 
 def eliminar_informe(request, informe_id):
     informe = get_object_or_404(Informe, id_informe=informe_id)
