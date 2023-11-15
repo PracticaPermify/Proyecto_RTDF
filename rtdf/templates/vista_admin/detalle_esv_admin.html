@@ -162,7 +162,9 @@
 <table class="table">
   <thead class="thead-dark">
     <tr>
-      <th scope="col">ID de la pauta</th>
+      <th scope="col">
+        Pauta {{ pauta.id_pauta_terapeutica.id }}
+    </th>
       <th scope="col">N° veces al día</th>
       <th scope="col">Fecha de inicio</th>
       <th scope="col">Fecha de fin</th>
@@ -173,7 +175,10 @@
     {% for pauta in pautas_terapeuticas %}
       <tr>
         <th scope="row">
-          Pauta {{ pauta.id_pauta_terapeutica }}
+            <a href="{% url 'detalle_pauta_esv_admin' pauta.id_pauta_terapeutica %}">
+            Pauta {{ pauta.id_pauta_terapeutica }}
+            </a>
+          </a>
         </th>
         <td>{{ pauta.cant_veces_dia }}</td>
         <td>{{ pauta.fecha_inicio }}</td>

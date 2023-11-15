@@ -1,0 +1,77 @@
+{% extends "rtdf/base.html" %}
+
+{% block content %}
+
+
+<a href="{% url 'detalle_esv_admin' informe_id=pauta.fk_informe.id_informe %}">
+  Volver al detalle del informe
+</a>
+
+</br>
+</br>
+
+<h1>Detalle de Pauta Terapéutica de Escala Vocal</h1>
+
+
+<a href="{% url 'eliminar_pauta_esv_admin' pauta.id_pauta_terapeutica %}" class="btn btn-danger btn-derecha" 
+   onclick="return confirm('¿Estás seguro de eliminar la pauta terapéutica?')">
+   Eliminar <i class="fas fa-trash" style="margin-left: 5px;"></i>
+</a>
+
+<a href="{% url 'editar_pauta_esv_admin' pauta.id_pauta_terapeutica %}" class="btn btn-primary btn-derecha">
+  Editar <i class="fas fa-pencil-alt" style="margin-left: 5px;"></i>
+</a>
+
+
+<table>
+  <tr>
+    <th>ID de la pauta:</th>
+    <td>{{ pauta.id_pauta_terapeutica }}</td>
+  </tr>
+  <tr>
+    <th>Nombre del paciente:</th>
+    <td>{{ paciente.primer_nombre }} {{ paciente.ap_paterno }}</td>
+  </tr>
+  <tr>
+    <th>Rut del paciente:</th>
+    <td>{{ paciente.numero_identificacion }}</td>
+  </tr>
+  <tr>
+    <th>N° veces al día:</th>
+    <td>{{ pauta.cant_veces_dia }}</td>
+  </tr>
+  <tr>
+    <th>Fecha de inicio:</th>
+    <td>{{ pauta.fecha_inicio }}</td>
+  </tr>
+  <tr>
+    <th>Fecha de fin:</th>
+    <td>{{ pauta.fecha_fin }}</td>
+  </tr>
+  <tr>
+    <th>Descripción:</th>
+    <td>{{ pauta.descripcion }}</td>
+  </tr>
+  <tr>
+    <th>Comentario:</th>
+    <td>{{ pauta.comentario }}</td>
+  </tr>
+</table>
+
+<h2>Palabras que debe decir su paciente:</h2>
+
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Palabra</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        {{ palabras }}
+      </td>
+  </tbody>
+</table>
+
+{% endblock %}

@@ -893,6 +893,7 @@ def detalle_prof_paci(request, paciente_id):
                                                                  'informes_grbas': informes_grbas,
                                                                  })
 
+@never_cache
 def listado_informes(request):
     # Obtén el fonoaudiólogo actual
     profesional_medico = request.user.profesionalsalud
@@ -2235,9 +2236,7 @@ def detalle_pauta_admin(request, id_pauta_terapeutica_id):
         elif tipo_usuario == 'Fonoaudiologo':
             url_regreso = reverse('detalle_prof_infor', kwargs={'informe_id': pauta.fk_informe.id_informe})
         else:
-            url_regreso = reverse('detalle_prof_infor', kwargs={'informe_id': pauta.fk_informe.id_informe})
-
-        
+            url_regreso = reverse('detalle_prof_infor', kwargs={'informe_id': pauta.fk_informe.id_informe})   
 
         try:
             intensidad = Intensidad.objects.get(id_pauta_terapeutica=pauta)
@@ -2260,6 +2259,108 @@ def detalle_pauta_admin(request, id_pauta_terapeutica_id):
         'paciente_relacionado': paciente_relacionado,
         'url_regreso': url_regreso,
         })
+
+
+
+@never_cache
+def detalle_pauta_esv_admin(request, pauta_id):
+
+    tipo_usuario = None
+
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+
+    source = request.GET.get('source')
+
+    if source == 'plantilla1':
+        url_regreso = reverse('listado_informes')
+    elif source == 'plantilla2':
+        url_regreso = reverse('detalle_esv')
+    else:
+        # Si no proviene de ninguna de las plantillas conocidas, configura una URL predeterminada
+        url_regreso = reverse('listado_informes')
+
+    pauta = get_object_or_404(PautaTerapeutica, pk=pauta_id)
+
+    if pauta.fk_tp_terapia.tipo_terapia == 'Escala_vocal':
+        paciente = pauta.fk_informe.fk_relacion_pa_pro.id_paciente.id_usuario
+        escala_vocales = pauta.escalavocales 
+        palabras = escala_vocales.palabras
+
+        return render(request, 'vista_admin/detalle_pauta_esv_admin.html', {'pauta': pauta, 
+                                                                      'palabras': palabras,
+                                                                      'paciente': paciente,
+                                                                      'url_regreso': url_regreso,
+                                                                      'tipo_usuario': tipo_usuario})
+    
+
+def editar_pauta_esv_admin(request, pauta_id):
+    tipo_usuario = None
+
+    if request.user.is_authenticated:
+        tipo_usuario = request.user.id_tp_usuario.tipo_usuario
+    
+    pauta = get_object_or_404(PautaTerapeutica, pk=pauta_id)
+    
+    if pauta.fk_tp_terapia.tipo_terapia != 'Escala_vocal':
+        return render(request, 'vista_profe/error.html', {'message': 'Error: Esta pauta no es de Escala Vocal.'})
+
+    palabras_pacientes = PalabrasPacientes.objects.all()
+    palabras_pauta = pauta.escalavocales.palabras.split(', ') if pauta.escalavocales else []
+
+    if request.method == 'POST':
+        form = PautaTerapeuticaForm(request.POST, instance=pauta)
+
+        if form.is_valid():
+            form.instance.fk_tp_terapia_id = 3  # Asegúrate de configurar el ID del tipo de terapia adecuado
+            form.save()
+
+            palabras = []
+            for i in range(1, 21):
+                palabra_id = request.POST.get(f'palabra{i}', '')
+                if palabra_id:
+                    palabra = PalabrasPacientes.objects.get(pk=palabra_id)
+                    palabras.append(palabra.palabras_paciente)
+
+            palabras_concatenadas = ", ".join(palabras)
+
+            if pauta.escalavocales:
+                pauta.escalavocales.palabras = palabras_concatenadas
+                pauta.escalavocales.save()
+            else:
+                escala_vocales = EscalaVocales(palabras=palabras_concatenadas)
+                escala_vocales.id_pauta_terapeutica = pauta
+                escala_vocales.save()
+
+            return redirect('detalle_pauta_esv_admin', pauta_id)
+    else:
+        form = PautaTerapeuticaForm(instance=pauta)
+
+        selects = []
+        for i in range(1, 21):
+            selects.append({
+                'id': i,
+                'palabras_pacientes': palabras_pacientes,
+                'palabra_seleccionada': palabras_pauta[i - 1] if i <= len(palabras_pauta) else None,
+            })
+
+    return render(request, 'vista_admin/editar_pauta_esv_admin.html', {
+        'form': form,
+        'pauta': pauta,
+        'selects': selects,
+        'tipo_usuario': tipo_usuario
+    })
+
+def eliminar_pauta_esv_admin(request, pauta_id):
+    pauta = get_object_or_404(PautaTerapeutica, pk=pauta_id)
+
+    if pauta.fk_tp_terapia.tipo_terapia == 'Escala_vocal':
+        pauta.delete()
+
+    # Redirigir a la vista correspondiente para el administrador
+    return redirect('detalle_esv_admin', informe_id=pauta.fk_informe.id_informe)
+    
+
 
 @never_cache
 def editar_pauta_admin(request, id_pauta_terapeutica_id):
@@ -2431,6 +2532,8 @@ def detalle_pauta_esv(request, pauta_id):
     
 
 
+
+
 def editar_pauta_esv(request, pauta_id):
 
     tipo_usuario = None
@@ -2490,64 +2593,6 @@ def editar_pauta_esv(request, pauta_id):
     })
 
 
-# def editar_pauta_esv(request, pauta_id):
-#     tipo_usuario = None
-#     if request.user.is_authenticated:
-#         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
-
-#     pauta = get_object_or_404(PautaTerapeutica, pk=pauta_id)
-
-#     if pauta.fk_tp_terapia.tipo_terapia == 'Escala_vocal':
-#         if request.method == 'POST':
-#             form = PautaTerapeuticaForm(request.POST, instance=pauta)
-#             if form.is_valid():
-#                 # Guardar los cambios en la pauta
-#                 form.instance.fk_tp_terapia_id = 3  # Asegúrate de configurar el ID del tipo de terapia adecuado
-#                 form.save()
-
-#                 # Procesar las palabras
-#                 palabras = []
-#                 for i in range(1, 21):
-#                     palabra_id = request.POST.get(f'palabra{i}', '')
-#                     if palabra_id:
-#                         palabra = PalabrasPacientes.objects.get(pk=palabra_id)
-#                         palabras.append(palabra.palabras_paciente)
-
-#                 palabras_concatenadas = ", ".join(palabras)
-
-#                 # Actualizar o crear el registro de EscalaVocales
-#                 if pauta.escalavocales:
-#                     pauta.escalavocales.palabras = palabras_concatenadas
-#                     pauta.escalavocales.save()
-#                 else:
-#                     escala_vocales = EscalaVocales(palabras=palabras_concatenadas)
-#                     escala_vocales.id_pauta_terapeutica = pauta
-#                     escala_vocales.save()
-
-#                 return redirect('detalle_pauta_esv', pauta_id)
-#         else:
-#             form = PautaTerapeuticaForm(instance=pauta)
-#             palabras = pauta.escalavocales.palabras.split(', ') if pauta.escalavocales else []
-
-#             # Obtén todas las palabras para cargar los select
-#             palabras_pacientes = PalabrasPacientes.objects.all()
-
-#             # Crea una lista de selecciones para 20 select
-#             selects = []
-#             for i in range(1, 21):
-#                 selects.append({
-#                     'id': i,
-#                     'palabras_pacientes': palabras_pacientes,
-#                     'palabra_seleccionada': palabras[i - 1] if i <= len(palabras) else None,
-#                 })
-
-#         return render(request, 'vista_profe/editar_pauta_esv.html', {'form': form, 'pauta': pauta, 'palabras': palabras, 'tipo_usuario': tipo_usuario, 'selects': selects})
-#     else:
-#         return render(request, 'vista_profe/error.html', {'message': 'Error: Esta pauta no es de Escala Vocal.'})
-    
-
-
-
 def eliminar_pauta_esv(request, pauta_id):
 
     pauta = get_object_or_404(PautaTerapeutica, pk=pauta_id)
@@ -2557,9 +2602,6 @@ def eliminar_pauta_esv(request, pauta_id):
 
     # Redirigir a la vista de detalle_esv
     return redirect('detalle_esv', informe_id=pauta.fk_informe.id_informe)
-
-
-
 
 
 
@@ -3098,3 +3140,13 @@ def generar_grafico(informe_id):
     )
 
     return plot(fig, output_type='div', include_plotlyjs=False)
+
+
+def traducir_valor(valor):
+    traducciones = {
+        0: 'Normal',
+        1: 'Alteración leve',
+        2: 'Alteración moderada',
+        3: 'Alteración severa',
+    }
+    return traducciones.get(valor, str(valor))

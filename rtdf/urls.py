@@ -44,7 +44,15 @@ urlpatterns = [
     path('detalle_prof_pauta/<int:id_pauta_terapeutica_id>/', views.detalle_prof_pauta, name='detalle_prof_pauta'),
     path('editar_prof_pauta/<int:id_pauta_terapeutica_id>/', views.editar_prof_pauta, name='editar_prof_pauta'),
     path('eliminar_prof_pauta/<int:id_pauta_terapeutica_id>/', views.eliminar_prof_pauta, name='eliminar_prof_pauta'),
+    
     path('detalle_pauta_admin/<int:id_pauta_terapeutica_id>/', views.detalle_pauta_admin, name='detalle_pauta_admin'),
+    path('detalle_pauta_esv_admin/<int:pauta_id>/', views.detalle_pauta_esv_admin, name='detalle_pauta_esv_admin'),
+
+    path('editar_pauta_esv_admin/<int:pauta_id>/', views.editar_pauta_esv_admin, name='editar_pauta_esv_admin'),
+    path('eliminar_pauta_esv_admin/<int:pauta_id>/', views.eliminar_pauta_esv_admin, name='eliminar_pauta_esv_admin'),
+
+
+    
     path('editar_pauta_admin/<int:id_pauta_terapeutica_id>/', views.editar_pauta_admin, name='editar_pauta_admin'),
     path('eliminar_pauta_admin/<int:id_pauta_terapeutica_id>/', views.eliminar_pauta_admin, name='eliminar_pauta_admin'),
     path('esv/', views.esv, name='esv'),

@@ -229,8 +229,8 @@ class InformeForm(forms.ModelForm):
 
 OPCIONES_GRBAS = [
         (0, 'Normal'),
-        (1, 'Leve'),
-        (2, 'Moderado'),
+        (1, 'Alteración leve'),
+        (2, 'Alteración moderada'),
         (3, 'Alteración Severa'),
     ]
 

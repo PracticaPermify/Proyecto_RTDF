@@ -61,23 +61,23 @@
                     </tr>
                     <tr>
                         <th>Grado disfonía:</th>
-                        <td>{{ grbas.g_grado_disfonia }}</td>
+                        <td class="valor-traducir" >{{ grbas.g_grado_disfonia }}</td>
                     </tr>
                     <tr>
                         <th>Rugosidad de voz: </th>
-                        <td>{{ grbas.r_aspereza }}</td>
+                        <td class="valor-traducir" >{{ grbas.r_aspereza }}</td>
                     </tr>
                     <tr>
                         <th>B (Respiración dificultosa):</th>
-                        <td> {{ grbas.b_soplo }}</td>
+                        <td class="valor-traducir"> {{ grbas.b_soplo }}</td>
                     </tr>
                     <tr>
                         <th>Astenia o grado de fatiga de voz</th>
-                        <td>{{ grbas.a_debilidad }}</td>
+                        <td class="valor-traducir">{{ grbas.a_debilidad }}</td>
                     </tr>
                     <tr>
                         <th>S (Grado de tensión vocal): </th>
-                        <td>{{ grbas.s_tension }}</td>
+                        <td class="valor-traducir">{{ grbas.s_tension }}</td>
                     </tr>
                     {% endif %}
                     {% if rasati %}
@@ -113,27 +113,27 @@
                     </tr>
                     <tr>
                         <th>Ronquera:</th>
-                        <td>{{ rasati.r_ronquedad }}</td>
+                        <td class="valor-traducir" >{{ rasati.r_ronquedad }}</td>
                     </tr>
                     <tr>
                         <th>Aspereza: </th>
-                        <td>{{ rasati.a_aspereza }}</td>
+                        <td class="valor-traducir" >{{ rasati.a_aspereza }}</td>
                     </tr>
                     <tr>
                         <th>Soplosidad:</th>
-                        <td> {{ rasati.s_soplo }}</td>
+                        <td class="valor-traducir"> {{ rasati.s_soplo }}</td>
                     </tr>
                     <tr>
                         <th>Astenia:</th>
-                        <td>{{ rasati.a_astenia }}</td>
+                        <td class="valor-traducir" >{{ rasati.a_astenia }}</td>
                     </tr>
                     <tr>
                         <th>Tensión: </th>
-                        <td>{{ rasati.t_tension }}</td>
+                        <td class="valor-traducir">{{ rasati.t_tension }}</td>
                     </tr>
                     <tr>
                         <th>Inestabilidad: </th>
-                        <td>{{ rasati.i_inestabilidad }}</td>
+                        <td class="valor-traducir">{{ rasati.i_inestabilidad }}</td>
                     </tr>
                     {% endif %}
                 </tbody>
@@ -352,5 +352,6 @@
 </body>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="{% static 'app/js/template/pauta_terapeutica.js' %}"></script>
+<script src="{% static 'app/js/traductor_numerico.js' %}"></script>
 
 {% endblock %}
