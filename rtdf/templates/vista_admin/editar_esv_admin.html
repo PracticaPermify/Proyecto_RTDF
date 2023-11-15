@@ -1,47 +1,75 @@
-{% extends "rtdf/base.html" %}
+
+{% extends 'rtdf/base.html' %}
 
 {% block content %}
 
-<div>
-  <a href="{% url 'detalle_esv_admin' informe.id_informe %}">Volver al detalle del informe ESV</a>
-</div>
+{% load static %}
+<link rel="stylesheet" href="{% static 'app/css/css_admin/editar_esv_admin.css' %}"/>
 
-<br>
+<body class="is-preload">
+    <div class="global-container">
+        <div class="card general-form">
+            <div class="card-body">
 
-<h1>Editar Informe ESV</h1>
+                <div class="mb-4 mt-3">
+                  <a href="{% url 'detalle_esv_admin' informe.id_informe %}">Volver al detalle del informe ESV</a>
+                </div>
 
-<br>
+                <h1 class="card-title text-center">Editar ESV {{ informe.id_informe }} de {{ informe.fk_relacion_pa_pro.id_paciente.id_usuario.primer_nombre }}
+                  {{ informe.fk_relacion_pa_pro.id_paciente.id_usuario.ap_paterno }}
+                  {{ informe.fk_relacion_pa_pro.id_paciente.id_usuario.ap_materno }}</h1>
+                    
+                <div class="card-text">
 
+                    {% if error_message %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error_message }}
+                    </div>
+                    {% endif %}
+
+                    <p class="required-message">
+                        <span class="asterisk">* </span> Campos requeridos
+                    </p>
 <form method="post">
   {% csrf_token %}
 
-  <div class="form-group col-md-4">
-    <label for="titulo">Título:</label>
-    <input type="text" id="titulo" name="titulo" value="{{ valores_actuales.titulo }}">
+  <br>
+  <div class="form-row">
+    <div class="form-group col-md-12">
+      <label for="titulo"><i class="fa-solid fa-heading"></i>Título <span class="required">*</span></label>
+      <input type="text" name="titulo" value="{{ informe.titulo }}">
+    </div>
   </div>
 
-  <div class="form-group col-md-10">
-    <label for="descripcion">Descripción:</label>
-    <textarea id="descripcion" name="descripcion">{{ valores_actuales.descripcion }}</textarea>
+  <div class="form-row">
+    <div class="form-group col-md-12">
+      <label for="descripcion"><i class="fa-solid fa-notes-medical"></i>Descripción <span class="required">*</span></label>
+      <textarea name="descripcion">{{ informe.descripcion }}</textarea>
+    </div>
   </div>
 
-  <div class="form-group col-md-4">
-    <label for="fecha">Fecha:</label><br>
-    <input type="datetime-local" id="fecha" name="fecha" value="{{ valores_actuales.fecha|date:'Y-m-d\TH:i' }}"> <br>
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="fecha"><i class="fas fa-calendar"></i>Fecha <span class="required">*</span></label>
+      <input type="datetime-local" class="campo_fecha" id="fecha" name="fecha" value="{{ valores_actuales.fecha|date:'Y-m-d\TH:i' }}"> 
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-md-12">
+      <label for="observacion"><i class="fa-solid fa-notes-medical"></i>Observación <span class="required">*</span></label>
+      <textarea name="observacion">{{ informe.observacion }}</textarea>
+    </div>
   </div>
 
   <br>
 
-  <div class="form-group col-md-10">
-    <label for="observacion">Observación:</label>
-    <textarea id="observacion" name="observacion">{{ valores_actuales.observacion }}</textarea>
-  </div>
+    <button type="submit" class="btn btn-primary mx-auto">Guardar Cambios</button>
 
-  <br>
-  <div class="form-group col-md-4">
-    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-  </div
-  >
-</form>
+
+  </form>
+</div>
+</div>
+</div>
 
 {% endblock %}

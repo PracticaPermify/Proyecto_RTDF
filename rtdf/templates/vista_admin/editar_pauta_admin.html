@@ -1,46 +1,75 @@
 {% extends 'rtdf/base.html' %}
 
-{% load static %}
-
 {% block content %}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'app/css/css_admin/editar_pauta_admin.css' %}"/>
+
 <body class="is-preload">
+    <div class="global-container">
+        <div class="card general-form">
+            <div class="card-body">
+
+                <div class="mb-4 mt-3">
+                    <a href="{% url 'detalle_pauta_admin' pauta.id_pauta_terapeutica %}">Volver al detalle del informe</a>
+                </div>
+
+                <h1 class="card-title text-center">Editar Pauta Terapeutica {{ pauta.id_pauta_terapeutica }} de 
+                    {{ pauta.fk_informe.fk_relacion_pa_pro.id_paciente.id_usuario.primer_nombre }}
+                    {{ pauta.fk_informe.fk_relacion_pa_pro.id_paciente.id_usuario.ap_paterno }}</h1>
+
+                    
+                <div class="card-text">
+
+                    {% if error_message %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error_message }}
+                    </div>
+                    {% endif %}
+                    <p class="required-message">
+                        <span class="asterisk">* </span> Campos requeridos
+                    </p>
     <form method="post">
 
-    <a href="{% url 'detalle_pauta_admin' pauta.id_pauta_terapeutica %}">Volver al detalle del informe</a>
-    <br>
-    <br>
+    
+
         {% csrf_token %}
-        <h1>Editar Pauta Terapeutica {{ pauta.id_pauta_terapeutica }} de 
-            {{ pauta.fk_informe.fk_relacion_pa_pro.id_paciente.id_usuario.primer_nombre }}
-            {{ pauta.fk_informe.fk_relacion_pa_pro.id_paciente.id_usuario.ap_paterno }}</h1>
-        <br>
+
         
-        <div class="form-group">
-            <label for="cant_veces_dia">Cantidad de veces al día:</label>
-            {{ form.cant_veces_dia }}
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label for="cant_veces_dia"><i class="fa-solid fa-rotate-left"></i>Cantidad de veces al día <span class="required">*</span></label>
+                {{ form.cant_veces_dia }}
+            </div>
         </div>
 
-        <div class="form-group">
-            <label for="descripcion">Descripción:</label>
-            {{ form.descripcion }}
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label for="descripcion"><i class="fa-solid fa-notes-medical"></i>Descripción <span class="required">*</span></label>
+                {{ form.descripcion }}
+            </div>
         </div>
 
-        <div class="form-group">
-            <label for="fecha_inicio">Fecha Inicio:</label><br>
-            <input type="datetime-local" id="fecha_inicio" name="fecha_inicio" value="{{ form.fecha_inicio.value|date:'Y-m-d\TH:i' }}">
+        <div class="form-row">
+            <div class="form-group col-md-12 col-lg-6">
+                <label for="fecha_inicio"><i class="fas fa-calendar"></i>Fecha Inicio <span class="required">*</span></label><br>
+                <input type="datetime-local" class="campo_fecha" id="fecha_inicio" name="fecha_inicio" value="{{ form.fecha_inicio.value|date:'Y-m-d\TH:i' }}">
+            </div>
+
+            <div class="form-group col-md-12 col-lg-6">
+                <label for="fecha_fin"><i class="fas fa-calendar"></i>Fecha fin <span class="required">*</span></label><br>
+                <input type="datetime-local" class="campo_fecha" id="fecha_fin" name="fecha_fin" value="{{ form.fecha_fin.value|date:'Y-m-d\TH:i' }}">
+            </div>
         </div>
 
-        <div class="form-group">
-            <label for="fecha_fin">Fecha fin:</label><br>
-            <input type="datetime-local" id="fecha_fin" name="fecha_fin" value="{{ form.fecha_fin.value|date:'Y-m-d\TH:i' }}">
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label for="comentario"><i class="fa-solid fa-comment-medical"></i>Comentario <span class="required">*</span></label>
+                {{ form.comentario }}
+            </div>
         </div>
 
-        <div class="form-group">
-            <label for="comentario">Comentario:</label>
-            {{ form.comentario }}
-        </div>
-
-        <div class="form-group">
+        <div id="fk_tp_terapia" class="form-group">
             <label for="fk_tp_terapia">Tipo de Terapia:</label>
             <select id="fk_tp_terapia" name="{{ form.fk_tp_terapia.name }}" class="form-control form-control-sm" readonly>
                 {% for choice in form.fk_tp_terapia.field.choices %}
@@ -54,19 +83,22 @@
         {% if pauta.fk_tp_terapia.tipo_terapia == 'Intensidad' %}
         <div id="campos-intensidad">
 
-            <div class="form-group">
-                <label for="{{ intensidad_form.intensidad.id_for_label }}">Intensidad en dB:</label>
-                {{ intensidad_form.intensidad }}
-            </div>
+            <h3 class="card-title col-md-12 mx-auto mt-3">Campos de pauta de Intensidad</h3>
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label for="{{ intensidad_form.intensidad.id_for_label }}"><i class="fa-solid fa-ear-listen"></i>Intensidad en dB <span class="required">*</span></label>
+                    {{ intensidad_form.intensidad }}
+                </div>
 
-            <div class="form-group">
-                <label for="{{ intensidad_form.min_db.id_for_label }}">dB mínimo:</label>
-                {{ intensidad_form.min_db }}
-            </div>
+                <div class="form-group col-md-4">
+                    <label for="{{ intensidad_form.min_db.id_for_label }}"><i class="fa-solid fa-ear-listen"></i>dB mínimo</label>
+                    {{ intensidad_form.min_db }}
+                </div>
 
-            <div class="form-group">
-                <label for="{{ intensidad_form.max_db.id_for_label }}">dB máximo:</label>
-                {{ intensidad_form.max_db }}
+                <div class="form-group col-md-4">
+                    <label for="{{ intensidad_form.max_db.id_for_label }}"><i class="fa-solid fa-ear-listen"></i>dB máximo</label>
+                    {{ intensidad_form.max_db }}
+                </div>
             </div>
 
         </div>
@@ -76,19 +108,23 @@
         {% if pauta.fk_tp_terapia.tipo_terapia == 'Vocalización' %}
         <div id="campos-vocalizacion">
 
-            <div class="form-group">
-                <label for="{{ vocalizacion_form.duracion_seg.id_for_label }}">Duración en segundos:</label>
-                {{ vocalizacion_form.duracion_seg }}
-            </div>
 
-            <div class="form-group">
-                <label for="{{ vocalizacion_form.bpm.id_for_label }}">BPM:</label>
-                {{ vocalizacion_form.bpm }}
-            </div>
+            <h3 class="card-title col-md-12 mx-auto mt-3">Campos de pauta de Vocalización</h3>
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label for="{{ vocalizacion_form.duracion_seg.id_for_label }}"><i class="fa-solid fa-stopwatch-20"></i>Duración en segundos <span class="required">*</span></label>
+                    {{ vocalizacion_form.duracion_seg }}
+                </div>
 
-            <div class="form-group">
-                <label for="{{ vocalizacion_form.tempo.id_for_label }}">Tempo:</label>
-                {{ vocalizacion_form.tempo }}
+                <div class="form-group col-md-4">
+                    <label for="{{ vocalizacion_form.bpm.id_for_label }}"><i class="fa-solid fa-wave-square"></i>BPM <span class="required">*</span></label>
+                    {{ vocalizacion_form.bpm }}
+                </div>
+
+                <div class="form-group col-md-4">
+                    <label for="{{ vocalizacion_form.tempo.id_for_label }}"><i class="fa-solid fa-gauge"></i>Tempo </label>
+                    {{ vocalizacion_form.tempo }}
+                </div>
             </div>
 
         </div>
@@ -96,9 +132,12 @@
 
 
         <br/>
-        <div class="container">
-            <button type="submit" class="btn btn-primary btn-block">Actualizar</button>
-        </div>
+
+            <button type="submit" class="btn btn-primary btn-block mx-auto">Actualizar</button>
+
     </form>
+</div>
+</div>
+</div>
 </body>
 {% endblock %}

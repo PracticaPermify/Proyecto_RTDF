@@ -2420,7 +2420,22 @@ def editar_pauta_admin(request, id_pauta_terapeutica_id):
                 form.save()
 
             if intensidad_form and intensidad_form.is_valid():
-                intensidad_form.save()
+
+                if not intensidad_form.cleaned_data['min_db']:
+                        #se setea a null
+                        intensidad_form.cleaned_data['min_db'] = None
+
+                if not intensidad_form.cleaned_data['max_db']:
+                        intensidad_form.cleaned_data['max_db'] = None  
+
+                #antes de guardar el formulario se setea el campo de min db y max db
+                intensidad_form.instance.min_db = intensidad_form.cleaned_data['min_db']
+                intensidad_form.instance.max_db = intensidad_form.cleaned_data['max_db'] 
+
+                
+                intensidad = intensidad_form.save(commit=False)
+
+                intensidad.save()
 
             if vocalizacion_form and vocalizacion_form.is_valid():
                 vocalizacion_form.save()
