@@ -108,7 +108,6 @@
         {% if pauta.fk_tp_terapia.tipo_terapia == 'Vocalización' %}
         <div id="campos-vocalizacion">
 
-
             <h3 class="card-title col-md-12 mx-auto mt-3">Campos de pauta de Vocalización</h3>
             <div class="form-row">
                 <div class="form-group col-md-4">
@@ -122,7 +121,7 @@
                 </div>
 
                 <div class="form-group col-md-4">
-                    <label for="{{ vocalizacion_form.tempo.id_for_label }}"><i class="fa-solid fa-gauge"></i>Tempo </label>
+                    <label for="{{ vocalizacion_form.tempo.id_for_label }}"><i class="fa-solid fa-gauge"></i>Tempo <span class="required">*</span></label>
                     {{ vocalizacion_form.tempo }}
                 </div>
             </div>

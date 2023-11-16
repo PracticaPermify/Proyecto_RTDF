@@ -98,16 +98,45 @@
 			</form>
 		</section>
 
+		{% if tipo_usuario %}
 		<!-- Text -->
 		<section class="box text-style1">
-			<div class="inner">
-				<p>
-					<strong>Striped:</strong> A free and fully responsive HTML5 site
-					template designed by <a href="http://twitter.com/ajlkn">AJ</a> for <a
-						href="http://html5up.net/">HTML5 UP</a>
-				</p>
+			<div class="inner perfil-base">
+				<div class="form-row mx-auto align-items-center">
+					<div class="col-4">
+						<img class="foto_perfil" src="{% static 'app\recursos\img\foto_perfil2.png' %}" alt="perfil">
+					</div>
+		
+					<div class="col-8 ">
+						<div class="perfil-boton">
+							<div class="dropdown">
+								<button type="button" class="btn btn-secondary dropdown-toggle invisible-button" data-bs-toggle="dropdown" aria-expanded="false">
+									<strong><span class="nombre-perfil">{{ user.primer_nombre }} <br>{{ user.ap_paterno }}</span></strong>
+								</button>
+								<ul class="dropdown-menu custom-dropdown-bg">
+									<li class="custom-dropdown-item"><a class="dropdown-item custom-dropdown-item" href="{% url 'perfil' request.user.id_usuario %}">Mi perfil</a></li>
+									<li class="custom-dropdown-item"><a class="dropdown-item custom-dropdown-item" href="{% url 'logout' %}">Cerrar sesión</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</section>
+		
+		{% else %}
+				<!-- Text -->
+				<section class="box text-style1">
+					<div class="inner">
+						<p>
+							<strong>Striped:</strong> A free and fully responsive HTML5 site
+							template designed by <a href="http://twitter.com/ajlkn">AJ</a> for <a
+								href="http://html5up.net/">HTML5 UP</a>
+						</p>
+					</div>
+				</section>
+
+		{% endif %}
 	</div>
 
 	<div id="content">

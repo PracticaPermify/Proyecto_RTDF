@@ -206,7 +206,7 @@ class InformeForm(forms.ModelForm):
 
     tp_informe = forms.ModelChoiceField(
         queryset=TpInforme.objects.filter(tipo_informe__in=['RASATI', 'GRBAS']),
-        required=False,
+        required=True,
         empty_label=None,
         widget=forms.Select(attrs={'class': 'form-control form-control-sm','id': 'tp_informe'}),
         label='Tipo de Informe'
@@ -364,6 +364,9 @@ class PautaTerapeuticaForm(forms.ModelForm):
         label='Tipo de terapia'
     )
 
+
+
+
     class Meta:
         model = PautaTerapeutica
         fields = ['cant_veces_dia', 'descripcion', 'fecha_inicio', 'fecha_fin', 'comentario', 'fk_tp_terapia']
@@ -392,6 +395,16 @@ class VocalizacionForm(PautaTerapeuticaForm):
         label='Tempo'
     )
 
+    def __init__(self, *args, **kwargs):
+
+        tipo_pauta = kwargs.pop('tipo_pauta', None)
+        super(VocalizacionForm, self).__init__(*args, **kwargs)
+
+        if tipo_pauta == "Vocalización":
+            self.fields['duracion_seg'].required = True
+            self.fields['bpm'].required = True
+            self.fields['tempo'].required = True
+
     class Meta:
         model = Vocalizacion
         fields = PautaTerapeuticaForm.Meta.fields + ['duracion_seg', 'bpm', 'tempo']
@@ -419,6 +432,16 @@ class IntensidadForm(PautaTerapeuticaForm):
     class Meta:
         model = Intensidad
         fields = PautaTerapeuticaForm.Meta.fields + ['intensidad', 'min_db','max_db']
+
+    def __init__(self, *args, **kwargs):
+
+        tipo_pauta = kwargs.pop('tipo_pauta', None)
+        super(IntensidadForm, self).__init__(*args, **kwargs)
+
+        if tipo_pauta == "Intensidad":
+            self.fields['intensidad'].required = True
+            # self.fields['min_db'].required = True
+            # self.fields['max_db'].required = True
 
 
 class AudioscoeficientesForm(forms.ModelForm):

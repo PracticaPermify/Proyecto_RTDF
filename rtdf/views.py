@@ -2175,6 +2175,8 @@ def editar_prof_pauta(request, id_pauta_terapeutica_id):
         profesional_salud = request.user.profesionalsalud
         relaciones_pacientes = RelacionPaPro.objects.filter(fk_profesional_salud=profesional_salud)
 
+        
+
         intensidad_form = None
         vocalizacion_form = None
 
@@ -2398,18 +2400,20 @@ def editar_pauta_admin(request, id_pauta_terapeutica_id):
         # profesional_salud = request.user.profesionalsalud
         # relaciones_pacientes = RelacionPaPro.objects.filter(fk_profesional_salud=profesional_salud)
 
+        tipo_pauta=pauta.fk_tp_terapia.tipo_terapia
+
         intensidad_form = None
         vocalizacion_form = None
 
         try:
             if pauta.intensidad:
-                intensidad_form = IntensidadForm(request.POST or None, instance=pauta.intensidad)
+                intensidad_form = IntensidadForm(request.POST or None, instance=pauta.intensidad, tipo_pauta=tipo_pauta)
         except Intensidad.DoesNotExist:
             intensidad_form = IntensidadForm()
 
         try:
             if pauta.vocalizacion:
-                vocalizacion_form = VocalizacionForm(request.POST or None, instance=pauta.vocalizacion)
+                vocalizacion_form = VocalizacionForm(request.POST or None, instance=pauta.vocalizacion, tipo_pauta=tipo_pauta )
         except Vocalizacion.DoesNotExist:
             vocalizacion_form = VocalizacionForm()
 
@@ -2438,7 +2442,23 @@ def editar_pauta_admin(request, id_pauta_terapeutica_id):
                 intensidad.save()
 
             if vocalizacion_form and vocalizacion_form.is_valid():
-                vocalizacion_form.save()
+
+                if not vocalizacion_form.cleaned_data['tempo']:
+                        #se setea a null
+                        vocalizacion_form.cleaned_data['tempo'] = None
+
+                if not vocalizacion_form.cleaned_data['tempo']:
+                        vocalizacion_form.cleaned_data['tempo'] = None  
+
+                #antes de guardar el formulario se setea el campo de min db y max db
+                vocalizacion_form.instance.tempo = vocalizacion_form.cleaned_data['tempo']
+        
+
+                
+                vocalizacion = vocalizacion_form.save(commit=False)
+
+                vocalizacion.save()
+
 
             return redirect('detalle_pauta_admin', id_pauta_terapeutica_id=pauta.id_pauta_terapeutica)
         else:

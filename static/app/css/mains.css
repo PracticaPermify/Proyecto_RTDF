@@ -3044,3 +3044,43 @@ input, select, textarea {
 	padding: 10px;
 	cursor: pointer;
 }
+
+.foto_perfil{
+	border-radius: 50%; 
+	border: 1px solid white; 
+	max-width: 50px; 
+	max-height: 50px;
+	background-color: #000;
+}
+
+.invisible-button {
+	background-color: transparent !important;
+	border: none !important;
+	box-shadow: none !important;
+	width: 100% !important;
+}
+
+.custom-dropdown-bg {
+	background-color: rgb(25, 28, 34) !important;
+}
+
+.custom-dropdown-item:hover,
+.custom-dropdown-item:active {
+	background-color: rgb(43, 48, 58) !important;
+}
+
+.custom-dropdown-item {
+	padding: 0;
+}
+
+.nombre-perfil{
+	font-size: 15px;
+}
+
+.perfil-boton{
+	align-items: center !important;
+}
+
+/* .perfil-base{
+	background-color: #b93653 !important;
+} */
