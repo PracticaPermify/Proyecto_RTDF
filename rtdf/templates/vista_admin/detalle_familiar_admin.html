@@ -12,31 +12,40 @@
       
       <div class="table-responsive">
         <table class="table">
-            <thead class="thead-dark">
               <tr>
                 <th scope="col">Rut</th>
-                <th scope="col">Correo electronico</th>
-                <th scope="col">Numero de contacto</th>
-                <th scope="col">Paciente asociado</th>
-                <th scope="col">Parentesco con el paciente</th>
+                <td scope="row">{{ familiar.numero_identificacion }}</td>
               </tr>
-            </thead>
-            <tbody>
               <tr>
-                <th scope="row">{{ familiar.numero_identificacion }}</th>
+                <th scope="col">Correo electronico</th>
                 <td>{{ familiar.email }}</td>
-                <td>{{ familiar.numero_telefonico }}</td>
-                <td>
-                    <a href="{% url 'detalle_paciente' paciente_id=paciente_asociado.id_usuario.id_usuario %}">
-                    {{ paciente_asociado.id_usuario.primer_nombre }} 
-                    {{ paciente_asociado.id_usuario.segundo_nombre }}
-                    {{ paciente_asociado.id_usuario.ap_paterno }} 
-                    {{ paciente_asociado.id_usuario.ap_materno }}
-                    </a>
-                </td>
-                <td>{{ parentesco }}</td>
               </tr>
-            </tbody>
+              <tr>
+                <th scope="col">Fecha de nacimiento</th>
+                <td>{{ familiar.fecha_nacimiento }}</td>
+              </tr>
+              <tr>
+                <th scope="col">Edad</th>
+                <td>{{ edad }}</td>
+              </tr>
+              <tr>
+                <th scope="col">Numero de contacto</th>
+                <td>{{ familiar.numero_telefonico }}</td>
+              </tr>
+              <tr>
+                <th scope="col">Paciente asociado</th>
+                <td>
+                  <a href="{% url 'detalle_paciente' paciente_id=paciente_asociado.id_usuario.id_usuario %}">
+                  {{ paciente_asociado.id_usuario.primer_nombre }} 
+                  {{ paciente_asociado.id_usuario.segundo_nombre }}
+                  {{ paciente_asociado.id_usuario.ap_paterno }} 
+                  {{ paciente_asociado.id_usuario.ap_materno }}
+                  </a>
+              </td>
+              </tr>
+                <th scope="col">Parentesco con el paciente</th>
+                <td>{{ parentesco }}</td>
+              <tr>
           </table>
       </div>    
 </div>

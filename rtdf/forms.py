@@ -359,7 +359,7 @@ class PautaTerapeuticaForm(forms.ModelForm):
 
     fk_tp_terapia = forms.ModelChoiceField(
         queryset=TpTerapia.objects.filter(tipo_terapia__in=['Vocalización', 'Intensidad']),
-        required=False,
+        required=True,
         widget=forms.Select(attrs={'class': 'form-control form-control-sm'}),
         label='Tipo de terapia'
     )
@@ -395,19 +395,30 @@ class VocalizacionForm(PautaTerapeuticaForm):
         label='Tempo'
     )
 
+
+
     def __init__(self, *args, **kwargs):
 
+        tipo_terapia = kwargs.pop('tipo_terapia', None)
         tipo_pauta = kwargs.pop('tipo_pauta', None)
         super(VocalizacionForm, self).__init__(*args, **kwargs)
+
+        if tipo_terapia == "Vocalización":
+            self.fields['duracion_seg'].required = True
+            self.fields['bpm'].required = True
+            self.fields['tempo'].required = True
+
 
         if tipo_pauta == "Vocalización":
             self.fields['duracion_seg'].required = True
             self.fields['bpm'].required = True
             self.fields['tempo'].required = True
 
+
     class Meta:
         model = Vocalizacion
         fields = PautaTerapeuticaForm.Meta.fields + ['duracion_seg', 'bpm', 'tempo']
+
 
 class IntensidadForm(PautaTerapeuticaForm):
 

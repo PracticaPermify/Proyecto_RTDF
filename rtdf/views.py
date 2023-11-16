@@ -28,7 +28,6 @@ from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
 from django.core.mail import send_mail
-
 from django.core.mail import EmailMessage
 from django.shortcuts import render
 from django.template.loader import render_to_string
@@ -1658,8 +1657,9 @@ def list_paci_admin(request):
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
     return render(request, 'vista_admin/list_paci_admin.html',{'tipo_usuario': tipo_usuario, 'pacientes': pacientes})
 
+
 @never_cache
-@user_passes_test(validate)
+@user_passes_test(validate)  # Asegúrate de tener la función de validación adecuada
 def detalle_paciente(request, paciente_id):
     paciente = get_object_or_404(Usuario, id_usuario=paciente_id, id_tp_usuario__tipo_usuario='Paciente')
     traer_paciente = paciente.paciente
@@ -1669,6 +1669,14 @@ def detalle_paciente(request, paciente_id):
     obtener_rasati = Rasati.objects.filter(id_informe__fk_relacion_pa_pro__id_paciente=traer_paciente)
     obtener_grbas = Grbas.objects.filter(id_informe__fk_relacion_pa_pro__id_paciente=traer_paciente)
     obtener_esv = Esv.objects.filter(id_informe__fk_relacion_pa_pro__id_paciente=traer_paciente)
+
+    # Calcular la edad del paciente
+    fecha_nacimiento = paciente.fecha_nacimiento
+    if fecha_nacimiento:
+        hoy = date.today()
+        edad = hoy.year - fecha_nacimiento.year - ((hoy.month, hoy.day) < (fecha_nacimiento.month, fecha_nacimiento.day))
+    else:
+        edad = None
 
     tipo_usuario = None
     if request.user.is_authenticated:
@@ -1686,6 +1694,7 @@ def detalle_paciente(request, paciente_id):
         'informes_esv': informes_esv,
         'informes_rasati': informes_rasati,
         'informes_grbas': informes_grbas,
+        'edad': edad,  # Agrega la edad al contexto
     })
 
 ##LISTADO DE LOS FONOAUDIOLOGOS PARA ADMINSITRADOR
@@ -1703,6 +1712,13 @@ def detalle_fonoaudiologo(request, fonoaudiologo_id):
 
     fonoaudiologo = get_object_or_404(Usuario, id_usuario=fonoaudiologo_id, id_tp_usuario__tipo_usuario='Fonoaudiólogo')
 
+    fecha_nacimiento = fonoaudiologo.fecha_nacimiento
+    if fecha_nacimiento:
+        hoy = date.today()
+        edad = hoy.year - fecha_nacimiento.year - ((hoy.month, hoy.day) < (fecha_nacimiento.month, fecha_nacimiento.day))
+    else:
+        edad = None
+
     profesional_salud = ProfesionalSalud.objects.get(id_usuario=fonoaudiologo)
 
     institucion = ProfesionalSalud.objects.get(id_usuario=fonoaudiologo).id_institucion
@@ -1718,7 +1734,8 @@ def detalle_fonoaudiologo(request, fonoaudiologo_id):
                                                                       'tipo_usuario': tipo_usuario,
                                                                       'pacientes_asociados': pacientes_asociados,
                                                                       'profesional_salud': profesional_salud,
-                                                                      'institucion': institucion})
+                                                                      'institucion': institucion,
+                                                                      'edad': edad })
 
 ##LISTADO PARA NEUROLOGOS PARA ADMINSITRADOR
 
@@ -1748,6 +1765,12 @@ def detalle_neurologo(request, neurologo_id):
 
     pacientes_asociados = [relacion.id_paciente for relacion in relaciones]
 
+    fecha_nacimiento = neurologo.fecha_nacimiento
+    if fecha_nacimiento:
+        hoy = date.today()
+        edad = hoy.year - fecha_nacimiento.year - ((hoy.month, hoy.day) < (fecha_nacimiento.month, fecha_nacimiento.day))
+    else:
+        edad = None
 
     tipo_usuario = None
     if request.user.is_authenticated:
@@ -1756,7 +1779,8 @@ def detalle_neurologo(request, neurologo_id):
                                                                     'tipo_usuario': tipo_usuario,
                                                                     'pacientes_asociados': pacientes_asociados,
                                                                     'profesional_salud': profesional_salud,
-                                                                    'institucion': institucion})
+                                                                    'institucion': institucion,
+                                                                    'edad': edad})
 
 ##LISTADO PARA FAMILIARES PARA VISTA DE ADMINISTRADOR
 
@@ -1777,6 +1801,13 @@ def list_fami_admin(request):
 def detalle_familiar_admin(request, familiar_id):
     familiar = get_object_or_404(Usuario, id_usuario=familiar_id, id_tp_usuario__tipo_usuario='Familiar')
 
+    fecha_nacimiento = familiar.fecha_nacimiento
+    if fecha_nacimiento:
+        hoy = date.today()
+        edad = hoy.year - fecha_nacimiento.year - ((hoy.month, hoy.day) < (fecha_nacimiento.month, fecha_nacimiento.day))
+    else:
+        edad = None
+
     familiar_paciente = FamiliarPaciente.objects.get(id_usuario=familiar)
     parentesco = familiar_paciente.fk_tipo_familiar
 
@@ -1792,7 +1823,8 @@ def detalle_familiar_admin(request, familiar_id):
                                                                 'familiar': familiar, 
                                                                 'tipo_usuario': tipo_usuario,
                                                                 'parentesco': parentesco,
-                                                                'paciente_asociado': paciente_asociado
+                                                                'paciente_asociado': paciente_asociado,
+                                                                'edad': edad
                                                             })
 ##Ayuda pancho
 
@@ -2175,20 +2207,20 @@ def editar_prof_pauta(request, id_pauta_terapeutica_id):
         profesional_salud = request.user.profesionalsalud
         relaciones_pacientes = RelacionPaPro.objects.filter(fk_profesional_salud=profesional_salud)
 
-        
+        tipo_pauta=pauta.fk_tp_terapia.tipo_terapia
 
         intensidad_form = None
         vocalizacion_form = None
 
         try:
             if pauta.intensidad:
-                intensidad_form = IntensidadForm(request.POST or None, instance=pauta.intensidad)
+                intensidad_form = IntensidadForm(request.POST or None, instance=pauta.intensidad, tipo_pauta=tipo_pauta)
         except Intensidad.DoesNotExist:
             intensidad_form = IntensidadForm()
 
         try:
             if pauta.vocalizacion:
-                vocalizacion_form = VocalizacionForm(request.POST or None, instance=pauta.vocalizacion)
+                vocalizacion_form = VocalizacionForm(request.POST or None, instance=pauta.vocalizacion, tipo_pauta=tipo_pauta)
         except Vocalizacion.DoesNotExist:
             vocalizacion_form = VocalizacionForm()
 

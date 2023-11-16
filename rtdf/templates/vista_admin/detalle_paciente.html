@@ -15,47 +15,45 @@
       </br>
     <div class="table-responsive">
       <table class="table">
-          <thead class="thead-dark">
             <tr>
               <th scope="col">Rut</th>
-              <th scope="col">Correo electronico</th>
-              <th scope="col">Comuna</th>
-              <th scope="col">Numero de contacto</th>
-              <th scope="col">telegram</th>
+              <td scope="row">{{ paciente.numero_identificacion }}</td>
             </tr>
-          </thead>
-          <tbody>
             <tr>
-              <th scope="row">{{ paciente.numero_identificacion }}</th>
+              <th scope="col">Fecha de nacimiento</th>
+              <td scope="row">{{ paciente.fecha_nacimiento}}</td>
+            </tr>
+            <tr>
+              <th scope="col">Edad</th>
+              <td scope="row">{{ edad }}</td>
+            </tr>
+            <tr>
+              <th scope="col">Correo electronico</th>
               <td>{{ paciente.email }}</td>
+            </tr>
+            <tr>
+              <th scope="col">Comuna</th>
               <td>{{ paciente.id_comuna }}</td>
+            </tr>
+            <tr>
+              <th scope="col">Numero de contacto</th>
               <td>{{ paciente.numero_telefonico }}</td>
+            </tr>
+            <tr>
+              <th scope="col">telegram</th>
               <td>{{ paciente_info.telegram }}</td>
             </tr>
-          </tbody>
+            <tr>
+              <th scope="col" class="col-6">Diabetes</th>
+              <td >{{ paciente_info.fk_tipo_diabetes }}</td>
+            </tr>
+            <tr>
+              <th scope="col" class="col-6">Hipertension</th>
+              <td>{{ paciente_info.fk_tipo_hipertension }}</td>
+            </tr>
         </table>
       </div>
     </br>
-    </br>
-    <h2><strong>Enfermedades del paciente</strong></h2>
-    </br>
-
-  <div class="table-responsive">
-    <table class="table">
-        <thead class="thead-dark">
-          <tr>
-            <th scope="col" class="col-6">Diabetes</th>
-            <th scope="col" class="col-6">Hipertension</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td >{{ paciente_info.fk_tipo_diabetes }}</td>
-            <td>{{ paciente_info.fk_tipo_hipertension }}</td>
-          </tr>
-        </tbody>
-     </table>
-  </div>    
 
   </br>
   <h2><strong>Profesional asignado al paciente</strong></h2>
@@ -100,6 +98,10 @@
           <td>{{ profesional.id_usuario.id_tp_usuario }} 
         </td>
         </tr>
+        {% empty %}
+        <tr>
+          <td colspan="2">No hay profesional asignado.</td>
+      </tr>
         {% endfor %}
       </tbody>
     </table>

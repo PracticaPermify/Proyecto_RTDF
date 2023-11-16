@@ -69,3 +69,59 @@ document.addEventListener('DOMContentLoaded', function () {
     // Llama a la función para configurar los campos según los valores iniciales
     toggleCampos();
 });
+
+// CAMBIO REQUIRED DE LOS ATRIBUTOS DE MANERA DINÁMICA
+$(document).ready(function () {
+    // TIPO DE TERAPIA
+    var fkTpTerapiaField = $('#fk_tp_terapia');
+
+    //CAMPOS VOCALIZACIÓN
+    var duracionSegField = $('#id_duracion_seg');
+    var id_bpm = $('#id_bpm');
+    var id_tempo = $('#id_tempo');
+
+    //CAMPOS INTENSIDAD
+    var id_intensidad = $('#id_intensidad');
+    var id_min_db = $('#id_min_db');
+    var id_max_db = $('#id_max_db');
+
+
+    function updateRequiredStatus() {
+        var selectedTpTerapia = fkTpTerapiaField.val();
+        console.log(selectedTpTerapia)
+
+        //VOCALIZACIÓN
+        if (selectedTpTerapia === "1") {
+            // CAMPOS DE VOCALIZACIÓN
+            duracionSegField.prop('required', true);
+            id_bpm.prop('required', true);
+            id_tempo.prop('required', true);
+    
+            // CAMPOS DE INTENSIDAD
+            id_intensidad.prop('required', false);
+            id_min_db.prop('required', false);
+            id_max_db.prop('required', false);
+
+        //INTENSIDAD
+        } else if (selectedTpTerapia === "2") {
+
+            //CAMPOS DE INTENSIDAD
+            id_intensidad.prop('required', true);
+            id_min_db.prop('required', false);
+            id_max_db.prop('required', false);
+
+            //CAMPOS DE VOCALIZACIÓN
+            duracionSegField.prop('required', false);
+            id_bpm.prop('required', false);
+            id_tempo.prop('required', false);
+        }
+    }
+
+    // Captura el evento cuando cambia el tipo de pauta terapéutica
+    fkTpTerapiaField.change(function () {
+        updateRequiredStatus();
+    });
+
+    // Ejecuta la función al cargar la página para reflejar el estado inicial
+    updateRequiredStatus();
+});

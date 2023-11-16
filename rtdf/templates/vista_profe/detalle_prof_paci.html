@@ -2,6 +2,8 @@
 
 {% block content %}
 
+{% load static %}
+
     <div class="container">
 
     <div>
@@ -74,11 +76,11 @@
             <td><a href="{% url 'detalle_prof_infor' informe.id_informe.id_informe %}">
               Informe {{ informe.id_informe.id_informe}}</a></td>
             <td>{{ informe.id_informe.fecha }}</td>
-            <td>{{ informe.g_grado_disfonia }}</td>
-            <td>{{ informe.r_aspereza }}</td>
-            <td>{{ informe.b_soplo }}</td>
-            <td>{{ informe.a_debilidad }}</td>
-            <td>{{ informe.s_tension }}</td>
+            <td class="valor-traducir">{{ informe.g_grado_disfonia }}</td>
+            <td class="valor-traducir">{{ informe.r_aspereza }}</td>
+            <td class="valor-traducir">{{ informe.b_soplo }}</td>
+            <td class="valor-traducir">{{ informe.a_debilidad }}</td>
+            <td class="valor-traducir">{{ informe.s_tension }}</td>
           </tr>
           {% empty %}
           <tr>
@@ -113,12 +115,12 @@
             <td><a href="{% url 'detalle_prof_infor' informe.id_informe.id_informe %}">
               Informe {{ informe.id_informe.id_informe}}</a></td>
             <td>{{ informe.id_informe.fecha }}</td>
-            <td>{{ informe.r_ronquedad }}</td>
-            <td>{{ informe.a_aspereza }}</td>
-            <td>{{ informe.s_soplo }}</td>
-            <td>{{ informe.a_astenia }}</td>
-            <td>{{ informe.t_tension }}</td>
-            <td>{{ informe.i_inestabilidad }}</td>
+            <td class="valor-traducir">{{ informe.r_ronquedad }}</td>
+            <td class="valor-traducir">{{ informe.a_aspereza }}</td>
+            <td class="valor-traducir">{{ informe.s_soplo }}</td>
+            <td class="valor-traducir">{{ informe.a_astenia }}</td>
+            <td class="valor-traducir">{{ informe.t_tension }}</td>
+            <td class="valor-traducir">{{ informe.i_inestabilidad }}</td>
           </tr>
           {% empty %}
           <tr>
@@ -128,5 +130,8 @@
         </tbody>
       </table>
   </div>
+
+
+  <script src="{% static 'app/js/traductor_numerico.js' %}"></script>
 
 {% endblock %}

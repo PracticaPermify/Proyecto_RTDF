@@ -11,22 +11,30 @@
         </div>
       <div class="table-responsive">
         <table class="table">
-            <thead class="thead-dark">
               <tr>
                 <th scope="col">Rut</th>
-                <th scope="col">Correo electronico</th>
-                <th scope="col">Numero de contacto</th>
-                <th scope="col">Universidad estudiada</th>
+                <td scope="row">{{ fonoaudiologo.numero_identificacion }}</td>
               </tr>
-            </thead>
-            <tbody>
               <tr>
-                <th scope="row">{{ fonoaudiologo.numero_identificacion }}</th>
+                <th scope="col">Correo electronico</th>
                 <td>{{ fonoaudiologo.email }}</td>
+              </tr>
+              <tr>
+                <th scope="col">Edad</th>
+                <td>{{ edad}}</td>
+              </tr>
+              <tr>
+                <th scope="col">Fecha de nacimiento</th>
+                <td>{{ fonoaudiologo.fecha_nacimiento }}</td>
+              </tr>
+              <tr>
+                <th scope="col">Numero de contacto</th>
                 <td>{{ fonoaudiologo.numero_telefonico }}</td>
+              </tr>
+              <tr>
+                <th scope="col">Universidad estudiada</th>
                 <td>{{ institucion }}</td>
               </tr>
-            </tbody>
           </table>
         </div>
 
