@@ -9,11 +9,7 @@
 
 {% block content %}
 
-<style>
-    .btn-container {
-        margin-top: 10px; /* Ajusta el valor según tu preferencia */
-    }
-</style>
+
 
 
 <div class="container">
@@ -214,9 +210,38 @@
                 
             </div>
 
-            
+            {% if graph_html %}
+                <div id="graph" class="graph">{{ graph_html|safe }}</div>
+            {% endif %}
 
+            {% if graph_frecuencias %}
+            <br>
+            <h2>Comparación gráfica de coeficientes</h2>
+
+            <div class="row">
+                <div class="form-group col-md-12 col-lg-6">
+                    <div id="graph" class="graph-frecuencias">{{ graph_frecuencias|safe }}</div>
+                </div>
+                <div class="form-group col-md-12 col-lg-6">
+                    <div id="graph" class="graph">{{ graph_intensidad|safe }}</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-12 col-lg-6">
+                    <div id="graph" class="graph">{{ graph_jitter|safe }}</div>
+                </div>
+                <div class="form-group col-md-12 col-lg-6">
+                    <div id="graph" class="graph">{{ graph_shimmer|safe }}</div>
+                </div>
+            </div>
             
+            {% else %}
+            <br>
+            <h2>Comparación gráfica de coeficientes</h2>
+            <br>
+            <p>No disponible.</p>
+            {% endif %}
+
 
 </div>
 

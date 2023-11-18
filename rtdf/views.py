@@ -16,6 +16,8 @@ from django.http import JsonResponse, HttpResponse
 import os
 from django.conf import settings
 from rtdf.audio_coef import audio_analysis
+from rtdf.analisis_estadistico import *
+from rtdf.ciencia_datos import *
 from django.http import FileResponse
 from django.conf import settings
 from datetime import datetime
@@ -36,6 +38,7 @@ from django.template.loader import render_to_string
 from plotly.offline import plot
 import plotly.graph_objs as go
 from plotly.colors import DEFAULT_PLOTLY_COLORS
+from plotly.subplots import make_subplots
 
 class CustomPasswordResetView(PasswordResetView):
     template_name = 'registro/password_reset_form.html'
@@ -3004,7 +3007,12 @@ def detalle_audio_admin(request, audio_id):
 
 def detalle_audio_profe(request, audio_id):
     tipo_usuario = None
-
+    graph_html =None
+    graph_frecuencias = None
+    graph_intensidad = None
+    graph_jitter = None
+    graph_shimmer = None
+    
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
 
@@ -3015,10 +3023,26 @@ def detalle_audio_profe(request, audio_id):
 
 
         print(audio_coeficiente_manual)
-        # audio = Audio.objects.select_related(
-        #     'fk_pauta_terapeutica__fk_informe__fk_relacion_pa_pro__id_paciente',
-        #     'fk_pauta_terapeutica__fk_informe__fk_relacion_pa_pro__fk_profesional_salud'
-        # ).get(id_audio=audio_id)
+
+
+        # Obtener los datos para el gráfico
+        x = ['f0', 'f1', 'f2', 'f3', 'f4', 'intensidad', 'hnr', 'local_jitter', 'local_absolute_jitter',
+            'rap_jitter', 'ppq5_jitter', 'ddp_jitter', 'local_shimmer', 'local_db_shimmer', 'apq3_shimmer',
+            'aqpq5_shimmer', 'apq11_shimmer']
+
+        # Convertir las cadenas a números
+        y_auto = convertir_a_numeros(audio_coeficiente_automatico)
+
+        if audio_coeficiente_manual:
+            y_manual = convertir_a_numeros(audio_coeficiente_manual)
+
+            # Generar el gráfico utilizando la función auxiliar
+            #graph_html = generar_grafico_audio(x, y_auto, y_manual) 
+
+            graph_frecuencias = grafico_frecuencias(x, y_auto, y_manual) 
+            graph_intensidad = grafico_intensidad(x, y_auto, y_manual)
+            graph_jitter = grafico_jitter(x, y_auto, y_manual)
+            graph_shimmer = grafico_shimmer(x, y_auto, y_manual)
 
         audio_dicc = {
             'id_audio': audio.id_audio,
@@ -3042,6 +3066,11 @@ def detalle_audio_profe(request, audio_id):
         'detalle_audio': audio_dicc,
         'coef_auto': audio_coeficiente_automatico,
         'coef_manual': audio_coeficiente_manual,
+        'graph_html': graph_html,
+        'graph_frecuencias': graph_frecuencias,
+        'graph_intensidad': graph_intensidad,
+        'graph_jitter': graph_jitter,
+        'graph_shimmer': graph_shimmer,
     })
 
 @user_passes_test(validate)
@@ -3204,36 +3233,6 @@ def analisis_estadistico_profe(request, informe_id):
                     {'tipo_usuario': tipo_usuario,
                      'informe_id': informe_id,
                      'plot_div': plot_div})
-
-
-
-def generar_grafico(informe_id):
-    fig = go.Figure()
-
-    pautas = PautaTerapeutica.objects.filter(fk_informe=informe_id)
-
-    for pauta in pautas:
-        fechas_audios = Audio.objects.filter(fk_pauta_terapeutica=pauta) \
-            .values('fecha_audio') \
-            .annotate(num_audios=Count('id_audio'))
-
-        x = [fecha['fecha_audio'] for fecha in fechas_audios]
-        y = [fecha['num_audios'] for fecha in fechas_audios]
-
-        pauta_id = pauta.id_pauta_terapeutica  
-        pauta_nombre = f"Pauta ID: {pauta_id}" 
-
-        fig.add_trace(go.Scatter(x=x, y=y, mode='lines+markers', name=pauta_nombre, marker=dict(size=8)))
-
-    fig.update_layout(
-        legend=dict(orientation='h', yanchor='top', y=1.15, xanchor='left', x=0),
-        title='Línea de Tiempo de Pautas Terapéuticas',
-        xaxis=dict(title='Fecha'),
-        yaxis=dict(title='Número de Audios')
-    )
-
-    return plot(fig, output_type='div', include_plotlyjs=False)
-
 
 def traducir_valor(valor):
     traducciones = {
