@@ -882,8 +882,22 @@ def detalle_prof_paci(request, paciente_id):
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
 
-    paciente = get_object_or_404(Usuario, id_usuario=paciente_id, id_tp_usuario__tipo_usuario='Paciente')
-    paciente_info = paciente.paciente
+        paciente = get_object_or_404(Usuario, id_usuario=paciente_id, id_tp_usuario__tipo_usuario='Paciente')
+        paciente_info = paciente.paciente
+
+        edad_paciente = paciente.fecha_nacimiento
+        diabetes_paciente = paciente_info.fk_tipo_diabetes_id
+        hipertension_paciente = paciente_info.fk_tipo_hipertension_id
+
+        resultado_kmeans = kmeans_criticidad(edad_paciente,diabetes_paciente,hipertension_paciente)
+
+        # Añadir el resultado a tu contexto
+        contexto = {
+            # ... otras variables de contexto ...
+            'resultado_kmeans': resultado_kmeans,
+        }
+
+
 
     fonoaudiologos_asociados = ProfesionalSalud.objects.filter(relacionpapro__id_paciente=paciente_info.id_paciente)
 
@@ -893,6 +907,7 @@ def detalle_prof_paci(request, paciente_id):
                                                                  'fonoaudiologos_asociados': fonoaudiologos_asociados,
                                                                  'informes_rasati': informes_rasati,
                                                                  'informes_grbas': informes_grbas,
+                                                                 'contexto':contexto,
                                                                  })
 
 @never_cache

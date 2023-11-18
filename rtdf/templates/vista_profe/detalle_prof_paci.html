@@ -47,9 +47,22 @@
                 <th>Hipertension:</th>
                 <td scope="row">{{ paciente_info.fk_tipo_hipertension }}</td>
               </tr>
+
+              <tr>
+                <th>Criticidad vocal:</th>
+                <td scope="row"><button id="btnEjecutarFuncion" class="btn btn-primary">Predicción</button></td>
+              </tr>
             </tbody>
           </table>
         </div>
+
+        <form method="post" id="formEjecutarFuncion">
+          {% csrf_token %}
+          <button type="submit" name="btnEjecutarFuncion">Ejecutar Función</button>
+      </form>
+      
+      <!-- Agrega un contenedor para mostrar el mensaje -->
+      <div id="mensajeContainer">{% if resultado_kmeans %}{{ resultado_kmeans.mensaje }}{% endif %}</div>
 
   </br>
 
@@ -133,5 +146,7 @@
 
 
   <script src="{% static 'app/js/traductor_numerico.js' %}"></script>
+
+
 
 {% endblock %}
