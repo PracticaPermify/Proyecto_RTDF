@@ -791,7 +791,7 @@ def login_view(request):
 
             return response
         else:
-            error_message = "Credenciales inválidas. Inténtalo de nuevo."
+            error_message = "Correo electrónico y/o contraseña inválidos. Inténtalo de nuevo."
             return render(request, 'registro/login.html', {'error_message': error_message})
     else:
         response = render(request, 'registro/login.html')
