@@ -20,11 +20,23 @@
         <h1 class="">Análisis estadístico para informe {{informe_id}}</h1>
 
 
-        <div id="grafico">
+        <div id="grafico" class="plot-container">
             {{ plot_div | safe }}
         </div>
+
+        <div id="grafico" class="plot-container">
+            {{ plot_sec | safe }}
+        </div>
+
     </div>
 </body>
 
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+    // Configuración para hacer el gráfico responsivo
+    window.addEventListener('resize', function () {
+        Plotly.Plots.resize('grafico');
+    });
+</script>
 
 {% endblock %}

@@ -48,21 +48,30 @@
                 <td scope="row">{{ paciente_info.fk_tipo_hipertension }}</td>
               </tr>
 
-              <tr>
-                <th>Criticidad vocal:</th>
-                <td scope="row"><button id="btnEjecutarFuncion" class="btn btn-primary">Predicción</button></td>
-              </tr>
-            </tbody>
+              <div id="resultado-container">
+                <tr>
+                    <th>Criticidad vocal:</th>
+                    <td scope="row">
+                        <form method="post" id="formEjecutarFuncion">
+                            {% csrf_token %}
+                            <button id="btnEjecutarFuncion" class="btn btn-primary">
+                                Predicción
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                <!-- Agrega un elemento para mostrar el resultado -->
+                <tr>
+                    <td colspan="2" id="resultadoCriticidad" style="display:none;"></td>
+                </tr>
+            </div>
+            </form>
+              
           </table>
         </div>
-
-        <form method="post" id="formEjecutarFuncion">
-          {% csrf_token %}
-          <button type="submit" name="btnEjecutarFuncion">Ejecutar Función</button>
-      </form>
       
       <!-- Agrega un contenedor para mostrar el mensaje -->
-      <div id="mensajeContainer">{% if resultado_kmeans %}{{ resultado_kmeans.mensaje }}{% endif %}</div>
+
 
   </br>
 
@@ -148,5 +157,20 @@
   <script src="{% static 'app/js/traductor_numerico.js' %}"></script>
 
 
+  <script>
+    $(document).ready(function () {
+        $("#btnEjecutarFuncion").click(function (e) {
+            e.preventDefault();
+
+            // Realiza una solicitud POST al servidor
+            $.post("{% url 'detalle_prof_paci' paciente_id=paciente.id_usuario %}", $("#formEjecutarFuncion").serialize(), function (data) {
+                // Muestra el resultado y oculta el botón
+                $("#resultadoCriticidad").text("Criticidad vocal: " + data);
+                $("#resultadoCriticidad").show();
+                $("#btnEjecutarFuncion").hide();
+            });
+        });
+    });
+</script>
 
 {% endblock %}

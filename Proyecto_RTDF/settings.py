@@ -34,7 +34,7 @@ DEBUG = True
     # Nicolas =  local_nico
     # PythonAnywhere = pa
 
-entorno = 'local_felipe'
+entorno = 'local_nico'
 
 if entorno == "local_felipe":
 
@@ -167,7 +167,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es'
 
 TIME_ZONE = 'America/Santiago'
 

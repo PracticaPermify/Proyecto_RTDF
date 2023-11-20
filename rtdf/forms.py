@@ -5,15 +5,20 @@ from django.core.exceptions import ValidationError
 import re
 from django.core import validators
 from datetime import date
-
+from django.utils.translation import gettext as _
+from django.core.exceptions import ObjectDoesNotExist
 ##Numero de telefono
 
 def es_numero_telefonico_valido(numero_telefonico):
+    patron = r'^\+56\d+$'
+    
+    if not re.match(patron, numero_telefonico):
+        raise ValidationError(_('Ingresa un número de teléfono válido en formato +56XXXXXXXXX.'))
 
-    patron = r'^\+\d{56}$'
-    return re.match(patron, numero_telefonico) is not None
+    if len(numero_telefonico) < 12:
+        raise ValidationError(_('Número de teléfono inválido.Ingreselo nuevamente'))
 
-def es_password_valido(password):
+def contrasena_valida(password):
     errores = []
 
     if not re.search(r'[A-Z]', password):
@@ -30,20 +35,62 @@ def es_password_valido(password):
 
     if len(password) < 8:
         errores.append('La contraseña debe tener al menos 8 caracteres.')
+    
+    if ' ' in password:
+        errores.append('La contraseña no puede contener espacios.')
 
     if errores:
         raise forms.ValidationError(errores)
     
-def clean_rut_paciente(self):
-        rut = self.cleaned_data['rut_paciente']
-        if not re.match(r'^\d{7,8}-[Kk\d]$', rut):
-            raise forms.ValidationError('El RUT ingresado no es válido.')
-        return rut
+def clean_email(self):
+        email = self.cleaned_data.get('email')
+
+        if '@' not in email or not (email.endswith('.com') or email.endswith('.cl')):
+            raise ValidationError('El correo electrónico ingresado no es válido.')
+
+        return email
+
+def clean_tipo_usuario(self):
+        tipo_usuario = self.cleaned_data.get('tipo_usuario')
+        if not tipo_usuario:
+            raise forms.ValidationError('Debe seleccionar un tipo de usuario para registrarse.')
+        return tipo_usuario
+
+def clean_id_comuna(self):
+        id_comuna = self.cleaned_data.get('id_comuna')
+
+        if not id_comuna:
+            raise ValidationError('Debe seleccionar una comuna para registrarse.')
+
+        return id_comuna
+
+def clean_numero_identificacion(numero_identificacion):
+    cleaned_rut = re.sub('[^\dKk]', '', numero_identificacion)
+
+    if '.' in numero_identificacion:
+        raise ValidationError(_('El Rut no debe contener puntos.'))
+
+    if len(cleaned_rut) < 8 or len(cleaned_rut) > 9:
+        raise ValidationError(_('El Rut no es válido, intentelo de nuevo.'))
+
+    if '-' not in numero_identificacion:
+        raise ValidationError(_('El Rut no es válido, debe contener un guion.'))
+
+    if not re.match(r'^\d{7,8}-[Kk\d]$', numero_identificacion):
+        raise ValidationError(_('El Rut ingresado no es válido.'))
+
+    return numero_identificacion
+
 
 def validate_fecha_nacimiento(value):
-    today = date.today()
-    if value == today:
+    hoy = date.today()
+    if value == hoy:
         raise ValidationError('La fecha de nacimiento no puede ser la fecha actual, ingrese su fecha de nacimiento correcto.')
+    if value.hoy < 1900:
+            raise ValidationError('La fecha de nacimiento no es valida, ingreselo nuevamente.')
+    if value > hoy:
+        raise ValidationError('La fecha de nacimiento no puede ser posterior a la fecha actual, intentelo de nuevo.')
+    
 
 
 class RegistroForm(forms.ModelForm):
@@ -52,16 +99,7 @@ class RegistroForm(forms.ModelForm):
         required=True,
         widget=forms.TextInput(attrs={'placeholder': '12345678-9'}),
         label='Rut',
-        validators=[
-            validators.RegexValidator(
-                regex=r'^\d{7,8}-[Kk\d]$',  # Validador para RUTs en formato válido
-                message='Ingrese un RUT válido para el registro.'
-            ),
-            validators.MinLengthValidator(limit_value=9, message='El RUT debe ir sin puntos y con guion.'),  
-        ],
-        error_messages={
-            'required': 'Este campo es obligatorio.'
-        },
+        validators=[clean_numero_identificacion]
     )
 
     fecha_nacimiento = forms.DateField(
@@ -73,33 +111,31 @@ class RegistroForm(forms.ModelForm):
 
     email = forms.EmailField(
         widget=forms.TextInput(attrs={'placeholder': 'usuario@gmail.com'}),
-        validators=[EmailValidator(message="Ingrese una dirección de correo electrónico válida")],
         required=True
     )
 
     numero_telefonico = forms.CharField(
-        validators=[es_numero_telefonico_valido],
         required=False,
         widget=forms.TextInput(attrs={'placeholder': '+56912345678'}),
-        help_text='Ingrese un número de teléfono válido (Ejemplo: +56912345678)',
-        error_messages={
-            'regex': 'Ingresa un número de teléfono válido en formato +56912345678.',
-        }
+        validators=[es_numero_telefonico_valido]
     )
 
     password = forms.CharField(
         widget=forms.PasswordInput(attrs={'placeholder': '********'}),
-        validators=[es_password_valido],
+        validators=[contrasena_valida],
         required=True,
         help_text='La contraseña debe contener al menos una mayúscula, una minúscula, un número y un carácter especial.',
     )
 
     tipo_usuario = forms.ModelChoiceField(
         queryset=TpUsuario.objects.filter(tipo_usuario__in=['Paciente', 'Familiar']),
-        empty_label=None,
         required=True,
         widget=forms.Select(attrs={'class': 'form-control form-control-sm', 'id': 'tipo_usuario'}),
-        label='Tipo de usuario'
+        label='Tipo de usuario',
+        empty_label= "Seleccione el tipo de usuario",
+        error_messages={
+            'required': 'Debe seleccionar un tipo de usuario para registrarse.'
+        }
     )
 
     id_comuna = forms.ModelChoiceField(
@@ -143,14 +179,21 @@ class RegistroForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'placeholder': '12345678-9'}),
         help_text='Ingresa el RUT del paciente (Ejemplo: 12345678-9)',
         label='Rut del paciente',
-        validators=[
-            validators.RegexValidator(
-                regex=r'^\d{7,8}-[Kk\d]$',  # Validador para RUTs en formato válido
-                message='Ingrese un RUT válido en formato 12345678-9.'
-            ),
-            validators.MinLengthValidator(limit_value=9, message='El rut debe contar con los caracteres especificados'),
-        ],
+        validators=[clean_numero_identificacion]
     )
+
+    def clean_rut_paciente(self):
+        rut_paciente = self.cleaned_data.get('rut_paciente')
+
+        if rut_paciente:
+            try:
+                paciente_relacionado = Paciente.objects.get(id_usuario__numero_identificacion=rut_paciente)
+            except Paciente.DoesNotExist:
+                raise forms.ValidationError('El paciente con el rut ingresado no existe, ingresalo nuevamente.')
+
+        return rut_paciente
+
+
 
     class Meta:
         model = Usuario
@@ -177,6 +220,7 @@ class InformeForm(forms.ModelForm):
     fk_relacion_pa_pro = forms.ModelChoiceField(
         queryset=RelacionPaPro.objects.all(),
         required=True,
+        empty_label="Seleccione su paciente",
         widget=forms.Select(attrs={'class': 'form-control form-control-sm'}),
         label='Relación con Paciente y Profesional de Salud'
     )
@@ -206,8 +250,8 @@ class InformeForm(forms.ModelForm):
 
     tp_informe = forms.ModelChoiceField(
         queryset=TpInforme.objects.filter(tipo_informe__in=['RASATI', 'GRBAS']),
-        required=True,
-        empty_label=None,
+        required=False,
+        empty_label="Tipo de informe",
         widget=forms.Select(attrs={'class': 'form-control form-control-sm','id': 'tp_informe'}),
         label='Tipo de Informe'
     )
@@ -605,18 +649,18 @@ class PreRegistroForm(forms.ModelForm):
     numero_identificacion = forms.CharField(
         required=True,
         widget=forms.TextInput(attrs={'placeholder': '12345678-9'}),
-        help_text='Ingrese su RUT válido (Ejemplo: 12345678-9)',
+        validators=[clean_numero_identificacion],
         label='Rut'
     )
 
     fecha_nacimiento = forms.DateField(
         widget=forms.DateInput(format='%d-%m-%Y', attrs={'type': 'date'}),
-        required=False
+        required=False,
+        validators=[validate_fecha_nacimiento]
     )
 
     email = forms.EmailField(
         widget=forms.TextInput(attrs={'placeholder': 'usuario@gmail.com'}),
-        validators=[EmailValidator(message="Ingrese una dirección de correo electrónico válida")],
         required=True
     )
 
@@ -684,8 +728,8 @@ class EditarPerfilForm(forms.Form):
     ap_paterno = forms.CharField(max_length=30, required=True)
     segundo_nombre = forms.CharField(max_length=30, required=False, widget=forms.TextInput(attrs={'placeholder': 'Opcional'}))
     ap_materno = forms.CharField(max_length=30, required=False, widget=forms.TextInput(attrs={'placeholder': 'Opcional'}))
-    fecha_nacimiento = forms.DateField(widget=forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date'}), required=True)
-    numero_telefonico = forms.CharField(max_length=20, required=True)
+    fecha_nacimiento = forms.DateField(widget=forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date'}), validators=[validate_fecha_nacimiento], required=True)
+    numero_telefonico = forms.CharField(max_length=20, validators=[es_numero_telefonico_valido], required=True)
     id_comuna = forms.ModelChoiceField(queryset=Comuna.objects.all(), required=True)
     password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Dejar en blanco si no se desea modificar'}),max_length=128, required=False)
     confirm_password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': '********'}),max_length=128, required=False)

@@ -47,6 +47,7 @@
                             <div class="form-group col">
                                 <label for="id_rut"><i class="fas fa-user"></i>Rut <span class="required">*</span></label>
                                 {{ registro_form.numero_identificacion }}
+                                <span class="text-danger">{{ registro_form.numero_identificacion.errors }}</span>
                             </div>
                         </div>
 
@@ -83,6 +84,7 @@
                             <div class="form-group col">
                                 <label for="id_email"><i class="fas fa-envelope"></i>Correo electrónico <span class="required">*</span></label>
                                 {{ registro_form.email }}
+                                <span class="text-danger">{{ registro_form.email.errors }}</span>
                             </div>
                         </div>
 

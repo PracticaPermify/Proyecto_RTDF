@@ -59,3 +59,34 @@ document.addEventListener('DOMContentLoaded', function () {
   // Llama a la función para configurar los campos según el valor inicial
   toggleCampos();
 });
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    let tipoUsuarioSelect = document.getElementById('tipo_usuario');
+    
+    if (tipoUsuarioSelect) {
+        tipoUsuarioSelect.addEventListener('change', function () {
+            let selectedOption = tipoUsuarioSelect.selectedOptions[0];
+            let selectedText = selectedOption.textContent;
+            console.log('Seleccionaste:', selectedText);
+            
+            // Resto de la lógica existente
+  
+            // Nueva lógica para hacer campos requeridos para "Paciente"
+            let camposPaciente = document.querySelectorAll('.campos-paciente');
+            camposPaciente.forEach(function (campo) {
+                campo.querySelectorAll('input, select, textarea').forEach(function (input) {
+                    input.required = (selectedText === 'Paciente');
+                });
+            });
+  
+            // Nueva lógica para hacer campos requeridos para "Familiar"
+            let camposFamiliar = document.querySelectorAll('.campos-familiar');
+            camposFamiliar.forEach(function (campo) {
+                campo.querySelectorAll('input, select, textarea').forEach(function (input) {
+                    input.required = (selectedText === 'Familiar');
+                });
+            });
+        });
+    }
+  });

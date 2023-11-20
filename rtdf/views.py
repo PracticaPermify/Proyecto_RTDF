@@ -1889,7 +1889,7 @@ def ingresar_informes(request):
             form.fields['fk_relacion_pa_pro'].queryset = relaciones_pacientes
             grbas_form = GrbasForm()
             rasati_form = RasatiForm()
-            
+            form.fields['tp_informe'].required = True
 
         return render(request, 'vista_profe/ingresar_informes.html', {
             'form': form,
@@ -3242,12 +3242,14 @@ def analisis_estadistico_profe(request, informe_id):
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
         plot_div = generar_grafico(informe_id)
+        plot_sec = generar_grafico_horas(informe_id)
 
 
     return render(request, 'vista_profe/analisis_estadistico_profe.html', 
                     {'tipo_usuario': tipo_usuario,
                      'informe_id': informe_id,
-                     'plot_div': plot_div})
+                     'plot_div': plot_div,
+                     'plot_sec': plot_sec})
 
 def traducir_valor(valor):
     traducciones = {

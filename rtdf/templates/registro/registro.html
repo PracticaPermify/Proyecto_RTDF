@@ -112,25 +112,18 @@
             </div>
         </div>
     
-
-
         <div class="form-row">
             <div class="form-group col-md-6">
                 <label for="tipo_usuario"><i class="fas fa-user"></i>Tipo de usuario <span class="required">*</span></label>
-                <select id="tipo_usuario" name="{{ registro_form.tipo_usuario.name }}" class="form-control form-control-sm">
-                    <option value="" selected>Selecciona un tipo de usuario</option>
-                    {% for choice in registro_form.tipo_usuario.field.choices %}
-                        <option value="{{ choice.0 }}">{{ choice.1 }}</option>
-                    {% endfor %}
-                </select>
+                {{ registro_form.tipo_usuario }}
+                <span class="text-danger">{{ registro_form.tipo_usuario.errors }}</span>
             </div>
         </div>
-        
 
 
 {% comment %} Aquí va los campos por usuario Paciente{% endcomment %}
 
-<div class="form-row campos-paciente" style="display: none;">
+<div id="campos-paciente" class="form-row campos-paciente" style="display: none;">
     <div class="form-group col-md-6">
         <label for="telegram"><i class="fa-brands fa-telegram"></i>Telegram <span class="required">*</span></label>
         {{ registro_form.telegram }}
@@ -166,6 +159,7 @@
     <div class="form-group col-md-6">
         <label for="rut_paciente"><i class="fas fa-user"></i>Rut del paciente <span class="required">*</span></label>
         {{ registro_form.rut_paciente }}
+        <span class="text-danger">{{ registro_form.rut_paciente.errors }}</span>
     </div>
 </div>
 
@@ -179,6 +173,7 @@
         </small>
     </div>
 </div>
+
 
 <br>
 
@@ -198,6 +193,7 @@
 
 <script src="{% static 'app/js/selector_ubicacion.js' %}"></script>
 <script src="{% static 'app/js/registro_final.js' %}"></script>
+
 
 </body>
 {% endblock %}

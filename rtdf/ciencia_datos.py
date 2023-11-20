@@ -203,4 +203,4 @@ def kmeans_criticidad(edad_paciente,diabetes_paciente,hipertension_paciente):
     print(new_labels)
 
 
-    return{'mensaje':mensaje}
+    return{'new_labels': new_labels}
