@@ -52,17 +52,20 @@
                 <tr>
                     <th>Criticidad vocal:</th>
                     <td scope="row">
-                        <button id="btnEjecutarFuncion" class="btn btn-primary">
-                            Probabilidad de ocurrencia
-                        </button>
-                        <div id="resultado_kmeans_prueba_container">
-                          <span id="resultado_kmeans_prueba"></span>
-                        </div>
+                        <form method="post" id="formEjecutarFuncion">
+                            {% csrf_token %}
+                            <button id="btnEjecutarFuncion" class="btn btn-primary">
+                                Predicción
+                            </button>
+                        </form>
                     </td>
                 </tr>
-
+                <!-- Agrega un elemento para mostrar el resultado -->
+                <tr>
+                    <td colspan="2" id="resultadoCriticidad" style="display:none;"></td>
+                </tr>
             </div>
-
+            </form>
               
           </table>
         </div>
@@ -155,33 +158,19 @@
 
 
   <script>
-$(document).ready(function () {
-    $("#btnEjecutarFuncion").click(function () {
-        var datos = {
-            'edad_paciente': {{ edad }},
-            'diabetes_paciente': {{ paciente_info.fk_tipo_diabetes_id }},
-            'hipertension_paciente': {{ paciente_info.fk_tipo_hipertension_id }},
-        };
+    $(document).ready(function () {
+        $("#btnEjecutarFuncion").click(function (e) {
+            e.preventDefault();
 
-        var btnEjecutar = $(this);  // Guarda una referencia al botón
-
-        // Realizar la llamada AJAX a tu función
-        $.ajax({
-            url: "/ciencia_datos/",
-            type: "GET",
-            data: datos,
-            dataType: "json"
-        })
-        .done(function (data) {
-            // Ocultar el botón y mostrar el mensaje en su lugar
-            btnEjecutar.hide();
-            $("#resultado_kmeans_prueba_container").html('<span id="resultado_kmeans_prueba">' + data.prediccion + '</span>');
-        })
-        .fail(function (jqXHR, textStatus, errorThrown) {
-            console.error("Error en la llamada AJAX", errorThrown);
+            // Realiza una solicitud POST al servidor
+            $.post("{% url 'detalle_prof_paci' paciente_id=paciente.id_usuario %}", $("#formEjecutarFuncion").serialize(), function (data) {
+                // Muestra el resultado y oculta el botón
+                $("#resultadoCriticidad").text("Criticidad vocal: " + data);
+                $("#resultadoCriticidad").show();
+                $("#btnEjecutarFuncion").hide();
+            });
         });
     });
-});
 </script>
 
 {% endblock %}

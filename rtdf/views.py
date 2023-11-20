@@ -886,13 +886,17 @@ def detalle_prof_paci(request, paciente_id):
         paciente_info = paciente.paciente
 
         edad_paciente = paciente.fecha_nacimiento
+        diabetes_paciente = paciente_info.fk_tipo_diabetes_id
+        hipertension_paciente = paciente_info.fk_tipo_hipertension_id
 
-        fecha_nacimiento = edad_paciente
-        if fecha_nacimiento:
-            hoy = datetime.today()
-            edad = hoy.year - fecha_nacimiento.year - ((hoy.month, hoy.day) < (fecha_nacimiento.month, fecha_nacimiento.day))
-        else:
-            edad = None
+        resultado_kmeans = kmeans_criticidad(edad_paciente,diabetes_paciente,hipertension_paciente)
+
+        # Añadir el resultado a tu contexto
+        contexto = {
+            # ... otras variables de contexto ...
+            'resultado_kmeans': resultado_kmeans,
+        }
+
 
 
     fonoaudiologos_asociados = ProfesionalSalud.objects.filter(relacionpapro__id_paciente=paciente_info.id_paciente)
@@ -903,7 +907,7 @@ def detalle_prof_paci(request, paciente_id):
                                                                  'fonoaudiologos_asociados': fonoaudiologos_asociados,
                                                                  'informes_rasati': informes_rasati,
                                                                  'informes_grbas': informes_grbas,
-                                                                 'edad': edad,
+                                                                 'contexto':contexto,
                                                                  })
 
 @never_cache
@@ -2147,9 +2151,6 @@ def agregar_paciente(request, paciente_id):
   
                 relacion = RelacionPaPro(fk_profesional_salud=profesional_salud, id_paciente=paciente)
                 relacion.save()
-
-                enviar_correo_paciente(paciente, profesional_salud)
-
                 return redirect('listado_pacientes')
             else:
                 return render(request, 'vista_profe/error.html', {'error_message': 'El paciente ya está asignado a otro profesional.'})
@@ -2157,27 +2158,6 @@ def agregar_paciente(request, paciente_id):
             return render(request, 'vista_profe/error.html', {'error_message': 'Has alcanzado el límite de 10 pacientes asignados.'})
     else:
         return render(request, 'vista_profe/error.html', {'error_message': 'No tienes permiso para realizar esta acción.'})
-
-
-def enviar_correo_paciente(paciente, profesional_salud):
-    # Obtener el usuario asociado al paciente
-    usuario_paciente = Usuario.objects.get(paciente=paciente)
-
-    subject = '¡Bienvenido a RTDF!'
-    from_email = 'permify.practica@gmail.com'
-    recipient_list = [usuario_paciente.email]
-
-    context = {'paciente': paciente, 'profesional_salud': profesional_salud}
-    
-    # Contenido del correo
-    html_content = render_to_string('correos/bienvenida_paciente.html', context)
-    
-    # Configurar el correo
-    email = EmailMessage(subject, html_content, from_email, recipient_list)
-    email.content_subtype = 'html'
-    
-    # Enviar el correo electrónico
-    email.send()
 
 @never_cache   
 def desvincular_paciente(request, paciente_id):
