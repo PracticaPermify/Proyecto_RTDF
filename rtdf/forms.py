@@ -87,11 +87,19 @@ def validate_fecha_nacimiento(value):
     if value == hoy:
         raise ValidationError('La fecha de nacimiento no puede ser la fecha actual, ingrese su fecha de nacimiento correcto.')
     if value.hoy < 1900:
-            raise ValidationError('La fecha de nacimiento no es valida, ingreselo nuevamente.')
+            raise ValidationError('La fecha de nacimiento no es valida, ingréselo nuevamente.')
     if value > hoy:
-        raise ValidationError('La fecha de nacimiento no puede ser posterior a la fecha actual, intentelo de nuevo.')
+        raise ValidationError('La fecha de nacimiento no puede ser posterior a la fecha actual, inténtelo de nuevo.')
     
 
+#Validaciones del pre registro
+def clean_numero_identificacion_usuario(value):
+    if Usuario.objects.filter(numero_identificacion=value).exists():
+        raise forms.ValidationError("El número de identificación ya ha sido registrado.")
+    
+def clean_correo_usuario(value):
+    if Usuario.objects.filter(email=value).exists():
+        raise forms.ValidationError("El correo electrónico ya ha sido registrado.")
 
 class RegistroForm(forms.ModelForm):
 
@@ -649,8 +657,8 @@ class PreRegistroForm(forms.ModelForm):
     numero_identificacion = forms.CharField(
         required=True,
         widget=forms.TextInput(attrs={'placeholder': '12345678-9'}),
-        validators=[clean_numero_identificacion],
-        label='Rut'
+        validators=[clean_numero_identificacion, clean_numero_identificacion_usuario],
+        label='Rut',
     )
 
     fecha_nacimiento = forms.DateField(
@@ -661,7 +669,8 @@ class PreRegistroForm(forms.ModelForm):
 
     email = forms.EmailField(
         widget=forms.TextInput(attrs={'placeholder': 'usuario@gmail.com'}),
-        required=True
+        required=True,
+        validators=[clean_correo_usuario]
     )
 
     numero_telefonico = forms.CharField(
@@ -712,6 +721,8 @@ class PreRegistroForm(forms.ModelForm):
                   'tipo_usuario',
                   'id_institucion',
                   ]
+        
+
         
     # def clean(self):
     #     cleaned_data = super().clean()
