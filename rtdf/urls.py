@@ -3,6 +3,8 @@ from . import views
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
+from rtdf.ciencia_datos import *
+
 
 urlpatterns = [
     path('', views.index, name='index'), 
@@ -51,7 +53,7 @@ urlpatterns = [
     path('editar_pauta_esv_admin/<int:pauta_id>/', views.editar_pauta_esv_admin, name='editar_pauta_esv_admin'),
     path('eliminar_pauta_esv_admin/<int:pauta_id>/', views.eliminar_pauta_esv_admin, name='eliminar_pauta_esv_admin'),
 
-
+    path('ciencia_datos/', kmeans_criticidad, name='ciencia_datos'),
     
     path('editar_pauta_admin/<int:id_pauta_terapeutica_id>/', views.editar_pauta_admin, name='editar_pauta_admin'),
     path('eliminar_pauta_admin/<int:id_pauta_terapeutica_id>/', views.eliminar_pauta_admin, name='eliminar_pauta_admin'),

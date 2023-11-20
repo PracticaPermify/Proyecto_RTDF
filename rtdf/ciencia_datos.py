@@ -5,15 +5,21 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import pairwise_distances_argmin_min
 from sklearn.metrics import silhouette_samples, silhouette_score
 from datetime import datetime
+from django.http import JsonResponse
 
-def kmeans_prueba():
+def kmeans_prueba(request):
 
-    mensaje="Estoy funcionando"
+    # Obtener los parámetros de la solicitud GET
+    parametro1 = request.GET.get('parametro1')
+    parametro2 = request.GET.get('parametro2')
+
+    mensaje = f"Estoy funcionando con {parametro1} y {parametro2}"
     print("Estoy funcionando")
 
-    return{'mensaje':mensaje}
+    response_data = {'mensaje': mensaje}
+    return JsonResponse(response_data)
 
-def kmeans_criticidad(edad_paciente,diabetes_paciente,hipertension_paciente):
+def kmeans_criticidad(request):
 
     mensaje="Estoy funcionando"
     print("Estoy funcionando")
@@ -174,13 +180,11 @@ def kmeans_criticidad(edad_paciente,diabetes_paciente,hipertension_paciente):
     cantidadGrupo['cantidad']=copy.groupby('label').size()
     print(cantidadGrupo)
 
-    #SE CALCULA LA EDAD DEL PACIENTE
-    fecha_nacimiento = edad_paciente
-    if fecha_nacimiento:
-        hoy = datetime.today()
-        edad = hoy.year - fecha_nacimiento.year - ((hoy.month, hoy.day) < (fecha_nacimiento.month, fecha_nacimiento.day))
-    else:
-        edad = None
+    #VARIABLES DEL USUARIO
+
+    edad = int(request.GET.get('edad_paciente'))
+    diabetes_paciente = int(request.GET.get('diabetes_paciente'))
+    hipertension_paciente = int(request.GET.get('hipertension_paciente'))
 
     print(edad)
 
@@ -202,5 +206,16 @@ def kmeans_criticidad(edad_paciente,diabetes_paciente,hipertension_paciente):
     new_labels = kmeans.predict(X_new)
     print(new_labels)
 
+    print(edad) 
 
-    return{'new_labels': new_labels}
+    prediccion = int(new_labels[0])
+
+    if prediccion == 1:
+        prediccion = "Baja probabilidad"
+    elif prediccion == 0:
+        prediccion = "Mediana probabilidad"
+    else:
+        prediccion = "Alta probabilidad"
+
+    response_data = {'prediccion': prediccion}
+    return JsonResponse(response_data)
