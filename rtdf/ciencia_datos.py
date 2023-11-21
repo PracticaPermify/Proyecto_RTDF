@@ -6,6 +6,9 @@ from sklearn.metrics import pairwise_distances_argmin_min
 from sklearn.metrics import silhouette_samples, silhouette_score
 from datetime import datetime
 from django.http import JsonResponse
+from django.conf import settings
+import os
+
 
 def kmeans_prueba(request):
 
@@ -25,7 +28,7 @@ def kmeans_criticidad(request):
     print("Estoy funcionando")
 
     #CARGA DE LA BDD
-    url = 'static/app/recursos/csv/bdd_pacientes.csv'
+    url = os.path.join(settings.STATICFILES_DIRS[0], 'app', 'recursos', 'csv', 'bdd_pacientes.csv')
     df = pd.read_csv(url, index_col=None)
 
     #CREACIÓN DEL DF CON LAS VARIABLES IMPORTANTES

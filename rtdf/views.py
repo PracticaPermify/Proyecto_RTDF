@@ -3281,24 +3281,20 @@ def analisis_estadistico_profe(request, informe_id):
 
     tipo_usuario = None
     plot_div = None
+    hay_pautas_terapeuticas = True  # Agrega la lógica para determinar si hay pautas terapéuticas
 
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
         plot_div = generar_grafico(informe_id)
-        plot_sec = generar_grafico_horas(informe_id)
 
-
-    return render(request, 'vista_profe/analisis_estadistico_profe.html', 
-                    {'tipo_usuario': tipo_usuario,
-                     'informe_id': informe_id,
-                     'plot_div': plot_div,
-                     'plot_sec': plot_sec})
-
-def traducir_valor(valor):
-    traducciones = {
-        0: 'Normal',
-        1: 'Alteración leve',
-        2: 'Alteración moderada',
-        3: 'Alteración severa',
-    }
-    return traducciones.get(valor, str(valor))
+    if hay_pautas_terapeuticas:
+        return render(request, 'vista_profe/analisis_estadistico_profe.html', 
+                      {'tipo_usuario': tipo_usuario,
+                       'informe_id': informe_id,
+                       'plot_div': plot_div})
+    else:
+        mensaje_error = "No hay pautas terapéuticas para analizar. Ingrese una para analizar el tratamiento del paciente."
+        return render(request, 'vista_profe/analisis_estadistico_profe.html', 
+                      {'tipo_usuario': tipo_usuario,
+                       'informe_id': informe_id,
+                       'mensaje_error': mensaje_error})

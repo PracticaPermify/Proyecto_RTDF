@@ -10,47 +10,36 @@
         <h1>Detalles del paciente {{ paciente.primer_nombre }} {{ paciente.ap_paterno }}</h1>
       </br>
     <table class="table">
-        <thead class="thead-dark">
           <tr>
             <th scope="col">Rut</th>
-            <th scope="col">Correo electronico</th>
-            <th scope="col">Comuna</th>
-            <th scope="col">Numero de contacto</th>
-            <th scope="col">telegram</th>
+            <td scope="row">{{ paciente.numero_identificacion }}</td>
           </tr>
-        </thead>
-        <tbody>
           <tr>
-            <th scope="row">{{ paciente.numero_identificacion }}</th>
-            <td>{{ paciente.email }}</td>
+            <th scope="col">Correo electronico</th>
+            <td scope="row">{{ paciente.email }}</td>
+          </tr>
+          <tr>
+            <th scope="col">Comuna</th>
             <td>{{ paciente.id_comuna }}</td>
+          </tr>
+          <tr>
+            <th scope="col">Numero de contacto</th>
             <td>{{ paciente.numero_telefonico }}</td>
+          </tr>
+          <tr>
+            <th scope="col">telegram</th>
             <td>{{ paciente_info.telegram }}</td>
           </tr>
-        </tbody>
-      </table>
-    </br>
-    </br>
-    <h2><strong>Enfermedades del paciente</strong></h2>
-    </br>
-
-    <table class="table">
-        <thead class="thead-dark">
           <tr>
-            <th scope="col" class="col-6">Diabetes</th>
-            <th scope="col" class="col-6">Hipertension</th>
+            <th scope="col">Diabetes</th>
+            <td>{{ paciente_info.fk_tipo_diabetes }}</td>
           </tr>
-        </thead>
-        <tbody>
           <tr>
-            <td >{{ paciente_info.fk_tipo_diabetes }}</td>
+            <th scope="col">Hipertension</th>
             <td>{{ paciente_info.fk_tipo_hipertension }}</td>
           </tr>
-        </tbody>
       </table>
-  </br>
-
-
+    </br>
 </br>
 <h2><strong>Profesionales asignado al paciente</strong></h2>
 </br>
@@ -85,6 +74,6 @@
       {% endfor %}
     </tbody>
   </table>
-  </div>
 
 {% endblock %}
+
