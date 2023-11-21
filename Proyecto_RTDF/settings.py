@@ -69,6 +69,14 @@ elif entorno == 'pa':
     db_pw= 'rtdfdev2023'
     db_host= 'farmaciadigital.mysql.pythonanywhere-services.com'
 
+elif entorno == 'capstone':
+
+    host= 'RTDFCapstone.pythonanywhere.com'
+    db_name= 'RTDFCapstone$rtdf_final'
+    db_user= 'RTDFCapstone'
+    db_pw= 'rtdfdev2023'
+    db_host= 'RTDFCapstone.mysql.pythonanywhere-services.com'
+
 else:
 
     raise ValueError(f"Entorno desconocido: {entorno}")
