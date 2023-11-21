@@ -86,7 +86,7 @@ def validate_fecha_nacimiento(value):
     hoy = date.today()
     if value == hoy:
         raise ValidationError('La fecha de nacimiento no puede ser la fecha actual, ingrese su fecha de nacimiento correcto.')
-    if value.hoy < 1900:
+    if value.year  < 1900:
             raise ValidationError('La fecha de nacimiento no es valida, ingreselo nuevamente.')
     if value > hoy:
         raise ValidationError('La fecha de nacimiento no puede ser posterior a la fecha actual, intentelo de nuevo.')
