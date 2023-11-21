@@ -86,7 +86,7 @@ def validate_fecha_nacimiento(value):
     hoy = date.today()
     if value == hoy:
         raise ValidationError('La fecha de nacimiento no puede ser la fecha actual, ingrese su fecha de nacimiento correcto.')
-    if value.year  < 1900:
+    if value.year < 1900:
             raise ValidationError('La fecha de nacimiento no es valida, ingreselo nuevamente.')
     if value > hoy:
         raise ValidationError('La fecha de nacimiento no puede ser posterior a la fecha actual, intentelo de nuevo.')
@@ -752,11 +752,11 @@ class EditarPerfilForm(forms.Form):
     ap_paterno = forms.CharField(max_length=30, required=True)
     segundo_nombre = forms.CharField(max_length=30, required=False, widget=forms.TextInput(attrs={'placeholder': 'Opcional'}))
     ap_materno = forms.CharField(max_length=30, required=False, widget=forms.TextInput(attrs={'placeholder': 'Opcional'}))
-    fecha_nacimiento = forms.DateField(widget=forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date'}), required=True)
-    numero_telefonico = forms.CharField(max_length=20, required=True)
+    fecha_nacimiento = forms.DateField(widget=forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date'}), validators=[validate_fecha_nacimiento], required=True)
+    numero_telefonico = forms.CharField(max_length=20, validators=[es_numero_telefonico_valido], required=True)
     id_comuna = forms.ModelChoiceField(queryset=Comuna.objects.all(), required=True)
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Dejar en blanco si no se desea modificar'}),max_length=128, required=False)
-    confirm_password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': '********'}),max_length=128, required=False)
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Dejar en blanco si no se desea modificar'}),max_length=128, validators=[contrasena_valida], required=False)
+    confirm_password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': '********'}),max_length=128, validators=[contrasena_valida], required=False)
     original_password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': '********'}),max_length=128, required=False)
 
     #campos de paciente
