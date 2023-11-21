@@ -24,7 +24,7 @@
                                     <!-- <th scope="col">Fecha nacimiento</th> -->
                                     <th scope="col">Tipo diabetes</th>
                                     <th scope="col">Tipo Hipertensión</th>
-                                    <th scope="col">Desvincular paciente</th>
+                                    {% comment %} <th scope="col">Desvincular paciente</th> {% endcomment %}
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -42,9 +42,9 @@
                                         <!-- <td>{{ paciente.fecha_nacimiento }}</td> -->
                                         <td>{{ paciente.tipo_diabetes }}</td>
                                         <td>{{ paciente.tipo_hipertension }}</td>
-                                        <td>
+                                        {% comment %} <td>
                                             <a href="{% url 'desvincular_paciente' paciente.id_paciente %}" class="btn btn-danger">Desvincular</a>
-                                        </td>
+                                        </td> {% endcomment %}
                                     </tr>
                                     {% empty %}
                                     <tr>

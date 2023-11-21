@@ -403,8 +403,9 @@ class PautaTerapeuticaForm(forms.ModelForm):
 
     fk_tp_terapia = forms.ModelChoiceField(
         queryset=TpTerapia.objects.filter(tipo_terapia__in=['Vocalización', 'Intensidad']),
-        required=True,
-        widget=forms.Select(attrs={'class': 'form-control form-control-sm'}),
+        required=False,
+        empty_label= "Seleccione el tipo de terapia",
+        widget=forms.Select(attrs={'class': 'form-control form-control-sm','id': 'fk_tp_terapia'}),
         label='Tipo de terapia'
     )
 
@@ -499,6 +500,14 @@ class IntensidadForm(PautaTerapeuticaForm):
             # self.fields['max_db'].required = True
 
 
+
+def Validador_coeficiente(value):
+    try:
+        float(value)
+    except (ValueError, TypeError):
+        raise ValidationError('El coeficiente ingresado no es valido, intentelo de nuevo.')
+
+
 class AudioscoeficientesForm(forms.ModelForm):
 
     nombre_archivo = forms.CharField(
@@ -526,107 +535,122 @@ class AudioscoeficientesForm(forms.ModelForm):
 
     f0 = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'Coeficiente f0'}),
-        required=False,
-        label='Coeficiente f0'
+        required=True,
+        label='Coeficiente f0',
+        validators=[Validador_coeficiente]
     ) 
 
     f1 = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'Coeficiente f1'}),
-        required=False,
-        label='Coeficiente f1'
+        required=True,
+        label='Coeficiente f1',
+        validators=[Validador_coeficiente]
     )    
 
     f2 = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'Coeficiente f2'}),
-        required=False,
-        label='Coeficiente f2'
+        required=True,
+        label='Coeficiente f2',
+        validators=[Validador_coeficiente]
     )    
 
     f3 = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'Coeficiente f3'}),
-        required=False,
-        label='Coeficiente f3'
+        required=True,
+        label='Coeficiente f3',
+        validators=[Validador_coeficiente]
     )    
 
     f4 = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'Coeficiente f4'}),
-        required=False,
-        label='Coeficiente f4'
+        required=True,
+        label='Coeficiente f4',
+        validators=[Validador_coeficiente]
     )       
 
     intensidad = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'Intensidad'}),
-        required=False,
-        label='Intensidad'
+        required=True,
+        label='Intensidad',
+        validators=[Validador_coeficiente]
     )
 
     hnr = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'HNR'}),
-        required=False,
-        label='HNR'
+        required=True,
+        label='HNR',
+        validators=[Validador_coeficiente]
     )
 
     local_jitter = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'Local Jitter'}),
-        required=False,
-        label='Local Jitter'
+        required=True,
+        label='Local Jitter',
+        validators=[Validador_coeficiente]
     )
 
     local_absolute_jitter = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'Local Absolute Jitter'}),
-        required=False,
-        label='Local Absolute Jitter'
+        required=True,
+        label='Local Absolute Jitter',
+        validators=[Validador_coeficiente]
     )
 
     rap_jitter = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'RAP Jitter'}),
-        required=False,
-        label='RAP Jitter'
+        required=True,
+        label='RAP Jitter',
+        validators=[Validador_coeficiente]
     )
 
     ppq5_jitter = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'PPQ5 Jitter'}),
-        required=False,
-        label='PPQ5 Jitter'
+        required=True,
+        label='PPQ5 Jitter',
+        validators=[Validador_coeficiente]
     )
 
     ddp_jitter = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'DDP Jitter'}),
-        required=False,
-        label='DDP Jitter'
+        required=True,
+        label='DDP Jitter',
+        validators=[Validador_coeficiente]
     )
 
     local_shimmer = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'Local Shimmer'}),
-        required=False,
-        label='Local Shimmer'
+        required=True,
+        label='Local Shimmer',
+        validators=[Validador_coeficiente]
     )
 
     local_db_shimmer = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'Local dB Shimmer'}),
-        required=False,
-        label='Local dB Shimmer'
+        required=True,
+        label='Local dB Shimmer',
+        validators=[Validador_coeficiente]
     )
 
     apq3_shimmer = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'APQ3 Shimmer'}),
-        required=False,
-        label='APQ3 Shimmer'
+        required=True,
+        label='APQ3 Shimmer',
+        validators=[Validador_coeficiente]
     )
 
     aqpq5_shimmer = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'APQ5 Shimmer'}),
-        required=False,
-        label='APQ5 Shimmer'
+        required=True,
+        label='APQ5 Shimmer',
+        validators=[Validador_coeficiente]
     )
 
     apq11_shimmer = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'APQ11 Shimmer'}),
-        required=False,
-        label='APQ11 Shimmer'
+        required=True,
+        label='APQ11 Shimmer',
+        validators=[Validador_coeficiente]
     )    
-
-
 
     class Meta:
         model = Audioscoeficientes  

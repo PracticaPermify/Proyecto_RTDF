@@ -100,6 +100,27 @@
           {% endfor %}
         </tbody>
       </table>
+
+      <div class="pagination">
+        <span class="step-links">
+          {% if datos_audiocoeficientes.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ datos_audiocoeficientes.previous_page_number }}">previous</a>
+          {% endif %}
+    
+          <span class="current">
+            Página {{ datos_audiocoeficientes.number }} de {{ datos_audiocoeficientes.paginator.num_pages }}.
+          </span>
+    
+          {% if datos_audiocoeficientes.has_next %}
+            <a href="?page={{ datos_audiocoeficientes.next_page_number }}">next</a>
+            <a href="?page={{ datos_audiocoeficientes.paginator.num_pages }}">last &raquo;</a>
+          {% endif %}
+        </span>
+      </div>
+
+  </br>
+
       {% else %}
       <p>No hay audios registrados de las pautas terapeuticas de sus pacientes.</p>
       {% endif %}

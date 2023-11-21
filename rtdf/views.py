@@ -1019,6 +1019,7 @@ def detalle_prof_infor(request, informe_id):
         else:
             # Si la solicitud no es POST, muestra el formulario en blanco
             form = PautaTerapeuticaForm()
+            form.fields['fk_tp_terapia'].required = True
             vocalizacion_form = VocalizacionForm()
             intensidad_form = IntensidadForm()
 
@@ -2057,6 +2058,7 @@ def detalle_informe(request, informe_id):
             form = PautaTerapeuticaForm()
             vocalizacion_form = VocalizacionForm()
             intensidad_form = IntensidadForm()
+            form.fields['fk_tp_terapia'].required = True
 
     return render(request, 'vista_admin/detalle_informe.html', {
         'form': form,
@@ -2990,13 +2992,29 @@ def analisis_profe(request):
 
             conteo_audios.append(relacion_info)
 
+            page = request.GET.get('page', 1)
+
+        # Especifica el número de elementos por página
+            items_por_pagina = 10
+
+        # Crea un objeto Paginator
+            paginator = Paginator(datos_audiocoeficientes, items_por_pagina)
+
+            try:
+            # Obtiene la página solicitada
+                audios_pagina = paginator.page(page)
+            except EmptyPage:
+            # Si la página está fuera de rango, muestra la última página
+                audios_pagina = paginator.page(paginator.num_pages)
+
 
     return render(request, 'vista_profe/analisis_profe.html', {
         'tipo_usuario': tipo_usuario,
         'datos_audiocoeficientes': datos_audiocoeficientes,
         'datos_audio_relacion': conteo_audios,
         'total_intensidad': total_intensidad,
-        'total_vocalizacion': total_vocalizacion
+        'total_vocalizacion': total_vocalizacion,
+        'paginator': paginator,
     })
 
 def detalle_audio_admin(request, audio_id):

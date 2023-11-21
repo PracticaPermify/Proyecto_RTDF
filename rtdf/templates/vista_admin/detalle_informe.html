@@ -159,14 +159,11 @@
 
         <br>
         
-        <div class="form-group">
-            <label for="fk_tp_terapia">Tipo de pauta terapéutica:</label>
-            <select id="fk_tp_terapia" name="{{ form.fk_tp_terapia.name }}" class="form-control form-control-sm">
-                <option value="" selected>Tipo de pauta terapeutica para diagnostico</option>
-                {% for choice in form.fk_tp_terapia.field.choices %}
-                    <option value="{{ choice.0 }}">{{ choice.1 }}</option>
-                {% endfor %}
-            </select>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label for="tipo_usuario"><i class="fa-solid fa-file-waveform"></i>Tipo de pauta terapeutica para diagnostico<span class="required">*</span></label>
+                {{ form.fk_tp_terapia }}
+            </div>
         </div>
 
         <div class="form-group">
@@ -275,7 +272,7 @@
           {% for vocalizacion in datos_vocalizacion %}
           <tr>
             <td><a href="{% url 'detalle_pauta_admin' vocalizacion.id_pauta_terapeutica_id %}">
-                {{ vocalizacion.id_pauta_terapeutica_id}}</a></td>
+                Pauta {{ vocalizacion.id_pauta_terapeutica_id}}</a></td>
             <td>{{ vocalizacion.id_pauta_terapeutica.cant_veces_dia}}</td>
             <td>{{ vocalizacion.id_pauta_terapeutica.fecha_inicio }}</td>
             <td>{{ vocalizacion.id_pauta_terapeutica.fecha_fin }}</td>
@@ -312,7 +309,7 @@
             {% for intensidad in datos_intensidad %}
             <tr>
                 <td><a href="{% url 'detalle_pauta_admin' intensidad.id_pauta_terapeutica_id %}">
-                    {{ intensidad.id_pauta_terapeutica_id}}</a></td>
+                    Pauta {{ intensidad.id_pauta_terapeutica_id}}</a></td>
               <td>{{ intensidad.id_pauta_terapeutica.cant_veces_dia}}</td>
               <td>{{ intensidad.id_pauta_terapeutica.fecha_inicio }}</td>
               <td>{{ intensidad.id_pauta_terapeutica.fecha_fin }}</td>

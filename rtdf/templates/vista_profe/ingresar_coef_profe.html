@@ -71,11 +71,13 @@
         <div class="form-group col-md-6">
             <label for="f0"><i class="fa-solid fa-file-pen"></i>Coeficiente f0 <span class="required">*</span></label>
             {{ form.f0 }}
+            <span class="text-danger">{{ form.f0.errors }}</span>
         </div>
 
         <div class="form-group col-md-6">
             <label for="f1"><i class="fa-solid fa-file-pen"></i>Coeficiente f1 <span class="required">*</span></label>
             {{ form.f1 }}
+            <span class="text-danger">{{ form.f1.errors }}</span>
         </div>
     </div>
 
@@ -83,11 +85,13 @@
         <div class="form-group col-md-6">
             <label for="f2"><i class="fa-solid fa-file-pen"></i>Coeficiente f2 <span class="required">*</span></label>
             {{ form.f2 }}
+            <span class="text-danger">{{ form.f2.errors }}</span>
         </div>
 
         <div class="form-group col-md-6">
             <label for="f3"><i class="fa-solid fa-file-pen"></i>Coeficiente f3 <span class="required">*</span></label>
             {{ form.f3 }}
+            <span class="text-danger">{{ form.f3.errors }}</span>
         </div>
     </div>
 
@@ -95,11 +99,13 @@
         <div class="form-group col-md-6">
             <label for="f4"><i class="fa-solid fa-file-pen"></i>Coeficiente f4 <span class="required">*</span></label>
             {{ form.f4 }}
+            <span class="text-danger">{{ form.f4.errors }}</span>
         </div>
 
         <div class="form-group col-md-6">
             <label for="intensidad"><i class="fa-solid fa-file-pen"></i>Intensidad:</label>
             {{ form.intensidad }}
+            <span class="text-danger">{{ form.intensidad.errors }}</span>
         </div>
     </div>
 
@@ -107,12 +113,14 @@
         <div class="form-group col-md-6">
             <label for="hnr"><i class="fa-solid fa-file-pen"></i>HNR <span class="required">*</span></label>
             {{ form.hnr }}
+            <span class="text-danger">{{ form.hnr.errors }}</span>
         </div>
     
 
         <div class="form-group col-md-6">
             <label for="local_jitter"><i class="fa-solid fa-file-pen"></i>Local Jitter <span class="required">*</span></label>
             {{ form.local_jitter }}
+            <span class="text-danger">{{ form.local_jitter.errors }}</span>
         </div>
     </div>
 
@@ -120,11 +128,13 @@
         <div class="form-group col-md-6">
             <label for="local_absolute_jitter"><i class="fa-solid fa-file-pen"></i>Local Absolute Jitter <span class="required">*</span></label>
             {{ form.local_absolute_jitter }}
+            <span class="text-danger">{{ form.local_absolute_jitter.errors }}</span>
         </div>
    
         <div class="form-group col-md-6">
             <label for="rap_jitter"><i class="fa-solid fa-file-pen"></i>RAP Jitter <span class="required">*</span></label>
             {{ form.rap_jitter }}
+            <span class="text-danger">{{ form.rap_jitter.errors }}</span>
         </div>
     </div>
 
@@ -132,11 +142,13 @@
         <div class="form-group col-md-6">
             <label for="ppq5_jitter"><i class="fa-solid fa-file-pen"></i>PPQ5 Jitter <span class="required">*</span></label>
             {{ form.ppq5_jitter }}
+            <span class="text-danger">{{ form.ppq5_jitter.errors }}</span>
         </div>
 
         <div class= "form-group col-md-6">
             <label for="ddp_jitter"><i class="fa-solid fa-file-pen"></i>DDP Jitter <span class="required">*</span></label>
             {{ form.ddp_jitter }}
+            <span class="text-danger">{{ form.ddp_jitter.errors }}</span>
         </div>
     </div>
 
@@ -144,11 +156,13 @@
         <div class="form-group col-md-6">
             <label for="local_shimmer"><i class="fa-solid fa-file-pen"></i>Local Shimmer <span class="required">*</span></label>
             {{ form.local_shimmer }}
+            <span class="text-danger">{{ form.local_shimmer.errors }}</span>
         </div>
 
         <div class="form-group col-md-6">
             <label for="local_db_shimmer"><i class="fa-solid fa-file-pen"></i>Local dB Shimmer <span class="required">*</span></label>
             {{ form.local_db_shimmer }}
+            <span class="text-danger">{{ form.local_db_shimmer.errors }}</span>
         </div>
     </div>
 
@@ -156,11 +170,13 @@
         <div class="form-group col-md-6">
             <label for="apq3_shimmer"><i class="fa-solid fa-file-pen"></i>APQ3 Shimmer <span class="required">*</span></label>
             {{ form.apq3_shimmer }}
+            <span class="text-danger">{{ form.apq3_shimmer.errors }}</span>
         </div>
 
         <div class="form-group col-md-6">
             <label for="apq5_shimmer"><i class="fa-solid fa-file-pen"></i>APQ5 Shimmer <span class="required">*</span></label>
             {{ form.aqpq5_shimmer }}
+            <span class="text-danger">{{ form.aqpq5_shimmer.errors }}</span>
         </div>
     </div>
 
@@ -168,6 +184,7 @@
         <div class="form-group col-md-6">
             <label for="apq11_shimmer"><i class="fa-solid fa-file-pen"></i>APQ11 Shimmer <span class="required">*</span></label>
             {{ form.apq11_shimmer }}
+            <span class="text-danger">{{ form.apq11_shimmer.errors }}</span>
         </div>
     </div>
     <br/>

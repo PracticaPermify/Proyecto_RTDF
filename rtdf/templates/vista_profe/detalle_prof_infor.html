@@ -170,14 +170,9 @@
                 <br>
 
                 <div class="form-row">
-                    <div class="form-group col">
-                        <label for="fk_tp_terapia"><i class="fa-solid fa-file-waveform"></i>Tipo de pauta terapéutica <span class="required">*</span></label>
-                        <select id="fk_tp_terapia" name="{{ form.fk_tp_terapia.name }}">
-                            <option value="0" selected>Tipo de pauta terapeutica para diagnostico</option>
-                            {% for choice in form.fk_tp_terapia.field.choices %}
-                            <option value="{{ choice.0 }}">{{ choice.1 }}</option>
-                            {% endfor %}
-                        </select>
+                    <div class="form-group col-md-12">
+                        <label for="tipo_usuario"><i class="fa-solid fa-file-waveform"></i>Tipo de pauta terapeutica para diagnostico<span class="required">*</span></label>
+                        {{ form.fk_tp_terapia }}
                     </div>
                 </div>
 
