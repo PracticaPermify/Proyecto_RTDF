@@ -2908,11 +2908,10 @@ def analisis_admin(request):
             'id_audio__fk_pauta_terapeutica__fk_informe__fk_relacion_pa_pro__fk_profesional_salud'
         )
 
-
-        #datos_audio_relacion = RelacionPaPro.objects.all()
+        # Relaciones
         relaciones = RelacionPaPro.objects.all()
-        conteo_audios = []
 
+        conteo_audios = []
         total_intensidad = 0
         total_vocalizacion = 0
 
@@ -2923,10 +2922,11 @@ def analisis_admin(request):
             }
 
             for origen_id, origen_nombre in [(1, 'Intensidad'), (2, 'Vocalización')]:
-
-                audios = Audio.objects.filter(fk_origen_audio=origen_id, fk_pauta_terapeutica__fk_informe__fk_relacion_pa_pro=relacion)
+                audios = Audio.objects.filter(
+                    fk_origen_audio=origen_id,
+                    fk_pauta_terapeutica__fk_informe__fk_relacion_pa_pro=relacion
+                )
                 relacion_info['origenes_audio'][origen_nombre] = len(audios)
-
 
                 if origen_id == 1:
                     total_intensidad += len(audios)
@@ -2935,16 +2935,20 @@ def analisis_admin(request):
 
             conteo_audios.append(relacion_info)
 
-        # Paginación
-        page_number = request.GET.get('page')
-        paginator = Paginator(conteo_audios, 5)  # Muestra 5 registros por página
-        page = paginator.get_page(page_number)
-        
+        # Paginación para la tabla de audios
+        page_number_audios = request.GET.get('page_audios')
+        paginator_audios = Paginator(datos_audiocoeficientes, 10)  # Cambia 10 por el número deseado de registros por página
+        audios_pagina = paginator_audios.get_page(page_number_audios)
+
+        # Paginación para la tabla de conteo_audios
+        page_number_conteo = request.GET.get('page_conteo')
+        paginator_conteo = Paginator(conteo_audios, 5)  # Muestra 5 registros por página
+        conteo_pagina = paginator_conteo.get_page(page_number_conteo)
 
     return render(request, 'vista_admin/analisis_admin.html', {
         'tipo_usuario': tipo_usuario,
-        'datos_audiocoeficientes': datos_audiocoeficientes,
-        'conteo_audios': page,
+        'datos_audiocoeficientes': audios_pagina,
+        'conteo_audios': conteo_pagina,
         'total_intensidad': total_intensidad,
         'total_vocalizacion': total_vocalizacion,
     })
@@ -2962,7 +2966,7 @@ def analisis_profe(request):
             id_audio__fk_pauta_terapeutica__fk_informe__fk_relacion_pa_pro__fk_profesional_salud__id_usuario=request.user.id_usuario
         )
 
-         # Filtrar solo relaciones del fonoaudiólogo conectado
+        # Filtrar solo relaciones del fonoaudiólogo conectado
         relaciones = RelacionPaPro.objects.filter(
             fk_profesional_salud__id_usuario=request.user.id_usuario
         )
@@ -2992,30 +2996,28 @@ def analisis_profe(request):
 
             conteo_audios.append(relacion_info)
 
-            page = request.GET.get('page', 1)
+        items_por_pagina = 10
 
-        # Especifica el número de elementos por página
-            items_por_pagina = 10
+        paginator = Paginator(datos_audiocoeficientes, items_por_pagina)
 
-        # Crea un objeto Paginator
-            paginator = Paginator(datos_audiocoeficientes, items_por_pagina)
+        page = request.GET.get('page', 1)
 
-            try:
-            # Obtiene la página solicitada
-                audios_pagina = paginator.page(page)
-            except EmptyPage:
-            # Si la página está fuera de rango, muestra la última página
-                audios_pagina = paginator.page(paginator.num_pages)
-
+        try:
+            audios_pagina = paginator.page(page)
+        except PageNotAnInteger:
+            audios_pagina = paginator.page(1)
+        except EmptyPage:
+            audios_pagina = paginator.page(paginator.num_pages)
 
     return render(request, 'vista_profe/analisis_profe.html', {
         'tipo_usuario': tipo_usuario,
-        'datos_audiocoeficientes': datos_audiocoeficientes,
+        'datos_audiocoeficientes': audios_pagina,
         'datos_audio_relacion': conteo_audios,
         'total_intensidad': total_intensidad,
         'total_vocalizacion': total_vocalizacion,
         'paginator': paginator,
     })
+
 
 def detalle_audio_admin(request, audio_id):
     tipo_usuario = None
@@ -3215,7 +3217,7 @@ def eliminar_coef_manual(request, audiocoeficientes_id):
 
     return redirect('detalle_audio_profe', audio_id=id_audio)
 
-
+@never_cache
 def editar_coef_manual(request, audiocoeficientes_id):
     tipo_usuario = None
     

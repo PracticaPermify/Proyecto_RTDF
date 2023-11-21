@@ -48,10 +48,11 @@
         <div class="form-group col-md-6">
             <label for="id_fk_tipo_llenado"><i class="fa-solid fa-file-signature"></i>Tipo de llenado</label>
             {{ form.fk_tipo_llenado }}
+            <input type="text" style="display: none;" name="{{ form.fk_tipo_llenado.name }}" value="{{ form.fk_tipo_llenado.value }}" readonly>
         </div>
         <div class="form-group col-md-6">
             <label for="{{ form.fecha_coeficiente.id_for_label }}"><i class="fas fa-calendar"></i>Fecha</label></br>
-            <input type="datetime-local" class="campo_fecha" id="fecha_coeficiente" name="fecha_coeficiente" value="{{ form.fecha_coeficiente.value|date:'Y-m-d\TH:i' }}" readonly>
+            <input type="datetime-local" class="campo_fecha" id="fecha_coeficiente" name="fecha_coeficiente" value="{% if form.fecha_coeficiente.value|date %}{{ form.fecha_coeficiente.value|date:'Y-m-d\TH:i' }}{% else %}{{ form.fecha_coeficiente.value }}{% endif %}" readonly>
         </div>
     </div>
 
@@ -60,6 +61,7 @@
         <div class="form-group col-md-12">
             <label for="id_id_audio"><i class="fa-solid fa-database"></i>ID de audio</label>
             {{ form.id_audio }}
+            <input type="text" style="display: none;" name="{{ form.id_audio.name }}" value="{{ form.id_audio.value }}" readonly>
         </div>
     </div>
 
