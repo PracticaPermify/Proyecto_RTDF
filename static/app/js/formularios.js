@@ -18,28 +18,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
 document.addEventListener('DOMContentLoaded', function () {
   let tpInformeSelect = document.getElementById('tp_informe');
-  let camposGrbas = document.querySelectorAll('.campos-grbas'); // Nuevos campos para "GRBAS"
-  let camposRasati = document.querySelectorAll('.campos-rasati'); // Nuevos campos para "RASATI"
+  let camposGrbas = document.querySelectorAll('.campos-grbas'); 
+  let camposRasati = document.querySelectorAll('.campos-rasati'); 
 
   function toggleCampos() {
       let selectedTipoInforme = tpInformeSelect.selectedOptions[0];
 
-      // Lógica para mostrar u ocultar campos según el tipo de informe
+      // Condicional para mostrar valores de los campos ya sea grbas o rasati
       if (selectedTipoInforme.textContent === 'GRBAS') {
           camposGrbas.forEach(function (campo) {
-              campo.style.display = 'block'; // Mostrar campos de "GRBAS"
+              campo.style.display = 'block'; 
           });
 
           camposRasati.forEach(function (campo) {
-              campo.style.display = 'none'; // Ocultar campos de "RASATI"
+              campo.style.display = 'none'; 
           });
       } else if (selectedTipoInforme.textContent === 'RASATI') {
           camposGrbas.forEach(function (campo) {
-              campo.style.display = 'none'; // Ocultar campos de "GRBAS"
+              campo.style.display = 'none'; 
           });
 
           camposRasati.forEach(function (campo) {
-              campo.style.display = 'block'; // Mostrar campos de "RASATI"
+              campo.style.display = 'block'; 
           });
       } else {
           camposGrbas.forEach(function (campo) {
@@ -47,12 +47,11 @@ document.addEventListener('DOMContentLoaded', function () {
           });
 
           camposRasati.forEach(function (campo) {
-              campo.style.display = 'none'; // Ocultar campos para otros valores de informe
+              campo.style.display = 'none'; 
           });
       }
   }
   tpInformeSelect.addEventListener('change', toggleCampos);
 
-  // Llama a la función para configurar los campos según los valores iniciales
   toggleCampos();
 });

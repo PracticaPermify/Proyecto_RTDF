@@ -109,7 +109,6 @@ def index(request):
 
     page_number = request.GET.get('page')
 
-    # Obtiene la página actual de usuarios
     page = paginator.get_page(page_number)
 
     return render(request, 'rtdf/index.html', {'tipo_usuario': tipo_usuario, 
@@ -151,8 +150,7 @@ def registro(request):
 
             elif tipo_usuario.tipo_usuario == 'Familiar':
                 rut_paciente = registro_form.cleaned_data.get('rut_paciente')
-
-                # Verificar si el RUT del paciente existe en la base de datos
+                
                 try:
                     paciente_relacionado = Paciente.objects.get(id_usuario__numero_identificacion=rut_paciente)
                 except Paciente.DoesNotExist:
@@ -210,7 +208,7 @@ def pre_registro(request):
     else:
         # pre_registro_form = PreRegistroForm()
 
-        # Crea una instancia del formulario y elimina los campos no deseados
+        # Instancias al formulario y se le pasan los datos directamente
         pre_registro_form = PreRegistroForm()
         del pre_registro_form.fields['fecha_nacimiento']
         del pre_registro_form.fields['numero_telefonico']
@@ -908,10 +906,10 @@ def detalle_prof_paci(request, paciente_id):
 
 @never_cache
 def listado_informes(request):
-    # Obtén el fonoaudiólogo actual
+    # Fonoaudiologo de la sesion
     profesional_medico = request.user.profesionalsalud
 
-    # Filtra los informes asociados al fonoaudiólogo actual
+    # Filtro por fonoaudiologo 
     informes = Informe.objects.filter(fk_relacion_pa_pro__fk_profesional_salud=profesional_medico).annotate(
     num_pautas_terapeuticas=Count('pautaterapeutica')).order_by('-fecha')
 
@@ -919,10 +917,8 @@ def listado_informes(request):
 
     paginator = Paginator(informes, informes_por_pagina)
 
-    # Obtiene el número de página actual desde la solicitud GET
     page_number = request.GET.get('page')
 
-    # Obtiene la página actual de informes
     page = paginator.get_page(page_number)
 
     tipo_usuario = None
@@ -945,7 +941,6 @@ def detalle_prof_infor(request, informe_id):
     elif source == 'plantilla2':
         url_regreso = reverse('listado_informes')
     else:
-        # Si no proviene de ninguna de las plantillas conocidas, configura una URL predeterminada
         url_regreso = reverse('listado_informes')
 
 
@@ -966,7 +961,6 @@ def detalle_prof_infor(request, informe_id):
     datos_vocalizacion = Vocalizacion.objects.filter(id_pauta_terapeutica__fk_informe=informe_id,id_pauta_terapeutica__fk_tp_terapia= 1)    
     datos_intensidad = Intensidad.objects.filter(id_pauta_terapeutica__fk_informe=informe_id,id_pauta_terapeutica__fk_tp_terapia= 2)
 
-    # Obtén el paciente relacionado con este informe
     paciente_relacionado = informe.fk_relacion_pa_pro.id_paciente
 
     tipo_usuario = None
@@ -1118,16 +1112,16 @@ def vocalizacion(request, pauta_id=None, *args, **kwargs):
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
 
-        # Obtén el nombre de usuario y su ID
+        # Se obtiene el nombre de usuario y su ID correspondiente
         nombre_usuario = f"{request.user.primer_nombre}_{request.user.ap_paterno}"
         id_usuario = request.user.id_usuario
         fecha = timezone.now()
         fecha_formateada = fecha.strftime("%Y-%m-%d_%H-%M-%S")
 
-        # Crea una ruta para la carpeta del usuario
+        # Ruta para la carpeta del usuario
         carpeta_usuario = os.path.join(settings.MEDIA_ROOT, 'audios_pacientes', nombre_usuario)
 
-        # Verifica si la carpeta del usuario existe, si no, créala
+        # Verifica si la carpeta del usuario existe realmente
         if not os.path.exists(carpeta_usuario):
             os.makedirs(carpeta_usuario)
 
@@ -1152,12 +1146,12 @@ def vocalizacion(request, pauta_id=None, *args, **kwargs):
         audio_file = request.FILES.get('file')
         print("Estoy llegando aquí", audio_file)
 
-        # se obtiene variables declaradas en la sesion
+        # se obtiene las variables declaradas en la sesion
         id_pauta = request.session.get('id_pauta', None)
         tipo_pauta = request.session.get('tipo_pauta', None)
         id_profesional = request.session.get('id_profesional', None)
 
-        # Define el nombre del archivo con el nombre del usuario y su ID
+        # Construcción del nombre del archivo
         nombre_archivo = f"{nombre_usuario}_{id_usuario}_{fecha_formateada}_{tipo_pauta}_{id_pauta}_{id_profesional}_audio.wav"
         ruta_archivo = os.path.join(carpeta_usuario, nombre_archivo)
 
@@ -1185,7 +1179,7 @@ def vocalizacion(request, pauta_id=None, *args, **kwargs):
             id_audio_registrado = audio_model.id_audio
 
 
-            # Guarda el archivo en la carpeta del usuario con el nuevo nombre
+            #Esto guardara el archivo en la carpeta 
             if audio_file:
                 with open(ruta_archivo, 'wb') as destination:
                     for chunk in audio_file.chunks():
@@ -1253,16 +1247,13 @@ def intensidad(request, pauta_id=None, *args, **kwargs):
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
 
-        # Obtén el nombre de usuario y su ID
         nombre_usuario = f"{request.user.primer_nombre}_{request.user.ap_paterno}"
         id_usuario = request.user.id_usuario
         fecha = timezone.now()
         fecha_formateada = fecha.strftime("%Y-%m-%d-%H-%M-%S")
 
-        # Crea una ruta para la carpeta del usuario
         carpeta_usuario = os.path.join(settings.MEDIA_ROOT, 'audios_pacientes', nombre_usuario)
 
-        # Verifica si la carpeta del usuario existe, si no, créala
         if not os.path.exists(carpeta_usuario):
             os.makedirs(carpeta_usuario)
 
@@ -1285,19 +1276,15 @@ def intensidad(request, pauta_id=None, *args, **kwargs):
         audio_file = request.FILES.get('file')
         print("Estoy llegando aquí", audio_file)
 
-        # se obtiene variables declaradas en la sesion
         id_pauta = request.session.get('id_pauta', None)
         tipo_pauta = request.session.get('tipo_pauta', None)
         id_profesional = request.session.get('id_profesional', None)
 
-        # Define el nombre del archivo con el nombre del usuario y su ID
         nombre_archivo = f"{nombre_usuario}_{id_usuario}_{fecha_formateada}_{tipo_pauta}_{id_pauta}_{id_profesional}_audio.wav"
         ruta_archivo = os.path.join(carpeta_usuario, nombre_archivo)
 
-        # se elimina la variable de la sesion y se guarda en la DB
         if id_pauta is not None:
 
-            # contruccion de la url para la DB
             if tipo_pauta == "Intensidad":
                 origen_audio = OrigenAudio.objects.get(id_origen_audio=1)
             else:
@@ -1314,10 +1301,8 @@ def intensidad(request, pauta_id=None, *args, **kwargs):
                                                fk_pauta_terapeutica=fk_pauta)
             audio_model.save()
 
-            #Capturo el id del audio al momento del guardado en la base de datos
             id_audio_registrado = audio_model.id_audio
 
-            # Guarda el archivo en la carpeta del usuario con el nuevo nombre
             if audio_file:
                 with open(ruta_archivo, 'wb') as destination:
                     for chunk in audio_file.chunks():
@@ -1325,10 +1310,8 @@ def intensidad(request, pauta_id=None, *args, **kwargs):
 
             #REGISTRO DE LOS COEFICIENTES DE AUDIOS DE INTENSIDAD EN LA DB
 
-            #obtencion del tipo de llenado automatico
             tipo_llenado = TpLlenado.objects.get(id_tipo_llenado=1)
 
-            #obtencion del id del audio
             id_audio = Audio.objects.get(id_audio=id_audio_registrado)
 
             print(ruta_db)
@@ -1379,16 +1362,13 @@ def escalas_vocales(request, pauta_id=None, *args, **kwargs):
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
 
-        # Obtén el nombre de usuario y su ID
         nombre_usuario = f"{request.user.primer_nombre}_{request.user.ap_paterno}"
         id_usuario = request.user.id_usuario
         fecha = timezone.now()
         fecha_formateada = fecha.strftime("%Y-%m-%d_%H-%M-%S")
 
-        # Crea una ruta para la carpeta del usuario
         carpeta_usuario = os.path.join(settings.MEDIA_ROOT, 'audios_pacientes', nombre_usuario)
 
-        # Verifica si la carpeta del usuario existe, si no, créala
         if not os.path.exists(carpeta_usuario):
             os.makedirs(carpeta_usuario)
 
@@ -1415,19 +1395,15 @@ def escalas_vocales(request, pauta_id=None, *args, **kwargs):
         audio_file = request.FILES.get('file')
         print("Estoy llegando aquí", audio_file)
 
-        # se obtiene variables declaradas en la sesion
         id_pauta = request.session.get('id_pauta', None)
         tipo_pauta = request.session.get('tipo_pauta', None)
         id_profesional = request.session.get('id_profesional', None)
 
-        # Define el nombre del archivo con el nombre del usuario y su ID
         nombre_archivo = f"{nombre_usuario}_{id_usuario}_{fecha_formateada}_{tipo_pauta}_{id_pauta}_{id_profesional}_audio.wav"
         ruta_archivo = os.path.join(carpeta_usuario, nombre_archivo)
 
-        # se elimina la variable de la sesion y se guarda en la DB
         if id_pauta is not None:
 
-            # contruccion de la url para la tabla audio DB
             if tipo_pauta == "Escala_vocal":
                 origen_audio = OrigenAudio.objects.get(id_origen_audio=3)
                 
@@ -1447,20 +1423,13 @@ def escalas_vocales(request, pauta_id=None, *args, **kwargs):
 
             id_audio_registrado = audio_model.id_audio
 
-
-            # Guarda el archivo en la carpeta del usuario con el nuevo nombre
             if audio_file:
                 with open(ruta_archivo, 'wb') as destination:
                     for chunk in audio_file.chunks():
                         destination.write(chunk)
 
-
-            #REGISTRO DE LOS COEFICIENTES DE AUDIOS DE VOCALIZACION EN LA DB
-
-            #obtencion del tipo de llenado automatico
             tipo_llenado = TpLlenado.objects.get(id_tipo_llenado=1)
 
-            #obtencion del id del audio
             id_audio = Audio.objects.get(id_audio=id_audio_registrado)
 
             print(ruta_db)
@@ -1554,7 +1523,7 @@ def esv(request):
                 informe = form.save()
                 informe.fecha = timezone.now()
 
-                # Inicializa los puntajes para las subescalas
+                #Declaro variables para almacenar los puntajes
                 puntaje_limitacion = 0
                 puntaje_emocional = 0
                 puntaje_fisico = 0
@@ -1580,6 +1549,7 @@ def esv(request):
                     elif i + 1 in [3, 7, 11, 12, 19, 22, 26]:
                         puntaje_fisico += puntaje
 
+                #Segun el documento de fonoaudiologia, el puntaje requerido es de 60, 32 y 28 para la escala vocal
                 puntaje_limitacion = min(puntaje_limitacion, 60)
                 puntaje_emocional = min(puntaje_emocional, 32)
                 puntaje_fisico = min(puntaje_fisico, 28)
@@ -1588,7 +1558,7 @@ def esv(request):
                 if puntaje_total > 120:
                     puntaje_total = 120
 
-                # Crea instancias de Informe y ESV y guarda los datos
+                #Con los valores agregados en cada variable, le asigno que lo almacene en la tabla correspondiente
                 esv_instance = Esv(id_informe=informe, total_esv=puntaje_total, limitacion=puntaje_limitacion,
                                     emocional=puntaje_emocional, fisico=puntaje_fisico)
                 esv_instance.save()
@@ -1613,30 +1583,26 @@ def mi_fonoaudiologo(request):
     tipo_usuario = None 
     usuarios = Usuario.objects.all()
 
-    # se verifica que el usuario este registrado como profesional salud
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
 
-        # se obtiene el identificador de la fk usuario relacionado al fonoaudiologo
-        id_usuario = request.user.id_usuario #Paciente Ricardo Rodriguez Tobalaba su ID de usuario es 9
+        id_usuario = request.user.id_usuario 
 
         try:
-            # se obtiene el fonoaudiologo relacionado
-            paciente_salud = Paciente.objects.get(id_usuario=id_usuario)# Mi id de usuario se compara con profesional salud...No
+            paciente_salud = Paciente.objects.get(id_usuario=id_usuario)
         except Paciente.DoesNotExist:
             paciente_salud = None
 
-        # lista para almacenar los pacientes relacionados
+        
         profesional_relacionados = []
 
-        # filtrado de los pacientes relacionados
+        
         if paciente_salud:
             profesional_relacionados = RelacionPaPro.objects.filter(id_paciente=paciente_salud)
 
         # lista de los pacientes con datos de usuario y paciente
         pacientes = []
 
-        # se cargan los datos en variables 
         for relacion in profesional_relacionados:
             paciente_dicc = {
                 'id_fonoaudiologo': relacion.fk_profesional_salud.id_profesional_salud,
@@ -1674,7 +1640,7 @@ def list_paci_admin(request):
 
 
 @never_cache
-@user_passes_test(validate)  # Asegúrate de tener la función de validación adecuada
+@user_passes_test(validate)  
 def detalle_paciente(request, paciente_id):
     paciente = get_object_or_404(Usuario, id_usuario=paciente_id, id_tp_usuario__tipo_usuario='Paciente')
     traer_paciente = paciente.paciente
@@ -1709,7 +1675,7 @@ def detalle_paciente(request, paciente_id):
         'informes_esv': informes_esv,
         'informes_rasati': informes_rasati,
         'informes_grbas': informes_grbas,
-        'edad': edad,  # Agrega la edad al contexto
+        'edad': edad,  
     })
 
 ##LISTADO DE LOS FONOAUDIOLOGOS PARA ADMINSITRADOR
@@ -1841,7 +1807,6 @@ def detalle_familiar_admin(request, familiar_id):
                                                                 'paciente_asociado': paciente_asociado,
                                                                 'edad': edad
                                                             })
-##Ayuda pancho
 
 @user_passes_test(validate)
 def ingresar_informes(request):
@@ -1866,7 +1831,7 @@ def ingresar_informes(request):
                 informe.fecha = timezone.now()
                 print(f"Tipo de informe seleccionado: {tipo_informe}")
 
-                # Asociar el informe con GRBAS y RASATI
+                # Filtro segun el tipo de informe seleccionado
                 if tipo_informe == 'GRBAS':
                     
                     grbas = grbas_form.save(commit=False)
@@ -2007,7 +1972,6 @@ def detalle_informe(request, informe_id):
         datos_vocalizacion = Vocalizacion.objects.filter(id_pauta_terapeutica__fk_informe=informe_id,id_pauta_terapeutica__fk_tp_terapia= 1)    
         datos_intensidad = Intensidad.objects.filter(id_pauta_terapeutica__fk_informe=informe_id,id_pauta_terapeutica__fk_tp_terapia= 2)
 
-        # Obtén el paciente relacionado con este informe
         paciente_relacionado = informe.fk_relacion_pa_pro.id_paciente
 
         if request.method == 'POST':
@@ -2033,8 +1997,7 @@ def detalle_informe(request, informe_id):
                     vocalizacion.save()
 
                 elif tipo_terapia == 'Intensidad':
-                        
-                    #se obtiene en valor del campo validado del form y se compara que este vacio    
+                           
                     if not intensidad_form.cleaned_data['min_db']:
                         #se setea a null
                         intensidad_form.cleaned_data['min_db'] = None
@@ -2162,7 +2125,6 @@ def agregar_paciente(request, paciente_id):
 
 
 def enviar_correo_paciente(paciente, profesional_salud):
-    # Obtener el usuario asociado al paciente
     usuario_paciente = Usuario.objects.get(paciente=paciente)
 
     subject = '¡Bienvenido a RTDF!'
@@ -2171,14 +2133,11 @@ def enviar_correo_paciente(paciente, profesional_salud):
 
     context = {'paciente': paciente, 'profesional_salud': profesional_salud}
     
-    # Contenido del correo
     html_content = render_to_string('correos/bienvenida_paciente.html', context)
     
-    # Configurar el correo
     email = EmailMessage(subject, html_content, from_email, recipient_list)
     email.content_subtype = 'html'
     
-    # Enviar el correo electrónico
     email.send()
 
 
@@ -2227,7 +2186,6 @@ def detalle_prof_pauta(request, id_pauta_terapeutica_id):
         except Vocalizacion.DoesNotExist:
             vocalizacion = None
 
-    # Obtén el paciente relacionado con este informe
     paciente_relacionado = pauta.fk_informe.fk_relacion_pa_pro.id_paciente
 
     return render(request, 'vista_profe/detalle_prof_pauta.html', {
@@ -2351,7 +2309,6 @@ def detalle_pauta_admin(request, id_pauta_terapeutica_id):
         except Vocalizacion.DoesNotExist:
             vocalizacion = None
 
-    # Obtén el paciente relacionado con este informe
     paciente_relacionado = pauta.fk_informe.fk_relacion_pa_pro.id_paciente
 
     return render(request, 'vista_admin/detalle_pauta_admin.html', {
@@ -2380,7 +2337,6 @@ def detalle_pauta_esv_admin(request, pauta_id):
     elif source == 'plantilla2':
         url_regreso = reverse('detalle_esv')
     else:
-        # Si no proviene de ninguna de las plantillas conocidas, configura una URL predeterminada
         url_regreso = reverse('listado_informes')
 
     pauta = get_object_or_404(PautaTerapeutica, pk=pauta_id)
@@ -2415,7 +2371,7 @@ def editar_pauta_esv_admin(request, pauta_id):
         form = PautaTerapeuticaForm(request.POST, instance=pauta)
 
         if form.is_valid():
-            form.instance.fk_tp_terapia_id = 3  # Asegúrate de configurar el ID del tipo de terapia adecuado
+            form.instance.fk_tp_terapia_id = 3  
             form.save()
 
             palabras = []
@@ -2460,7 +2416,6 @@ def eliminar_pauta_esv_admin(request, pauta_id):
     if pauta.fk_tp_terapia.tipo_terapia == 'Escala_vocal':
         pauta.delete()
 
-    # Redirigir a la vista correspondiente para el administrador
     return redirect('detalle_esv_admin', informe_id=pauta.fk_informe.id_informe)
     
 
@@ -2587,32 +2542,26 @@ def detalle_esv(request, informe_id):
             pauta_terapeutica.fk_tp_terapia = TpTerapia.objects.get(tipo_terapia='Escala_vocal')
             pauta_terapeutica.save()
 
-            # Procesar palabras para EscalaVocales
             palabras = []
-            for i in range(1, 21):  # Modificar a 21 para tener 20 selects
-                palabra_id = request.POST.get(f'palabra{i}', '')  # Obtén el valor seleccionado en el formulario
+            for i in range(1, 21): 
+                palabra_id = request.POST.get(f'palabra{i}', '')  
                 if palabra_id:
-                    palabra = PalabrasPacientes.objects.get(pk=palabra_id)  # Obtén el objeto de PalabrasPacientes
+                    palabra = PalabrasPacientes.objects.get(pk=palabra_id) 
                     palabras.append(palabra.palabras_paciente)
 
-            # Concatenar palabras en una sola cadena
             palabras_concatenadas = ", ".join(palabras)
 
-            # Crear una instancia de EscalaVocales y guardar las palabras
             escala_vocales = EscalaVocales(palabras=palabras_concatenadas)
             escala_vocales.id_pauta_terapeutica = pauta_terapeutica
             escala_vocales.save()
 
-            # Después de guardar la pauta, redirige a la misma página para evitar mantener los datos en los campos
             return HttpResponseRedirect(request.path_info)
 
     else:
         pauta_terapeutica_form = PautaTerapeuticaForm()
 
-    # Obtén todas las palabras de la tabla PalabrasPacientes
     palabras_pacientes = PalabrasPacientes.objects.all()
 
-    # Crea una lista de selecciones (selects) con 20 selects
     selects = []
     for i in range(1, 21):
         palabras_select = PalabrasPacientes.objects.filter().order_by('id_palabras_pacientes')[i-1]
@@ -2648,7 +2597,6 @@ def detalle_pauta_esv(request, pauta_id):
     elif source == 'plantilla2':
         url_regreso = reverse('detalle_esv')
     else:
-        # Si no proviene de ninguna de las plantillas conocidas, configura una URL predeterminada
         url_regreso = reverse('listado_informes')
 
     pauta = get_object_or_404(PautaTerapeutica, pk=pauta_id)
@@ -2689,7 +2637,7 @@ def editar_pauta_esv(request, pauta_id):
         form = PautaTerapeuticaForm(request.POST, instance=pauta)
 
         if form.is_valid():
-            form.instance.fk_tp_terapia_id = 3  # Asegúrate de configurar el ID del tipo de terapia adecuado
+            form.instance.fk_tp_terapia_id = 3  
             form.save()
 
             palabras = []
@@ -2736,7 +2684,6 @@ def eliminar_pauta_esv(request, pauta_id):
     if pauta.fk_tp_terapia.tipo_terapia == 'Escala_vocal':
         pauta.delete()
 
-    # Redirigir a la vista de detalle_esv
     return redirect('detalle_esv', informe_id=pauta.fk_informe.id_informe)
 
 
@@ -2799,32 +2746,27 @@ def detalle_esv_admin(request, informe_id):
                 pauta_terapeutica.fk_tp_terapia = TpTerapia.objects.get(tipo_terapia='Escala_vocal')
                 pauta_terapeutica.save()
 
-                # Procesar palabras para EscalaVocales
+                
                 palabras = []
-                for i in range(1, 21):  # Modificar a 21 para tener 20 selects
-                    palabra_id = request.POST.get(f'palabra{i}', '')  # Obtén el valor seleccionado en el formulario
+                for i in range(1, 21):  
+                    palabra_id = request.POST.get(f'palabra{i}', '') 
                     if palabra_id:
-                        palabra = PalabrasPacientes.objects.get(pk=palabra_id)  # Obtén el objeto de PalabrasPacientes
+                        palabra = PalabrasPacientes.objects.get(pk=palabra_id) 
                         palabras.append(palabra.palabras_paciente)
 
-                # Concatenar palabras en una sola cadena
                 palabras_concatenadas = ", ".join(palabras)
 
-                # Crear una instancia de EscalaVocales y guardar las palabras
                 escala_vocales = EscalaVocales(palabras=palabras_concatenadas)
                 escala_vocales.id_pauta_terapeutica = pauta_terapeutica
                 escala_vocales.save()
 
-                # Después de guardar la pauta, redirige a la misma página para evitar mantener los datos en los campos
                 return HttpResponseRedirect(request.path_info)
 
         else:
             pauta_terapeutica_form = PautaTerapeuticaForm()
 
-        # Obtén todas las palabras de la tabla PalabrasPacientes
         palabras_pacientes = PalabrasPacientes.objects.all()
 
-        # Crea una lista de selecciones (selects) con 20 selects
         selects = []
         for i in range(1, 21):
             palabras_select = PalabrasPacientes.objects.filter().order_by('id_palabras_pacientes')[i-1]
@@ -2853,12 +2795,11 @@ def editar_esv_admin(request, informe_id):
         if tipo_usuario == 'Admin':
             informe = get_object_or_404(Informe, pk=informe_id)
 
-            # Obtener la fecha y hora actual
             fecha_actual = timezone.now()
 
             valores_actuales = {
                 'titulo': informe.titulo,
-                'fecha': fecha_actual,  # Establecer la fecha actual
+                'fecha': fecha_actual, 
                 'descripcion': informe.descripcion,
                 'observacion': informe.observacion,
             }
@@ -2888,7 +2829,6 @@ def eliminar_esv_admin(request, informe_id):
         if informe.tp_informe and informe.tp_informe.tipo_informe == 'ESV':
             informe.esv.delete()
 
-        # Elimina el informe
         informe.delete()
 
   
@@ -2908,7 +2848,6 @@ def analisis_admin(request):
             'id_audio__fk_pauta_terapeutica__fk_informe__fk_relacion_pa_pro__fk_profesional_salud'
         )
 
-        # Relaciones
         relaciones = RelacionPaPro.objects.all()
 
         conteo_audios = []
@@ -2935,14 +2874,13 @@ def analisis_admin(request):
 
             conteo_audios.append(relacion_info)
 
-        # Paginación para la tabla de audios
         page_number_audios = request.GET.get('page_audios')
-        paginator_audios = Paginator(datos_audiocoeficientes, 10)  # Cambia 10 por el número deseado de registros por página
+        paginator_audios = Paginator(datos_audiocoeficientes, 10)  
         audios_pagina = paginator_audios.get_page(page_number_audios)
 
         # Paginación para la tabla de conteo_audios
         page_number_conteo = request.GET.get('page_conteo')
-        paginator_conteo = Paginator(conteo_audios, 5)  # Muestra 5 registros por página
+        paginator_conteo = Paginator(conteo_audios, 5)  
         conteo_pagina = paginator_conteo.get_page(page_number_conteo)
 
     return render(request, 'vista_admin/analisis_admin.html', {
@@ -2959,14 +2897,12 @@ def analisis_profe(request):
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
 
-        # Filtra datos de Audiocoeficientes para pacientes relacionados al profesional
         datos_audiocoeficientes = Audioscoeficientes.objects.select_related(
             'id_audio__fk_pauta_terapeutica__fk_informe__fk_relacion_pa_pro__id_paciente__id_usuario'
         ).filter(
             id_audio__fk_pauta_terapeutica__fk_informe__fk_relacion_pa_pro__fk_profesional_salud__id_usuario=request.user.id_usuario
         )
 
-        # Filtrar solo relaciones del fonoaudiólogo conectado
         relaciones = RelacionPaPro.objects.filter(
             fk_profesional_salud__id_usuario=request.user.id_usuario
         )
@@ -3083,18 +3019,18 @@ def detalle_audio_profe(request, audio_id):
         print(audio_coeficiente_manual)
 
 
-        # Obtener los datos para el gráfico
+        
         x = ['f0', 'f1', 'f2', 'f3', 'f4', 'intensidad', 'hnr', 'local_jitter', 'local_absolute_jitter',
             'rap_jitter', 'ppq5_jitter', 'ddp_jitter', 'local_shimmer', 'local_db_shimmer', 'apq3_shimmer',
             'aqpq5_shimmer', 'apq11_shimmer']
 
-        # Convertir las cadenas a números
+
         y_auto = convertir_a_numeros(audio_coeficiente_automatico)
 
         if audio_coeficiente_manual:
             y_manual = convertir_a_numeros(audio_coeficiente_manual)
 
-            # Generar el gráfico utilizando la función auxiliar
+            
             #graph_html = generar_grafico_audio(x, y_auto, y_manual) 
 
             graph_frecuencias = grafico_frecuencias(x, y_auto, y_manual) 
@@ -3201,9 +3137,9 @@ def ingresar_coef_profe(request, audio_id):
 def reproducir_audio(request, audio_id):
 
     audio = Audio.objects.get(id_audio=audio_id)
-    # Construir la ruta completa al archivo de audio
+    # Ruta del audio
     audio_path = os.path.join(settings.MEDIA_ROOT, 'audios_pacientes' , audio.url_audio)
-    # Abrir y servir el archivo de audio
+    #Despliegue del audio
     return FileResponse(open(audio_path, 'rb'), content_type='audio/wav')
 
 
@@ -3281,7 +3217,7 @@ def analisis_estadistico_profe(request, informe_id):
 
     tipo_usuario = None
     plot_div = None
-    hay_pautas_terapeuticas = True  # Agrega la lógica para determinar si hay pautas terapéuticas
+    hay_pautas_terapeuticas = True  
 
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario

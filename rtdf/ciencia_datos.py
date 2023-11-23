@@ -12,7 +12,6 @@ import os
 
 def kmeans_prueba(request):
 
-    # Obtener los parámetros de la solicitud GET
     parametro1 = request.GET.get('parametro1')
     parametro2 = request.GET.get('parametro2')
 
@@ -76,55 +75,43 @@ def kmeans_criticidad(request):
 
     datos2['criticidad_vocal'] = 0
 
-    # Filtro 7: Edad mayor de 75 con al menos una condición (hipertensión o diabetes)
+    # Filtro: 
     filtro_edad_mayor_75 = (datos2['edad'] > 75) & ((datos2['hipertension'] == 1) | (datos2['diabetes'] == 1))
     datos2.loc[filtro_edad_mayor_75, 'criticidad_vocal'] = 3  # Alta probabilidad
 
-    # Filtro 6: Edad entre 60 y 75 con hipertensión y diabetes
     filtro_edad_hipertension_diabetes = (datos2['edad'].between(60, 75)) & (datos2['hipertension'] == 1) & (datos2['diabetes'] == 1)
     datos2.loc[filtro_edad_hipertension_diabetes, 'criticidad_vocal'] = 3  # Alta probabilidad
 
-    # Filtro 1: Edad mayor o igual a 65
     filtro_edad_65_o_mas = (datos2['edad'] >= 65)
     datos2.loc[filtro_edad_65_o_mas, 'criticidad_vocal'] = 3  # Alta probabilidad
 
-    # Filtro 3: Edad entre 45 y 64 con hipertensión
     filtro_edad_hipertension = (datos2['edad'].between(45, 64)) & (datos2['hipertension'] == 1)
     datos2.loc[filtro_edad_hipertension, 'criticidad_vocal'] = 2  # Moderada probabilidad
 
-    # Filtro 8: Edad entre 30 y 45 con hipertensión y sin diabetes
     filtro_edad_hipertension_sin_diabetes = (datos2['edad'].between(30, 45)) & (datos2['hipertension'] == 1) & (datos2['diabetes'] == 0)
     datos2.loc[filtro_edad_hipertension_sin_diabetes, 'criticidad_vocal'] = 2  # Moderada probabilidad
 
-    # Filtro 9: Edad mayor de 50 con hipertensión moderada o severa
     filtro_edad_hipertension_severa = (datos2['edad'] > 50) & (datos2['hipertension'].isin([2, 3]))  # Suponiendo que 2 es moderada y 3 es severa
     datos2.loc[filtro_edad_hipertension_severa, 'criticidad_vocal'] = 3  # Alta probabilidad
 
-    # Filtro 2: Hipertensión y diabetes
     filtro_hipertension_diabetes = (datos2['hipertension'] == 1) & (datos2['diabetes'] == 1)
     datos2.loc[filtro_hipertension_diabetes, 'criticidad_vocal'] = 3  # Alta probabilidad
 
-    # Filtro 5: Edad entre 40 y 59 con diabetes
     filtro_edad_diabetes = (datos2['edad'].between(40, 59)) & (datos2['diabetes'] == 1)
     datos2.loc[filtro_edad_diabetes, 'criticidad_vocal'] = 2  # Moderada probabilidad
 
-    # Filtro 4: Edad menor de 18 con hipertensión o diabetes
     filtro_edad_menor_18 = (datos2['edad'] < 18) & ((datos2['hipertension'] == 1) | (datos2['diabetes'] == 1))
     datos2.loc[filtro_edad_menor_18, 'criticidad_vocal'] = 1  # Baja probabilidad
 
-    # Filtro 10: Edad menor de 30 sin condiciones
     filtro_edad_menor_30_sin_condiciones = (datos2['edad'] < 30) & (datos2['hipertension'] == 0) & (datos2['diabetes'] == 0)
     datos2.loc[filtro_edad_menor_30_sin_condiciones, 'criticidad_vocal'] = 1  # Baja probabilidad
 
-    # Filtro 11: Edad menor o igual a 64
     filtro_edad_menor_64 = (datos2['edad'] <= 64)
     datos2.loc[filtro_edad_menor_64, 'criticidad_vocal'] = 2  # Moderada probabilidad
 
-    # Filtro 12: Edad menor o igual a 35
     filtro_edad_menor_35 = (datos2['edad'] <= 35)
     datos2.loc[filtro_edad_menor_35, 'criticidad_vocal'] = 1  # Baja probabilidad
 
-    # Filtro 5: Edad entre 40 y 59 con diabetes
     filtro_edad_diabetes = (datos2['edad'].between(55, 64)) & ((datos2['hipertension'] == 1) | (datos2['diabetes'] == 1))
     datos2.loc[filtro_edad_diabetes, 'criticidad_vocal'] = 3  # Moderada probabilidad
 

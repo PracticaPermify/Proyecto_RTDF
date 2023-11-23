@@ -172,12 +172,9 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Agrega un evento al formulario cuando se envía
         document.querySelector('form').addEventListener('submit', function(event) {
-            // Verifica si el campo tp_informe está vacío
             var tipoInforme = document.querySelector('select[name="tp_informe"]').value;
             if (!tipoInforme) {
-                // Si está vacío, muestra un mensaje de error y evita que el formulario se envíe
                 alert('El campo Tipo de Informe es requerido.');
                 event.preventDefault();
             }

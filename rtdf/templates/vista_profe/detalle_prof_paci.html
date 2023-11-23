@@ -163,9 +163,8 @@ $(document).ready(function () {
             'hipertension_paciente': {{ paciente_info.fk_tipo_hipertension_id }},
         };
 
-        var btnEjecutar = $(this);  // Guarda una referencia al botón
+        var btnEjecutar = $(this);  // Guarda referencia del boton de predicciones
 
-        // Realizar la llamada AJAX a tu función
         $.ajax({
             url: "/ciencia_datos/",
             type: "GET",
@@ -173,7 +172,7 @@ $(document).ready(function () {
             dataType: "json"
         })
         .done(function (data) {
-            // Ocultar el botón y mostrar el mensaje en su lugar
+            // Este metodo, permitira ocultar el boton 
             btnEjecutar.hide();
             $("#resultado_kmeans_prueba_container").html('<span id="resultado_kmeans_prueba">' + data.prediccion + '</span>');
         })

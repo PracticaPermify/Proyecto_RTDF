@@ -1,4 +1,4 @@
-// Variables globales para manejar la grabación de audio
+// Variables globales
 let audioContext;
 let audioRecorder;
 let audioChunks = [];
@@ -8,7 +8,6 @@ document.querySelector('#start-stop').addEventListener('click', async function (
     var csrftoken = document.querySelector('#csrf-form [name=csrfmiddlewaretoken]').value;
 
     if (!audioRecorder) {
-        // Iniciar la grabación si aún no se ha iniciado
         try {
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -25,7 +24,7 @@ document.querySelector('#start-stop').addEventListener('click', async function (
                 const formData = new FormData();
                 formData.append('audio', audioBlob);
 
-                // Enviar el archivo de audio al servidor
+                // Con este metodo se enviara el audio al servidor mediante el metodo post en este fecth
                 fetch(vocalizacionConPautaURL, {
                     method: 'POST',
                     body: formData,
@@ -48,7 +47,7 @@ document.querySelector('#start-stop').addEventListener('click', async function (
             console.error('Error al acceder al micrófono: ', error);
         }
     } else {
-        // Detener la grabación si ya se inició
+        // Si el audio partio, con este metodo se podra detener
         audioRecorder.stop();
         audioRecorder = null;
         audioChunks = [];

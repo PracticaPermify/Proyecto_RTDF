@@ -9,10 +9,10 @@ document.addEventListener('DOMContentLoaded', function () {
           
           if (selectedText === 'Paciente') {
               console.log('Realiza lógica para Paciente');
-              // Resto de la lógica para Paciente
+        
           } else if (selectedText === 'Familiar') {
               console.log('Realiza lógica para Familiar');
-              // Resto de la lógica para Familiar
+        
           }
       });
   }
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
 document.addEventListener('DOMContentLoaded', function () {
   let tipoUsuarioSelect = document.getElementById('tipo_usuario');
   let camposPaciente = document.querySelectorAll('.campos-paciente');
-  let camposFamiliar = document.querySelectorAll('.campos-familiar'); // Nuevos campos para "Familiar"
+  let camposFamiliar = document.querySelectorAll('.campos-familiar'); 
 
   function toggleCampos() {
       let selectedOption = tipoUsuarioSelect.selectedOptions[0];
@@ -33,15 +33,15 @@ document.addEventListener('DOMContentLoaded', function () {
           });
 
           camposFamiliar.forEach(function (campo) {
-              campo.style.display = 'none'; // Ocultar campos de "Familiar"
+              campo.style.display = 'none'; 
           });
       } else if (selectedText === 'Familiar') {
           camposPaciente.forEach(function (campo) {
-              campo.style.display = 'none'; // Ocultar campos de "Paciente"
+              campo.style.display = 'none'; 
           });
 
           camposFamiliar.forEach(function (campo) {
-              campo.style.display = 'block'; // Mostrar campos de "Familiar"
+              campo.style.display = 'block'; 
           });
       } else {
           camposPaciente.forEach(function (campo) {
@@ -49,14 +49,13 @@ document.addEventListener('DOMContentLoaded', function () {
           });
 
           camposFamiliar.forEach(function (campo) {
-              campo.style.display = 'none'; // Ocultar campos para otros valores
+              campo.style.display = 'none'; 
           });
       }
   }
 
   tipoUsuarioSelect.addEventListener('change', toggleCampos);
 
-  // Llama a la función para configurar los campos según el valor inicial
   toggleCampos();
 });
 
@@ -70,9 +69,8 @@ document.addEventListener('DOMContentLoaded', function () {
             let selectedText = selectedOption.textContent;
             console.log('Seleccionaste:', selectedText);
             
-            // Resto de la lógica existente
+         
   
-            // Nueva lógica para hacer campos requeridos para "Paciente"
             let camposPaciente = document.querySelectorAll('.campos-paciente');
             camposPaciente.forEach(function (campo) {
                 campo.querySelectorAll('input, select, textarea').forEach(function (input) {
@@ -80,7 +78,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             });
   
-            // Nueva lógica para hacer campos requeridos para "Familiar"
             let camposFamiliar = document.querySelectorAll('.campos-familiar');
             camposFamiliar.forEach(function (campo) {
                 campo.querySelectorAll('input, select, textarea').forEach(function (input) {

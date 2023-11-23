@@ -71,10 +71,10 @@ def clean_numero_identificacion(numero_identificacion):
         raise ValidationError(_('El Rut no debe contener puntos.'))
 
     if len(cleaned_rut) < 8 or len(cleaned_rut) > 9:
-        raise ValidationError(_('El Rut no es válido, intentelo de nuevo.'))
+        raise ValidationError(_('El Rut no es válido, inténtelo de nuevo.'))
 
     if '-' not in numero_identificacion:
-        raise ValidationError(_('El Rut no es válido, debe contener un guion.'))
+        raise ValidationError(_('El Rut no es válido, debe contener un guión.'))
 
     if not re.match(r'^\d{7,8}-[Kk\d]$', numero_identificacion):
         raise ValidationError(_('El Rut ingresado no es válido.'))
@@ -87,10 +87,19 @@ def validate_fecha_nacimiento(value):
     if value == hoy:
         raise ValidationError('La fecha de nacimiento no puede ser la fecha actual, ingrese su fecha de nacimiento correcto.')
     if value.year < 1900:
-            raise ValidationError('La fecha de nacimiento no es valida, ingreselo nuevamente.')
+            raise ValidationError('La fecha de nacimiento no es valida, ingréselo nuevamente.')
     if value > hoy:
-        raise ValidationError('La fecha de nacimiento no puede ser posterior a la fecha actual, intentelo de nuevo.')
+        raise ValidationError('La fecha de nacimiento no puede ser posterior a la fecha actual, inténtelo de nuevo.')
     
+##VALIDADOR PRE REGISTRO
+
+def clean_numero_identificacion_usuario(value):
+    if Usuario.objects.filter(numero_identificacion=value).exists():
+        raise forms.ValidationError("El número de identificación ya ha sido registrado.")
+
+def clean_correo_usuario(value):
+    if Usuario.objects.filter(email=value).exists():
+        raise forms.ValidationError("El correo electrónico ya ha sido registrado.")
 
 
 class RegistroForm(forms.ModelForm):
@@ -99,7 +108,7 @@ class RegistroForm(forms.ModelForm):
         required=True,
         widget=forms.TextInput(attrs={'placeholder': '12345678-9'}),
         label='Rut',
-        validators=[clean_numero_identificacion]
+        validators=[clean_numero_identificacion, clean_numero_identificacion_usuario]
     )
 
     fecha_nacimiento = forms.DateField(
@@ -111,7 +120,8 @@ class RegistroForm(forms.ModelForm):
 
     email = forms.EmailField(
         widget=forms.TextInput(attrs={'placeholder': 'usuario@gmail.com'}),
-        required=True
+        required=True,
+        validators=[clean_correo_usuario]
     )
 
     numero_telefonico = forms.CharField(
@@ -155,6 +165,7 @@ class RegistroForm(forms.ModelForm):
     fk_tipo_hipertension = forms.ModelChoiceField(
         queryset=TipoHipertension.objects.all(),
         required=False,
+        empty_label= "Seleccione su tipo de hipertensión",
         widget=forms.Select(attrs={'class': 'form-control form-control-sm'}),
         label='Tipo de Hipertensión'
     )
@@ -162,19 +173,21 @@ class RegistroForm(forms.ModelForm):
     fk_tipo_diabetes = forms.ModelChoiceField(
         queryset=TipoDiabetes.objects.all(),
         required=False,
+        empty_label= "Seleccione su tipo de diabetes",
         widget=forms.Select(attrs={'class': 'form-control form-control-sm'}),
         label='Tipo de Diabetes'
     )
 
     fk_tipo_familiar = forms.ModelChoiceField(
-        queryset=TpFamiliar.objects.all(),  # Ajusta esto según tus necesidades
-        required=False,  # Cambia esto a True si el campo es obligatorio para Familiares
+        queryset=TpFamiliar.objects.all(),  
+        required=False,  
+        empty_label= "Seleccione su tipo de familiar",
         widget=forms.Select(attrs={'class': 'form-control form-control-sm'}),
         label='Parentesco con paciente'
     )
 
     rut_paciente = forms.CharField(
-        max_length=12,  # Ajusta la longitud máxima según tus necesidades
+        max_length=12,  
         required=False,
         widget=forms.TextInput(attrs={'placeholder': '12345678-9'}),
         help_text='Ingresa el RUT del paciente (Ejemplo: 12345678-9)',
@@ -673,7 +686,7 @@ class PreRegistroForm(forms.ModelForm):
     numero_identificacion = forms.CharField(
         required=True,
         widget=forms.TextInput(attrs={'placeholder': '12345678-9'}),
-        validators=[clean_numero_identificacion],
+        validators=[clean_numero_identificacion, clean_numero_identificacion_usuario],
         label='Rut'
     )
 
@@ -685,7 +698,8 @@ class PreRegistroForm(forms.ModelForm):
 
     email = forms.EmailField(
         widget=forms.TextInput(attrs={'placeholder': 'usuario@gmail.com'}),
-        required=True
+        required=True,
+        validators=[clean_correo_usuario]
     )
 
     numero_telefonico = forms.CharField(

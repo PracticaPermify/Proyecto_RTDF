@@ -14,7 +14,9 @@ document.getElementById('region').addEventListener('change', function() {
     institucionSelect.innerHTML = '<option value="" selected>Selecciona una institución</option>'
 
     if (regionId) {
-        // Al seleccionar una región, cargar todas las provincias y la primera provincia seleccionada por defecto
+        
+        //El metodo fetch permitira obtener la region a traves de la regiones que se declararon en la vista
+
         fetch(`/obtener_provincias/?region_id=${regionId}`)
             .then(response => response.json())
             .then(data => {
@@ -25,7 +27,6 @@ document.getElementById('region').addEventListener('change', function() {
                     provinciaSelect.appendChild(option);
                 });
 
-                // Una vez que se cargan las provincias, seleccionar la primera provincia por defecto
                 if (data.length > 0) {
                     const primeraProvincia = data[0].id_provincia;
                     cargarComunasPorProvincia(primeraProvincia);
@@ -45,7 +46,7 @@ function cargarComunasPorProvincia(provinciaId) {
     comunaSelect.innerHTML = '<option value="" selected>Selecciona una comuna</option>';
 
     if (provinciaId) {
-        // Al seleccionar una provincia, cargar las comunas relacionadas con esa provincia
+        // esto permitira obtener las comunas para almacenarlas en la vista del usuario
         fetch(`/obtener_comunas/?provincia_id=${provinciaId}`)
             .then(response => response.json())
             .then(data => {
@@ -67,7 +68,7 @@ document.getElementById('comuna').addEventListener('change', function() {
     institucionSelect.innerHTML = '<option value="" selected>Selecciona una institución</option>';
 
     if (comunaId) {
-        // Al seleccionar una comuna, cargar las instituciones relacionadas con esa comuna
+        
         fetch(`/obtener_instituciones/?comuna_id=${comunaId}`)
             .then(response => response.json())
             .then(data => {

@@ -670,15 +670,13 @@ document.getElementById("close-modal2").addEventListener("click", (event) => {
     const valorInicialComuna2 = ComunaPrincipal2.value;
 
     document.getElementById("close-modal2").addEventListener("click", function() {
-        // Copiar el valor seleccionado en la ventana modal al campo "Institución" del formulario principal
+        // Copia el valor seleccionado en la ventana modal al campo "Institución" del formulario principal 
         
 
         if (comunaModal2.value === "") {
-        // Si no se seleccionó ninguna institución en la ventana modal, restaura el valor original
             comunaModal2.value = valorInicialComuna2;
             } else {ComunaPrincipal2.value = comunaModal2.value;}  
 
-        // Cerrar la ventana modal
         document.getElementById("modal2").close();
     });
 
@@ -691,7 +689,7 @@ document.getElementById("close-modal2").addEventListener("click", (event) => {
         comunaModal2.innerHTML = '<option value="" selected>Selecciona una comuna</option>';
 
         if (regionId) {
-            // Cargar provincias y la primera provincia seleccionada por defecto
+
             fetch(`/obtener_provincias/?region_id=${regionId}`)
                 .then(response => response.json())
                 .then(data => {
@@ -703,7 +701,6 @@ document.getElementById("close-modal2").addEventListener("click", (event) => {
                         provinciaModal2.appendChild(option);
                     });
 
-                    // Seleccionar la primera provincia por defecto
                     if (data.length > 0) {
                         const primeraProvincia = data[0].id_provincia;
                         cargarComunasPorProvincia2(primeraProvincia);
@@ -724,7 +721,7 @@ document.getElementById("close-modal2").addEventListener("click", (event) => {
         comunaModal2.innerHTML = '<option value="" selected>Selecciona una comuna</option>';
 
         if (provinciaId) {
-            // Cargar comunas relacionadas con la provincia
+ 
             fetch(`/obtener_comunas/?provincia_id=${provinciaId}`)
             
                 .then(response => response.json())
@@ -760,16 +757,12 @@ document.getElementById("close-modal2").addEventListener("click", (event) => {
     const institucionPrincipal = document.getElementById("{{ form.id_institucion.auto_id }}");
     const valorInicialInstitucion = institucionPrincipal.value;
 
-    document.getElementById("close-modal").addEventListener("click", function() {
-        // Copiar el valor seleccionado en la ventana modal al campo "Institución" del formulario principal
-        
+    document.getElementById("close-modal").addEventListener("click", function() {      
 
         if (institucionModal.value === "") {
-        // Si no se seleccionó ninguna institución en la ventana modal, restaura el valor original
             institucionModal.value = valorInicialInstitucion;
             } else {institucionPrincipal.value = institucionModal.value;}  
 
-        // Cerrar la ventana modal
         document.getElementById("modal").close();
     });
 
@@ -784,7 +777,6 @@ document.getElementById("close-modal2").addEventListener("click", (event) => {
         institucionModal.innerHTML = '<option value="" selected>Selecciona una institución</option>';
 
         if (regionId) {
-            // Cargar provincias y la primera provincia seleccionada por defecto
             fetch(`/obtener_provincias/?region_id=${regionId}`)
                 .then(response => response.json())
                 .then(data => {
@@ -795,7 +787,6 @@ document.getElementById("close-modal2").addEventListener("click", (event) => {
                         provinciaModal.appendChild(option);
                     });
 
-                    // Seleccionar la primera provincia por defecto
                     if (data.length > 0) {
                         const primeraProvincia = data[0].id_provincia;
                         cargarComunasPorProvincia(primeraProvincia);
@@ -814,7 +805,6 @@ document.getElementById("close-modal2").addEventListener("click", (event) => {
         comunaModal.innerHTML = '<option value="" selected>Selecciona una comuna</option>';
 
         if (provinciaId) {
-            // Cargar comunas relacionadas con la provincia
             fetch(`/obtener_comunas/?provincia_id=${provinciaId}`)
                 .then(response => response.json())
                 .then(data => {
@@ -835,7 +825,6 @@ document.getElementById("close-modal2").addEventListener("click", (event) => {
         institucionModal.innerHTML = '<option value="" selected>Selecciona una institución</option>';
 
         if (comunaId) {
-            // Cargar instituciones relacionadas con la comuna
             fetch(`/obtener_instituciones/?comuna_id=${comunaId}`)
                 .then(response => response.json())
                 .then(data => {
