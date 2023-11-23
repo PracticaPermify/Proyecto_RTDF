@@ -34,7 +34,7 @@ DEBUG = True
     # Nicolas =  local_nico
     # PythonAnywhere = pa
 
-entorno = 'local_nico'
+entorno = 'local_felipe'
 
 if entorno == "local_felipe":
 
@@ -84,7 +84,7 @@ else:
 
 ALLOWED_HOSTS = [host]
 
-
+MESSAGE_STORAGE = "django.contrib.messages.storage.cookie.CookieStorage"
 
 # Application definition
 

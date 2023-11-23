@@ -13,6 +13,7 @@
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
 		integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
 	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 </head>
 
 <body class="is-preload">
@@ -135,6 +136,9 @@
 	</div>
 
 	<div id="content">
+
+
+
 		{% block content %}{% endblock %}
 	</div>
 
@@ -163,7 +167,21 @@
 		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 		<script src="https://kit.fontawesome.com/2b69110305.js" crossorigin="anonymous"></script>
-		   
+		<!-- Sweet Alert 2 -->
+		
+
+		{% if messages %}
+			{% for m in messages %}
+				<script>
+					Swal.fire({
+						"title": "Correcto",
+						"text": "{{m}}",
+						"icon": "success"
+					})
+				</script>
+			{% endfor %}
+		{% endif %}
+
 		{% endblock %}
 </body>
 

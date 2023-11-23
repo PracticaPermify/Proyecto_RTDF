@@ -1,10 +1,34 @@
 
 {% extends 'rtdf/base.html' %}
 
+{% block js %}
+<script>
+    function eliminarInforme(id) {
+        Swal.fire({
+            "title":"¿Estas seguro?",
+            "text": "esta acción no se puede deshacer.",
+            "icon":"error",
+            "showCancelButton": true,
+            "cancelButtonText": "No, Cancelar",
+            "cancelButtonColor": "#3085d6",
+            "confirmButtonText": "Si, Eliminar",
+            "reverseButtons":true,
+            "confirmButtonColor":"#d33"
+        })
+            .then(function(result){
+                if(result.isConfirmed){
+                    window.location.href = "/eliminar_informe/"+id+"/"
+                }
+            })
+
+    }
+</script>
+
+{% endblock %}
+
 {% block content %}
 {% load static%}
 <link rel="stylesheet" href="{% static 'app/css/css_profesionales/detalle_prof_infor.css' %}"/>
-
 
 <body class="is-preload">
     <div class="container">
@@ -18,7 +42,10 @@
 
         <h1>Detalles del informe {{ informe.id_informe }}</h1>
         </br>
-        <a href="{% url 'eliminar_informe' informe.id_informe %}" class="btn btn-danger btn-derecha">
+        <!-- <a href="{% url 'eliminar_informe' informe.id_informe %}" class="btn btn-danger btn-derecha">
+            Eliminar <i class="fas fa-trash-alt" style="margin-left: 5px;"></i>
+        </a> -->
+        <a href="#" onclick="eliminarInforme({{ informe.id_informe }})" class="btn btn-danger btn-derecha">
             Eliminar <i class="fas fa-trash-alt" style="margin-left: 5px;"></i>
         </a>
         <a href="{% url 'editar_informe' informe.id_informe %}" class="btn btn-primary btn-derecha">
