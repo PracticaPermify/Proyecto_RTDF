@@ -98,7 +98,7 @@
 
             <div class="form-row">
                 {% for select in selects %}
-                    <div class="col-md-3 select-separado">
+                    <div class="col-md-5 select-separado">
                         <label for="palabra{{ select.id }}">Selecciona una palabra {{ select.id }}:</label>
                         <select name="palabra{{ select.id }}" id="palabra{{ select.id }}" class="form-control">
                             <option value="">Selecciona una palabra</option>
@@ -114,6 +114,19 @@
                 {% endfor %}
             </div>
 
+
+            <div class="row">
+              <div class="col-md-6">
+                  <button type="button" class="btn btn-secondary w-100" id="anterior-btn">Anterior</button>
+              </div>
+              <div class="col-md-6">
+                  <button type="button" class="btn btn-primary w-100" id="siguiente-btn">Siguiente</button>
+              </div>
+            </div>
+          
+
+
+          </br>
           </br>
 
             <div class="row">
@@ -196,6 +209,8 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="{% static 'app/js/template/pauta_terapeutica.js' %}"></script>
+<script src="{% static 'app/js/desplazador_palabras.js' %}"></script>
+
 
 </br>
 

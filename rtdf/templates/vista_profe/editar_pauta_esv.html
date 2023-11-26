@@ -2,6 +2,8 @@
 
 {% block content %}
 
+{% load static %}
+
 <form method="post">
 
 
@@ -43,7 +45,7 @@
 </br>
 <div class="row">
   {% for select in selects %}
-      <div class="col-md-3">
+      <div class="col-md-6 select-separado select-group">
           <label for="palabra{{ select.id }}">Selecciona una palabra {{ select.id }}:</label>
           <select name="palabra{{ select.id }}" id="palabra{{ select.id }}">
               <option value="">Selecciona una palabra</option>
@@ -57,12 +59,28 @@
       </div>
   {% endfor %}
 </div>
+
+</br>
+
+<div class="row">
+    <div class="col-md-6">
+        <button type="button" class="btn btn-secondary w-100" id="anterior-btn">Anterior</button>
+    </div>
+    <div class="col-md-6">
+        <button type="button" class="btn btn-primary w-100" id="siguiente-btn">Siguiente</button>
+    </div>
+</div>
+
+
 </br>
 
 
   <button type="submit" class="btn btn-primary">Guardar Cambios</button>
 
 </form>
+
+
+<script src="{% static 'app/js/desplazador_palabras.js' %}"></script>
 
 
 {% endblock %}
