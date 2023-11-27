@@ -24,8 +24,9 @@
         <h1>Detalles del análisis del audio N°{{ detalle_audio.id_audio }}</h1>
     
         </br>
-        <a href="{% url 'eliminar_audio_prof' detalle_audio.id_audio %}" class="btn btn-danger btn-derecha mb-3">
-            Eliminar audio<i class="fas fa-trash-alt" style="margin-left: 5px;"></i> 
+
+        <a href="#" onclick="eliminarAudio({{ detalle_audio.id_audio }})" class="btn btn-danger btn-derecha mb-3">
+            Eliminar audio<i class="fas fa-trash-alt" style="margin-left: 5px;"></i>
         </a>
 
         <div class="table-container">
@@ -142,12 +143,17 @@
 
             {% if coef_manual %}
                 
-                <a href="{% url 'eliminar_coef_manual' coef_manual.id_audiocoeficientes %}" class="btn btn-danger btn-derecha mb-3">
-                    Eliminar <i class="fas fa-trash-alt" style="margin-left: 5px;"></i> 
+
+
+                <a href="#" onclick="eliminarCoefManual({{ coef_manual.id_audiocoeficientes }})" class="btn btn-danger btn-derecha mb-3">
+                    Eliminar<i class="fas fa-trash-alt" style="margin-left: 5px;"></i>
                 </a>
+
                 <a href="{% url 'editar_coef_manual' coef_manual.id_audiocoeficientes %}" class="btn btn-primary btn-derecha mb-3">
                     Editar <i class="fas fa-pencil-alt" style="margin-left: 5px;"></i>
                 </a>
+
+                
             {% else %}
                   </br>    
             {% endif %}
@@ -245,5 +251,50 @@
 
 </div>
 
+
+<script>
+    function eliminarCoefManual(audiocoeficientes_id) {
+        Swal.fire({
+            "title":"¿Estas seguro?",
+            "text": "esta acción no se puede deshacer.",
+            "icon":"error",
+            "showCancelButton": true,
+            "cancelButtonText": "No, Cancelar",
+            "cancelButtonColor": "#3085d6",
+            "confirmButtonText": "Si, Eliminar",
+            "reverseButtons":true,
+            "confirmButtonColor":"#d33"
+        })
+            .then(function(result){
+                if(result.isConfirmed){
+                    window.location.href = "/eliminar_coef_manual/"+audiocoeficientes_id+"/"
+                }
+            })
+
+    }
+
+
+    function eliminarAudio(audio_id) {
+        Swal.fire({
+            "title":"¿Estas seguro?",
+            "text": "esta acción no se puede deshacer.",
+            "icon":"error",
+            "showCancelButton": true,
+            "cancelButtonText": "No, Cancelar",
+            "cancelButtonColor": "#3085d6",
+            "confirmButtonText": "Si, Eliminar",
+            "reverseButtons":true,
+            "confirmButtonColor":"#d33"
+        })
+            .then(function(result){
+                if(result.isConfirmed){
+                    window.location.href = "/eliminar_audio_prof/"+audio_id+"/"
+                }
+            })
+
+    }
+
+    
+</script>
 
 {% endblock %}

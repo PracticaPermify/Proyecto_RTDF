@@ -1224,6 +1224,8 @@ def esv(request):
                                     emocional=puntaje_emocional, fisico=puntaje_fisico)
                 esv_instance.save()
 
+                messages.success(request, "Informe ESV ingresado correctamente")  
+
                 return redirect('listado_informes')
         else:
             form = InformeForm(initial={'fecha': timezone.now()})
@@ -1323,7 +1325,7 @@ def ingresar_informes(request):
                     rasati = rasati_form.save(commit=False)
                     rasati.id_informe = informe
                     rasati.save()
-
+                messages.success(request, "Informe "+ tipo_informe + " ingresado correctamente")  
                 return redirect('listado_informes')
         else:
             form = InformeForm(initial={'fecha': timezone.now()})
@@ -1388,6 +1390,7 @@ def editar_informe(request, informe_id):
             if grbas_form and grbas_form.is_valid():
                 grbas_form.save()
 
+            messages.success(request, "Informe "+ str(informe_id) + " editado correctamente")  
             return redirect('detalle_prof_infor', informe_id=informe.id_informe)
         else:
             form = InformeForm(instance=informe)
@@ -1440,6 +1443,7 @@ def detalle_esv(request, informe_id):
             escala_vocales.id_pauta_terapeutica = pauta_terapeutica
             escala_vocales.save()
 
+            messages.success(request, "Pauta Escala Vocal agregada correctamente")  
             return HttpResponseRedirect(request.path_info)
 
     else:
@@ -1604,6 +1608,7 @@ def editar_pauta_esv(request, pauta_id):
                 escala_vocales.id_pauta_terapeutica = pauta
                 escala_vocales.save()
 
+            messages.success(request, "Pauta ESV N°" + str(pauta_id) + " editada correctamente")  
             return redirect('detalle_pauta_esv', pauta_id)
     else:
         form = PautaTerapeuticaForm(instance=pauta)
@@ -1631,6 +1636,7 @@ def eliminar_pauta_esv(request, pauta_id):
     if pauta.fk_tp_terapia.tipo_terapia == 'Escala_vocal':
         pauta.delete()
 
+    messages.success(request, "Pauta ESV N°" + str(pauta_id) + " eliminada correctamente")
     return redirect('detalle_esv', informe_id=pauta.fk_informe.id_informe)
 
 
@@ -1650,7 +1656,9 @@ def editar_esv(request, informe_id):
         informe.observacion = request.POST.get('observacion')
         informe.save()
 
-        return redirect('listado_informes')
+        messages.success(request, "Informe ESV N°" + str(informe_id) + " editado correctamente")
+
+        return redirect('detalle_esv', informe_id)
     else:
         return render(request, 'vista_profe/editar_esv.html', {'informe': informe, 
                                                                  'tipo_usuario': tipo_usuario})
@@ -1664,7 +1672,7 @@ def eliminar_informe_esv(request, informe_id):
         esv_instance.delete()
 
     informe.delete()
-
+    messages.success(request, "Informe ESV eliminado correctamente")
     return redirect('listado_informes')
 
 def eliminar_informe(request, informe_id):
@@ -1774,6 +1782,7 @@ def desvincular_paciente(request, paciente_id):
     
     if relacion.exists():
         relacion.delete()
+        messages.success(request, "Desvinculado correctamente.")
         return redirect('listado_pacientes')
     else:
         return redirect('listado_pacientes')
@@ -1939,6 +1948,7 @@ def ingresar_coef_profe(request, audio_id):
                 informe.fecha_coeficiente = timezone.now()
                 informe.save()  # Ahora guarda en la base de dato
 
+                messages.success(request, "Coeficiente manual ingresado correctamente")
                 return redirect('detalle_audio_profe', audio_id)
         else:
             form = AudioscoeficientesForm(initial={'fecha_coeficiente': timezone.now(),
@@ -1971,6 +1981,7 @@ def eliminar_coef_manual(request, audiocoeficientes_id):
 
     coef_manual.delete()
 
+    messages.success(request, "Coeficiente manual N°" + str(audiocoeficientes_id) + " eliminado correctamente")
     return redirect('detalle_audio_profe', audio_id=id_audio)
 
 @never_cache
@@ -1996,6 +2007,7 @@ def editar_coef_manual(request, audiocoeficientes_id):
                 informe.fecha_coeficiente = fecha
                 informe.save() 
 
+                messages.success(request, "Coeficiente manual N°" + str(audiocoeficientes_id) + " editada correctamente")
                 return redirect('detalle_audio_profe', audio_id=id_audio)
             
         else:
@@ -2017,6 +2029,7 @@ def eliminar_audio_prof(request, audio_id):
 
     audio_registro.delete()
 
+    messages.success(request, "Audio N°" + str(audio_id) + " eliminado correctamente")
     return redirect('analisis_profe')
 
 
@@ -2074,6 +2087,7 @@ def editar_prof_pauta(request, id_pauta_terapeutica_id):
             if vocalizacion_form and vocalizacion_form.is_valid():
                 vocalizacion_form.save()
 
+            messages.success(request, "Pauta N°" + str(id_pauta_terapeutica_id) + " editada correctamente")
             return redirect('detalle_prof_pauta', id_pauta_terapeutica_id=pauta.id_pauta_terapeutica)
         else:
             form = PautaTerapeuticaForm(instance=pauta)
@@ -2102,6 +2116,7 @@ def eliminar_prof_pauta(request, id_pauta_terapeutica_id):
 
     pauta.delete()
 
+    messages.success(request, "Pauta N°" + str(id_pauta_terapeutica_id) + " eliminada correctamente")
     return redirect('detalle_prof_infor', informe_id=pauta.fk_informe.id_informe)
 
 @never_cache
@@ -2151,12 +2166,13 @@ def agregar_paciente(request, paciente_id):
         if RelacionPaPro.objects.filter(fk_profesional_salud=profesional_salud).count() < 10:
 
             if not RelacionPaPro.objects.filter(id_paciente=paciente).exists():
-  
+
                 relacion = RelacionPaPro(fk_profesional_salud=profesional_salud, id_paciente=paciente)
                 relacion.save()
 
                 enviar_correo_paciente(paciente, profesional_salud)
 
+                messages.success(request, "Paciente vinculado correctamente")
                 return redirect('listado_pacientes')
             else:
                 return render(request, 'vista_profe/error.html', {'error_message': 'El paciente ya está asignado a otro profesional.'})
@@ -2441,7 +2457,7 @@ def detalle_preregistro(request, preregistro_id):
 
 
 
-
+            messages.success(request, "Pre-registro N°" + str(preregistro_id) + " validado correctamente. Correo enviado al usuario " + usuario.primer_nombre + " " + usuario.ap_paterno)
             return redirect('detalle_preregistro', preregistro_id )
 
     return render(request, 'vista_admin/detalle_preregistro.html', 
@@ -2643,7 +2659,7 @@ def eliminar_informe_admin(request, informe_id):
         informe.rasati.delete()
 
     informe.delete()
-
+    messages.success(request, "Informe N°" + str(informe_id) + " eliminado correctamente")
     return redirect('detalle_paciente', paciente_id=informe.fk_relacion_pa_pro.id_paciente.id_usuario.id_usuario)
 
 @never_cache
@@ -2693,7 +2709,7 @@ def detalle_informe(request, informe_id):
                     vocalizacion.save()
 
                 elif tipo_terapia == 'Intensidad':
-                           
+                    
                     if not intensidad_form.cleaned_data['min_db']:
                         #se setea a null
                         intensidad_form.cleaned_data['min_db'] = None
@@ -2709,6 +2725,7 @@ def detalle_informe(request, informe_id):
                     intensidad.id_pauta_terapeutica = pauta_terapeutica
                     intensidad.save()    
 
+                messages.success(request, "Pauta " + tipo_terapia + " ingresada correctamente")
                 return redirect('detalle_informe', informe_id=informe.id_informe)
         
 
@@ -2774,6 +2791,7 @@ def editar_informe_admin(request, informe_id):
             if grbas_form and grbas_form.is_valid():
                 grbas_form.save()
 
+            messages.success(request, "Informe N°" + str(informe_id) + " editado correctamente")
             return redirect('detalle_informe', informe_id=informe.id_informe)
         else:
             form = InformeForm(instance=informe)
@@ -2894,6 +2912,7 @@ def editar_pauta_esv_admin(request, pauta_id):
                 escala_vocales.id_pauta_terapeutica = pauta
                 escala_vocales.save()
 
+            messages.success(request, "Pauta N°" + str(pauta_id) + " editada correctamente")
             return redirect('detalle_pauta_esv_admin', pauta_id)
     else:
         form = PautaTerapeuticaForm(instance=pauta)
@@ -2919,6 +2938,7 @@ def eliminar_pauta_esv_admin(request, pauta_id):
     if pauta.fk_tp_terapia.tipo_terapia == 'Escala_vocal':
         pauta.delete()
 
+    messages.success(request, "Pauta ESV N°" + str(pauta_id) + " eliminada correctamente")
     return redirect('detalle_esv_admin', informe_id=pauta.fk_informe.id_informe)
     
 
@@ -2992,7 +3012,7 @@ def editar_pauta_admin(request, id_pauta_terapeutica_id):
 
                 vocalizacion.save()
 
-
+            messages.success(request, "Pauta N°" + str(id_pauta_terapeutica_id) + " editada correctamente")
             return redirect('detalle_pauta_admin', id_pauta_terapeutica_id=pauta.id_pauta_terapeutica)
         else:
             form = PautaTerapeuticaForm(instance=pauta)
@@ -3017,6 +3037,8 @@ def eliminar_pauta_admin(request, id_pauta_terapeutica_id):
         pauta.vocalizacion.delete()
 
     pauta.delete()
+
+    messages.success(request, "Pauta N°" + str(id_pauta_terapeutica_id) + " eliminada correctamente")
 
     return redirect('detalle_informe', informe_id=pauta.fk_informe.id_informe)
 
@@ -3058,6 +3080,7 @@ def detalle_esv_admin(request, informe_id):
                 escala_vocales.id_pauta_terapeutica = pauta_terapeutica
                 escala_vocales.save()
 
+                messages.success(request, "Pauta Escala Vocal ingresada correctamente")
                 return HttpResponseRedirect(request.path_info)
 
         else:
@@ -3109,6 +3132,7 @@ def editar_esv_admin(request, informe_id):
                 informe.observacion = request.POST.get('observacion')
                 informe.save()
 
+                messages.success(request, "Informe ESV N°" + str(informe_id) + " editado correctamente")
                 return redirect('detalle_esv_admin', informe_id=informe.id_informe)
 
             return render(request, 'vista_admin/editar_esv_admin.html', {
@@ -3129,7 +3153,7 @@ def eliminar_esv_admin(request, informe_id):
 
         informe.delete()
 
-  
+        messages.success(request, "Informe ESV N°" + str(informe_id) + " eliminado correctamente")
         return redirect('detalle_paciente', paciente_id=informe.fk_relacion_pa_pro.id_paciente.id_usuario.id_usuario)
 
     return redirect('index')

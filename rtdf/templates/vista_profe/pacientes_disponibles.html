@@ -30,8 +30,8 @@
                 <td>{{ paciente.id_usuario.email }}</td>
                 <td>{{ paciente.telegram }}</td>
                 <td>
-                  <a href="{% url 'agregar_paciente' paciente.id_paciente %}" class="btn btn-primary"
-                  onclick="return confirm('¿Estás seguro de añadir a este paciente?')">Añadir paciente</a>
+                  <a href="#" class="btn btn-primary" onclick="AñadirPaciente({{paciente.id_paciente}})">Añadir paciente</a>
+
               </td>
             </tr>
         {% empty %}
@@ -42,5 +42,28 @@
     </tbody>
   </table>
 </div>
+
+
+<script>
+      function AñadirPaciente(paciente_id) {
+        Swal.fire({
+            "title":"¿Estas seguro?",
+            "text": "¿Estás seguro de añadir a este paciente?",
+            "icon":"warning",
+            "showCancelButton": true,
+            "cancelButtonText": "No, Cancelar",
+            "cancelButtonColor": "#d33",
+            "confirmButtonText": "Si, Agregar",
+            "reverseButtons":true,
+            "confirmButtonColor":"#196F3D"
+        })
+            .then(function(result){
+                if(result.isConfirmed){
+                    window.location.href = "/agregar_paciente/"+paciente_id+"/"
+                }
+            })
+
+    }
+</script>
 
 {% endblock %}

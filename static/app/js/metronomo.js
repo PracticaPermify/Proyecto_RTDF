@@ -65,8 +65,8 @@ source1.connect(audioCtx.destination);
 source2.connect(audioCtx.destination);
 
 //CONFIGURACIONES DEL METRONOMO
-let bpm = 140;
-let beatsPerMeasure = 4;
+let bpm = parseInt(document.getElementById('metronome').dataset.bpm) || 140;
+let beatsPerMeasure = parseInt(document.getElementById('metronome').dataset.tempo) || 4;
 let count = 0;
 let isRunning = false;
 let tempoTextString = 'Medium';

@@ -13,9 +13,8 @@
 <h1>Detalle de Pauta Terapéutica de Escala Vocal</h1>
 
 
-<a href="{% url 'eliminar_pauta_esv_admin' pauta.id_pauta_terapeutica %}" class="btn btn-danger btn-derecha" 
-   onclick="return confirm('¿Estás seguro de eliminar la pauta terapéutica?')">
-   Eliminar <i class="fas fa-trash" style="margin-left: 5px;"></i>
+<a href="#" onclick="eliminarPautaEsv({{ pauta.id_pauta_terapeutica }})" class="btn btn-danger btn-derecha">
+  Eliminar <i class="fas fa-trash" style="margin-left: 5px;"></i>
 </a>
 
 <a href="{% url 'editar_pauta_esv_admin' pauta.id_pauta_terapeutica %}" class="btn btn-primary btn-derecha">
@@ -73,5 +72,30 @@
       </td>
   </tbody>
 </table>
+
+
+<script>
+
+  function eliminarPautaEsv(pauta_id) {
+      Swal.fire({
+          "title":"¿Estas seguro?",
+          "text": "esta acción no se puede deshacer.",
+          "icon":"error",
+          "showCancelButton": true,
+          "cancelButtonText": "No, Cancelar",
+          "cancelButtonColor": "#3085d6",
+          "confirmButtonText": "Si, Eliminar",
+          "reverseButtons":true,
+          "confirmButtonColor":"#d33"
+      })
+          .then(function(result){
+              if(result.isConfirmed){
+                  window.location.href = "/eliminar_pauta_esv_admin/"+pauta_id+"/"
+              }
+          })
+
+  }
+
+</script>
 
 {% endblock %}

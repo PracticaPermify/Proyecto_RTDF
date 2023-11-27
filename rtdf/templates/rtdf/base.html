@@ -14,6 +14,8 @@
 		integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
 	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+	
 </head>
 
 <body class="is-preload">
@@ -38,7 +40,7 @@
 							<a href="{% url 'ingresar_informes' %}">Ingresar informe</a>
 						</li>
 						<li {% if request.path == '/esv/' %}class="current"{% endif %}>
-							<a href="{% url 'esv' %}">Escala de sintomas vocales (ESV)</a>
+							<a href="{% url 'esv' %}">Escala de síntomas vocales (ESV)</a>
 						</li>
 						<li {% if request.path == '/pacientes_disponibles/' %}class="current"{% endif %}><a href="{% url 'pacientes_disponibles' %}">Pacientes disponibles</a></li>
 						<li {% if request.path == '/analisis_profe/' %}class="current"{% endif %}>
@@ -58,13 +60,13 @@
 						<li><a href="{% url 'perfil' request.user.id_usuario %}">Mi perfil</a></li>
 					{% endif %}
 					{% if tipo_usuario == 'Admin' %}
-						<li><a href="{% url 'list_fono_admin' %}">Fonoaudiólogos</a></li>
-						<li><a href="{% url 'list_neur_admin' %}">Neurólogos</a></li>
-						<li><a href="{% url 'list_paci_admin' %}">Pacientes</a></li>
-						<li><a href="{% url 'list_fami_admin' %}">Familiares</a></li>
-						<li><a href="{% url 'analisis_admin' %}">Análisis</a></li>
-						<li><a href="{% url 'listado_preregistros' %}">Pre-registros</a></li>
-						<li><a href="{% url 'perfil' request.user.id_usuario %}">Mi perfil</a></li>
+						<li {% if request.path == '/list_fono_admin/' %}class="current"{% endif %}><a href="{% url 'list_fono_admin' %}">Fonoaudiólogos</a></li>
+						<li {% if request.path == '/list_neur_admin/' %}class="current"{% endif %}><a href="{% url 'list_neur_admin' %}">Neurólogos</a></li>
+						<li {% if request.path == '/list_paci_admin/' %}class="current"{% endif %}><a href="{% url 'list_paci_admin' %}">Pacientes</a></li>
+						<li {% if request.path == '/list_fami_admin/' %}class="current"{% endif %}><a href="{% url 'list_fami_admin' %}">Familiares</a></li>
+						<li {% if request.path == '/analisis_admin/' %}class="current"{% endif %}><a href="{% url 'analisis_admin' %}">Análisis</a></li>
+						<li {% if request.path == '/listado_preregistros/' %}class="current"{% endif %}><a href="{% url 'listado_preregistros' %}">Pre-registros</a></li>
+						<li {% if '/perfil/' in request.path %}class="current"{% endif %}><a href="{% url 'perfil' request.user.id_usuario %}">Mi perfil</a></li>
 					{% endif %}
 					{% if tipo_usuario == 'Familiar' %}
 						<li><a href="{% url 'lista_familiar' %}">Familiar de</a></li>

@@ -18,8 +18,8 @@
 
   <h1>Detalles de la Pauta {{ pauta.id_pauta_terapeutica }}</h1>
 
-    <a href="{% url 'eliminar_pauta_admin' pauta.id_pauta_terapeutica %}" class="btn btn-danger btn-derecha">
-        Eliminar <i class="fas fa-trash-alt" style="margin-left: 5px;"></i> 
+    <a href="#" onclick="eliminarAdminPauta({{ pauta.id_pauta_terapeutica }})" class="btn btn-danger btn-derecha">
+        Eliminar<i class="fas fa-trash-alt" style="margin-left: 5px;"></i>
     </a>
 
     <a href="{% url 'editar_pauta_admin' pauta.id_pauta_terapeutica %}" class="btn btn-primary btn-derecha">
@@ -143,5 +143,27 @@
       </table>
   </div>
 </div>
+
+<script>
+    function eliminarAdminPauta(id_pauta_terapeutica_id) {
+        Swal.fire({
+            "title":"¿Estas seguro?",
+            "text": "esta acción no se puede deshacer.",
+            "icon":"error",
+            "showCancelButton": true,
+            "cancelButtonText": "No, Cancelar",
+            "cancelButtonColor": "#3085d6",
+            "confirmButtonText": "Si, Eliminar",
+            "reverseButtons":true,
+            "confirmButtonColor":"#d33"
+        })
+            .then(function(result){
+                if(result.isConfirmed){
+                    window.location.href = "/eliminar_pauta_admin/"+id_pauta_terapeutica_id+"/"
+                }
+            })
+
+    }
+</script>
 
 {% endblock %}

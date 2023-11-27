@@ -23,9 +23,12 @@
     <h1>Detalles del informe {{ informe.id_informe }}</h1>
 
     </br>
-    <a href="{% url 'eliminar_informe_admin' informe.id_informe %}" class="btn btn-danger btn-derecha">
-        Eliminar <i class="fas fa-trash-alt" style="margin-left: 5px;"></i> 
+
+
+    <a href="#" onclick="eliminarInforme({{ informe.id_informe }})" class="btn btn-danger btn-derecha">
+        Eliminar <i class="fas fa-trash-alt" style="margin-left: 5px;"></i>
     </a>
+
     <a href="{% url 'editar_informe_admin' informe.id_informe %}" class="btn btn-primary btn-derecha">
         Editar <i class="fas fa-pencil-alt" style="margin-left: 5px;"></i>
     </a>
@@ -355,6 +358,30 @@
     <!-- <script src="../../../static/app/js/pauta_terapeutica.js"></script> -->
     <script src="{% static 'app/js/template/pauta_terapeutica.js' %}"></script>
     <script src="{% static 'app/js/traductor_numerico.js' %}"></script>
+
+
+<script>
+
+    function eliminarInforme(id_informe) {
+            Swal.fire({
+                "title":"¿Estas seguro?",
+                "text": "esta acción no se puede deshacer.",
+                "icon":"error",
+                "showCancelButton": true,
+                "cancelButtonText": "No, Cancelar",
+                "cancelButtonColor": "#3085d6",
+                "confirmButtonText": "Si, Eliminar",
+                "reverseButtons":true,
+                "confirmButtonColor":"#d33"
+            })
+                .then(function(result){
+                    if(result.isConfirmed){
+                        window.location.href = "/eliminar_informe_admin/"+id_informe+"/"
+                    }
+                })
+
+        }
+</script>
 
 {% endblock %}
 

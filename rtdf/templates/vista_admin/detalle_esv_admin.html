@@ -14,9 +14,13 @@
 
 </br>
 
-<a href="{% url 'eliminar_esv_admin' informe.id_informe %}" class="btn btn-danger btn-derecha">Eliminar ESV <i class="fas fa-trash-alt" style="margin-left: 5px;"></i></a>
+<a href="#" onclick="eliminarInformeEsv({{ informe.id_informe }})" class="btn btn-danger btn-derecha">
+  Eliminar<i class="fas fa-trash-alt" style="margin-left: 5px;"></i>
+</a>
 
-<a href="{% url 'editar_esv_admin' informe.id_informe %}" class="btn btn-primary btn-derecha">Editar ESV <i class="fas fa-pencil-alt" style="margin-left: 5px;"></i></a>
+<a href="#" onclick="EditarInformeEsv({{ informe.id_informe }})" class="btn btn-primary btn-derecha">
+  Editar<i class="fas fa-pencil-alt" style="margin-left: 5px;"></i>
+</a>
 
 </br>
 
@@ -212,6 +216,47 @@
 <script src="{% static 'app/js/desplazador_palabras.js' %}"></script>
 
 
-</br>
+
+<script>
+      function EditarInformeEsv(id_informe) {
+        Swal.fire({
+            "title":"¿Estás seguro?",
+            "text": "Solo podrá editar el titulo, la descripción, la fecha y la observación. Si desea modificar las respuestas, deberá eliminar este informe y crear otro.",
+            "icon":"warning",
+            "showCancelButton": true,
+            "cancelButtonText": "No, Cancelar",
+            "cancelButtonColor": "#3085d6",
+            "confirmButtonText": "Si, Editar",
+            "reverseButtons":true,
+            "confirmButtonColor":"#d33"
+        })
+            .then(function(result){
+                if(result.isConfirmed){
+                    window.location.href = "/editar_esv_admin/"+id_informe+"/"
+                }
+            })
+
+    }
+
+    function eliminarInformeEsv(informe_id) {
+        Swal.fire({
+            "title":"¿Estas seguro?",
+            "text": "esta acción no se puede deshacer.",
+            "icon":"error",
+            "showCancelButton": true,
+            "cancelButtonText": "No, Cancelar",
+            "cancelButtonColor": "#3085d6",
+            "confirmButtonText": "Si, Eliminar",
+            "reverseButtons":true,
+            "confirmButtonColor":"#d33"
+        })
+            .then(function(result){
+                if(result.isConfirmed){
+                    window.location.href = "/eliminar_esv_admin/"+informe_id+"/"
+                }
+            })
+
+    }
+</script>
 
 {% endblock %}
