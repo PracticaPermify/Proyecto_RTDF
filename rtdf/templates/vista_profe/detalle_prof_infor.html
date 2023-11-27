@@ -1,30 +1,6 @@
 
 {% extends 'rtdf/base.html' %}
 
-{% block js %}
-<script>
-    function eliminarInforme(id) {
-        Swal.fire({
-            "title":"¿Estas seguro?",
-            "text": "esta acción no se puede deshacer.",
-            "icon":"error",
-            "showCancelButton": true,
-            "cancelButtonText": "No, Cancelar",
-            "cancelButtonColor": "#3085d6",
-            "confirmButtonText": "Si, Eliminar",
-            "reverseButtons":true,
-            "confirmButtonColor":"#d33"
-        })
-            .then(function(result){
-                if(result.isConfirmed){
-                    window.location.href = "/eliminar_informe/"+id+"/"
-                }
-            })
-
-    }
-</script>
-
-{% endblock %}
 
 {% block content %}
 {% load static%}
@@ -248,16 +224,19 @@
                         <div class="form-group col-md-4">
                             <label for="{{ vocalizacion_form.duracion_seg.id_for_label }}"><i class="fa-solid fa-stopwatch-20"></i>Duración en segundos <span class="required">*</span></label>
                             {{ vocalizacion_form.duracion_seg }}
+                            <span class="text-danger">{{ vocalizacion_form.errors.duracion_seg }}</span>
                         </div>
         
                         <div class="form-group col-md-4">
                             <label for="{{ vocalizacion_form.bpm.id_for_label }}"><i class="fa-solid fa-wave-square"></i>BPM <span class="required">*</span></label>
                             {{ vocalizacion_form.bpm }}
+                            <span class="text-danger">{{ vocalizacion_form.errors.bpm }}</span>
                         </div>
         
                         <div class="form-group col-md-4">
                             <label for="{{ vocalizacion_form.tempo.id_for_label }}"><i class="fa-solid fa-gauge"></i>Tempo <span class="required">*</span></label>
                             {{ vocalizacion_form.tempo }}
+                            <span class="text-danger">{{ vocalizacion_form.errors.tempo }}</span>
                         </div>
                     </div>
 
@@ -337,7 +316,7 @@
                     {% for vocalizacion in datos_vocalizacion %}
                     <tr>
                         <td><a href="{% url 'detalle_prof_pauta' vocalizacion.id_pauta_terapeutica_id %}">
-                                {{ vocalizacion.id_pauta_terapeutica_id}}</a></td>
+                            Pauta {{ vocalizacion.id_pauta_terapeutica_id}}</a></td>
                         <td>{{ vocalizacion.id_pauta_terapeutica.cant_veces_dia}}</td>
                         <td>{{ vocalizacion.id_pauta_terapeutica.fecha_inicio }}</td>
                         <td>{{ vocalizacion.id_pauta_terapeutica.fecha_fin }}</td>
@@ -375,7 +354,7 @@
                     {% for intensidad in datos_intensidad %}
                     <tr>
                         <td><a href="{% url 'detalle_prof_pauta' intensidad.id_pauta_terapeutica_id %}">
-                                {{ intensidad.id_pauta_terapeutica_id}}</a></td>
+                            Pauta {{ intensidad.id_pauta_terapeutica_id}}</a></td>
                         <td>{{ intensidad.id_pauta_terapeutica.cant_veces_dia}}</td>
                         <td>{{ intensidad.id_pauta_terapeutica.fecha_inicio }}</td>
                         <td>{{ intensidad.id_pauta_terapeutica.fecha_fin }}</td>
@@ -400,6 +379,26 @@
 <script src="{% static 'app/js/traductor_numerico.js' %}"></script>
 
 <script>
+
+    function eliminarInforme(id_informe) {
+        Swal.fire({
+            "title":"¿Estas seguro?",
+            "text": "esta acción no se puede deshacer.",
+            "icon":"error",
+            "showCancelButton": true,
+            "cancelButtonText": "No, Cancelar",
+            "cancelButtonColor": "#3085d6",
+            "confirmButtonText": "Si, Eliminar",
+            "reverseButtons":true,
+            "confirmButtonColor":"#d33"
+        })
+            .then(function(result){
+                if(result.isConfirmed){
+                    window.location.href = "/eliminar_informe/"+id_informe+"/"
+                }
+            })
+
+    }
 
 </script>
 

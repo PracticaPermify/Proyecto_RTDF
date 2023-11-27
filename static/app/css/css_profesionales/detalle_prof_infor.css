@@ -147,6 +147,10 @@ height: 100px;
 
   }
 
+  #select-groups-container{
+    cursor: pointer;
+  }
+
 }
 
 @media screen and (max-width: 992px) {

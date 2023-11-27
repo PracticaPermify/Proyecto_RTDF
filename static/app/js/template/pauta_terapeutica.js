@@ -10,10 +10,34 @@ $(document).ready(function() {
     }
 
     function ocultarFormulario() {
+        limpiarCampos();
+
         $("#formulario-pauta").slideUp();
         $("#mostrar-formulario-btn").show();
         $("#ocultar-formulario-btn").hide();
         formularioVisible = false;
+    }
+
+    function limpiarCampos() {
+        $("#id_cant_veces_dia").val("");
+        $("#id_descripcion").val("");
+        $("#fk_tp_terapia").val("");
+        $("#fecha_inicio").val("");
+        $("#id_descripcion").val("");
+        $("#fecha_fin").val("");
+        $("#id_comentario").val("");
+
+        //Campos de intensidad
+
+        $("#id_intensidad").val("");
+        $("#id_min_db").val("");
+        $("#id_max_db").val("");
+
+        //campos de vocalizacion
+        
+        $("#id_duracion_seg").val("");
+        $("#id_bpm").val("");
+        $("#id_tempo").val("");
     }
 
     $("#mostrar-formulario-btn").click(function() {

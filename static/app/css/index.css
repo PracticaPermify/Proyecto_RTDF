@@ -1,13 +1,15 @@
-/* BLOQUE DEL CSS SIN INICIAR SESIÓN */
-
 #content {
   width: 100% !important;
 
 }
 
+.titulo_header{
+  padding-top: 0 !important;
+}
+
 /* Asegúrate de que no haya estilos que limiten el ancho */
 .titulo_index {
-  font-size: 50px;
+  font-size: 60px;
 }
 
 .span_title{
@@ -86,6 +88,11 @@
 }
 
 
+.texto_header{
+  font-size: 25px !important;
+  color: #8a8a8a !important;
+}
+
 
 @media (max-width: 992px) {
   .custom-margin {
@@ -99,6 +106,23 @@
   .custom-margin {
       margin-bottom: 50px;
   }
-}
 
-/* FIN DEL BLOQUE DE CSS SIN INICIAR SESIÓN */
+  .titulo_index{
+    text-align: center;
+    font-size: 45px;
+  }
+
+  .texto_header{
+    font-size: 20px !important;
+    text-align: center;
+    padding-top: 5%;
+  }
+
+  .texto_inicio{
+    padding-top: 0% !important;
+  }
+
+  .centrar{
+    text-align: center !important;
+  }
+}

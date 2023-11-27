@@ -1507,10 +1507,11 @@ def analisis_profe(request):
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
 
         datos_audiocoeficientes = Audioscoeficientes.objects.select_related(
-            'id_audio__fk_pauta_terapeutica__fk_informe__fk_relacion_pa_pro__id_paciente__id_usuario'
+        'id_audio__fk_pauta_terapeutica__fk_informe__fk_relacion_pa_pro__id_paciente__id_usuario'
         ).filter(
             id_audio__fk_pauta_terapeutica__fk_informe__fk_relacion_pa_pro__fk_profesional_salud__id_usuario=request.user.id_usuario
-        )
+        ).order_by('-fecha_coeficiente')
+
 
         relaciones = RelacionPaPro.objects.filter(
             fk_profesional_salud__id_usuario=request.user.id_usuario
@@ -1676,6 +1677,8 @@ def eliminar_informe(request, informe_id):
         informe.rasati.delete()
 
     informe.delete()
+
+    messages.success(request, "Informe N°"+ str(informe_id)+" fue eliminado correctamente")    
 
     return redirect('listado_informes')
 
@@ -2238,6 +2241,8 @@ def detalle_prof_infor(request, informe_id):
                     intensidad = intensidad_form.save(commit=False)
                     intensidad.id_pauta_terapeutica = pauta_terapeutica
                     intensidad.save()    
+                
+                messages.success(request, "Pauta ingresada correctamente")  
 
                 return redirect('detalle_prof_infor', informe_id=informe.id_informe)
         

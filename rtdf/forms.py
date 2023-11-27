@@ -433,6 +433,7 @@ class PautaTerapeuticaForm(forms.ModelForm):
             'fecha_fin': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
 
+
 class VocalizacionForm(PautaTerapeuticaForm):
 
     duracion_seg = forms.CharField(
@@ -452,6 +453,39 @@ class VocalizacionForm(PautaTerapeuticaForm):
         required=False,
         label='Tempo'
     )
+
+    def clean_bpm(self):
+        bpm = self.cleaned_data.get('bpm')
+
+        if not bpm.isdigit():
+            raise forms.ValidationError('El BPM ingresado no es valido.')
+
+        bpm = int(bpm)
+
+        if not 20 <= bpm <= 280:
+            raise forms.ValidationError('BPM debe estar en el rango de 20 a 280.')
+
+        return bpm
+
+    def clean_tempo(self):
+        tempo = self.cleaned_data.get('tempo')
+
+        if not tempo.isdigit():
+            raise forms.ValidationError('El tempo del ejercicio no es valido.')
+
+        tempo = int(tempo)
+
+        if not 2 <= tempo <= 12:
+            raise forms.ValidationError('Tempo debe estar en el rango de 2 a 12.')
+
+        return tempo
+    
+    def clean_duracion_seg(self):
+        duracion_seg = self.cleaned_data['duracion_seg']
+        
+        if not duracion_seg.isnumeric():
+            raise ValidationError('La duración del ejercicio no es valido.')
+        return duracion_seg
 
 
 
