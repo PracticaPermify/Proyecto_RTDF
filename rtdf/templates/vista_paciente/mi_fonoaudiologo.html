@@ -75,7 +75,17 @@
 </body>
 
 
+<script>
+    var miDiv = document.getElementById('caja-perfil');
+    function ajustarMarginBottom() {
+        var alturaPantalla = window.innerHeight;
+        var nuevoMarginBottom = Math.max(0, alturaPantalla - 945);
 
+        miDiv.style.marginBottom = nuevoMarginBottom + 'px';
+    }
+    window.onload = ajustarMarginBottom;
+    window.onresize = ajustarMarginBottom;
+</script>
 
 
 

@@ -3,6 +3,11 @@
 
 }
 
+/* PARA AJUSTAR EL ERROR DEL ESPACIADO BLANCO AL FINAL DE LA PAGINA */
+.perfil-base{
+  margin-bottom: 285px !important;
+}
+
 .titulo_header{
   padding-top: 0 !important;
 }

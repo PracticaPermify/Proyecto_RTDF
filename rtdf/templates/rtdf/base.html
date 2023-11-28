@@ -27,7 +27,7 @@
 		<!-- Nav -->
 		<nav id="nav">
 			<ul>
-				<li {% if request.path == '/' %}class="current"{% endif %}><a href="{% url 'index' %}">Menu</a></li>
+				<li {% if request.path == '/' %}class="current"{% endif %}><a href="{% url 'index' %}">Inicio</a></li>
 				{% if tipo_usuario %}
 					{% if tipo_usuario == 'Fonoaudiologo' %}
 						<li {% if request.path == '/listado_pacientes/' %}class="current"{% endif %}>
@@ -101,7 +101,7 @@
 		{% if tipo_usuario %}
 		<!-- Text -->
 		<section class="box text-style1">
-			<div class="inner perfil-base">
+			<div id="caja-perfil" class="inner perfil-base">
 				<div class="form-row mx-auto align-items-center">
 					<div class="col-4">
 						<img class="foto_perfil" src="{% static 'app\recursos\img\foto_perfil2.png' %}" alt="perfil">
@@ -127,7 +127,7 @@
 		{% else %}
 				<!-- Text -->
 				<section class="box text-style1">
-					<div class="inner">
+					<div  id="caja-perfil" class="inner">
 						<p>
 								Cualquier pregunta, consultar a administradores del sistema.
 						</p>
