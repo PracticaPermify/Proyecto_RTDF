@@ -8,8 +8,13 @@
 <link rel="stylesheet" href="{% static 'app/css/metronomo.css' %}">
 
 <body class="is-preload">
-    <h1 style="text-align: center;">Pauta terapéutica N°{{ pauta_seleccionada.id_pauta_terapeutica }} de Intensidad</h1>
-    <br />
+
+    <!-- <div>
+        <a class="btn btn-danger " href="{% url 'index' %}">Volver al menu</a>
+    </div> -->
+
+    
+    <h1 style="text-align: center;" class="titulo_index my-5">Pauta terapéutica <span class="span_title">Intensidad N°{{ pauta_seleccionada.id_pauta_terapeutica }}</span></h1>
 
     <div class="container-mic" style="display:none;">
         <div class="selector-audio">
@@ -48,39 +53,40 @@
         </table>
     </div>
 
-    <div class="container">
-        <div style="width:100%; display:flex; justify-content:center; margin:5px;">
-            <p id="segundos"></p>
-            <p class="duracion" id="duracion">
-            <h1><strong>Buenos días</strong> {{ user.primer_nombre }}</h1>
-            </p>
-        </div>
-        <br />
-        <div style=" justify-content:center; margin:5px;">
-            <div class="container">
-                <h1></h1>
-                <div class="metronome-info" text-align: center;>
-                    {% if pauta_seleccionada %}
-                    <p style="text-align: center;"><b>Esta semana debes trabajar en la intensidad de tu voz.</b></p>
-                    <p style="text-align: center;"><b>Recuerde la descripción de su pauta dice que:</b> {{pauta_seleccionada.descripcion }}</p>
-                    <p style="text-align: center;"><b>Comentario del fonoaudiólogo:</b> {{ pauta_seleccionada.comentario }}
-                    </p>
-                    <p style="text-align: center;"><b>El ejercicio se debe realizar con una intensidad de</b> {{pauta_seleccionada.intensidad.intensidad}} dB.
-                    <p style="text-align: center;"><b>Mínimo DB:</b> {{ pauta_seleccionada.intensidad.min_db}}</p>
-                    <p style="text-align: center;"><b>Max DB:</b>{{ pauta_seleccionada.intensidad.max_db}}</p>
-                    {% else %}
-                    <tr>
-                        <td colspan="8">No se ha seleccionado una pauta terapéutica.</td>
-                    </tr>
-                    {% endif %}
 
+    <div class="row">
+    
+        <div class="col-12">
+            <div style=" justify-content:center; margin:5px;">
+                <div class="container container-texto my-3">
+                    
+                    <div class="mb-5 mt-2">
+                        <h1 class="display-5 fw-bolder centrar"> Buenos días <span class="span_title">{{ user.primer_nombre }} {{ user.ap_paterno }}</span></h1>
+                    </div>
+
+                    <div class="metronome-info" text-align: center;>
+                        {% if pauta_seleccionada %}
+                        <p class="texto-intensidad2"><b>Esta semana debes trabajar en la intensidad de tu voz.</b></p>
+                        <p class="texto-intensidad"><b>Recuerde la descripción de su pauta dice que:</b> <span class="span_title negrita">{{pauta_seleccionada.descripcion }}</span></p>
+                        <p class="texto-intensidad"><b>Comentario del fonoaudiólogo:</b><span class="span_title negrita"> {{ pauta_seleccionada.comentario }}</span>
+                        </p>
+                        <p class="texto-intensidad"><b>El ejercicio se debe realizar con una intensidad de</b> <span class="span_title negrita">{{pauta_seleccionada.intensidad.intensidad}} dB </span>.
+                        <p class="texto-intensidad"><b>Mínimo DB: </b><span class="span_title negrita"> {{ pauta_seleccionada.intensidad.min_db}}</span></p>
+                        <p class="texto-intensidad"><b>Max DB: </b><span class="span_title negrita">{{ pauta_seleccionada.intensidad.max_db}}</span></p>
+                        {% else %}
+                        <tr>
+                            <td colspan="8">No se ha seleccionado una pauta terapéutica.</td>
+                        </tr>
+                        {% endif %}
+
+                        <div style="width:100%; display:flex; justify-content:center; margin:5px;">
+                            <button id="start_stop" class="start-stop" onclick="clickAudio(true)">COMENZAR</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <div style="width:100%; display:flex; justify-content:center; margin:5px;">
-                <button id="start_stop" class="start-stop" onclick="clickAudio(true)">COMENZAR</button>
-            </div>
-            <br />
+        </div>    
+    
 
 
             <div class="oscilograma">
@@ -128,6 +134,8 @@
                             </tr>
                         </tbody>
                     </table>
+                    <br>
+                    <br>
                     <table>
                         <thead>
                             <tr>

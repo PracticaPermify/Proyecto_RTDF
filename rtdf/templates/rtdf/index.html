@@ -1,3 +1,4 @@
+
 {% extends 'rtdf/base.html' %}
 
 {% block content %}
@@ -12,122 +13,196 @@
                             <!-- <a href="#" class="image featured"><img src="images/pic01.jpg" alt="" /></a> -->
                         {% if tipo_usuario %}
                             {% if tipo_usuario == 'Paciente' %}
-                            <h2><p>Bienvenido, {{ user.primer_nombre }}.</p></h2>
-                            <p> 
-                                Gracias por utilizar nuestra plataforma de atención en línea. Estamos aquí para brindarte el mejor servicio y cuidado de tu salud vocal.
-                                En tu panel de usuario, podrás acceder a tus informes, pautas terapéuticas y más. No dudes en contactar a tu 
-                                fonoaudiólogo si tienes alguna pregunta o necesitas asistencia adicional.¡Tu salud vocal es nuestra prioridad! 
-                                ¡Esperamos que tengas una experiencia positiva en nuestra plataforma!
-                            </p>
-
-                            <h3>Pautas Vigentes</h3>
-                            </br>
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead class="thead-dark">
-                                        <tr>
-                                            <th>ID de pauta</th>
-                                            <th>Tipo de terapia</th>
-                                            <th>Descripción</th>
-                                            <th>Informe asociado</th>
-                                            <th>Tipo de informe</th>
-                                            <th>Fecha de Inicio</th>
-                                            <th>Fecha de Fin</th>
-                                            <th>Empezar pauta</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for pauta_terapeutica in pautas_terapeuticas %}
-                                        <tr>
-                                            <td>{{ pauta_terapeutica.id_pauta_terapeutica }}</td>
-                                            <td>{{ pauta_terapeutica.fk_tp_terapia }}</td>
-                                            <td>{{ pauta_terapeutica.descripcion|truncatechars:150 }}</td>
-                                            <td>{{ pauta_terapeutica.fk_informe }}</td>
-                                            <td>{{ pauta_terapeutica.fk_informe.tp_informe }}</td>
-                                            <td>{{ pauta_terapeutica.fecha_inicio }}</td>
-                                            <td>{{ pauta_terapeutica.fecha_fin }}</td>
-                                            <td>
-                                                    {% if pauta_terapeutica.vocalizacion %}
-                                                        {% if pauta_terapeutica.vocalizacion %}
-                                                        <a href="{% url 'vocalizacion_con_pauta' pauta_terapeutica.id_pauta_terapeutica %}" class="btn btn-primary">Empezar</a>
-                                                        {% endif %}
-    
-                                                    {% elif pauta_terapeutica.intensidad %}
-                                                        {% if pauta_terapeutica.intensidad %}
-                                                        <a href="{% url 'intensidad_con_pauta' pauta_terapeutica.id_pauta_terapeutica %}" class="btn btn-primary">Empezar</a>
-                                                        {% endif %}
-
-                                                    {% elif pauta_terapeutica.escalavocales %}
-                                                        {% if pauta_terapeutica.escalavocales %}
-                                                            <a href="{% url 'escalas_vocales_con_pauta' pauta_terapeutica.id_pauta_terapeutica %}" class="btn btn-primary">Empezar</a>
-                                                        {% endif %}
-                                                    {% endif %}
-                                            </td>
-                                        </tr>
-                                        {% empty %}
-                                        <tr>
-                                            <td colspan="2">No hay pautas terapéuticas para hoy o en la semana.</td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-
-                                </br>
-                                <h3>Pautas no vigentes</h3>
-                                </br>
-                                <table class="table">
-                                    <thead class="thead-dark">
-                                        <tr>
-                                            <th>ID de pauta</th>
-                                            <th>Tipo de terapia</th>
-                                            <th>Descripción</th>
-                                            <th>Informe asociado</th>
-                                            <th>Tipo de informe</th>
-                                            <th>Fecha de Inicio</th>
-                                            <th>Fecha de Fin</th>
-                                            <th>Empezar pauta</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for pauta_terapeutica in pautas_terapeuticas_expiradas %}
-                                        <tr>
-                                            <td>{{ pauta_terapeutica.id_pauta_terapeutica }}</td>
-                                            <td>{{ pauta_terapeutica.fk_tp_terapia }}</td>
-                                            <td>{{ pauta_terapeutica.descripcion|truncatechars:150 }}</td>
-                                            <td>{{ pauta_terapeutica.fk_informe }}</td>
-                                            <td>{{ pauta_terapeutica.fk_informe.tp_informe }}</td>
-                                            <td>{{ pauta_terapeutica.fecha_inicio }}</td>
-                                            <td>{{ pauta_terapeutica.fecha_fin }}</td>
-                                            <td>Pauta terminada o expirada</td>
-                                        </tr>
-                                        {% empty %}
-                                        <tr>
-                                            <td colspan="8">No hay pautas terapéuticas expiradas.</td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                                    <div class="pagination">
-                                        <span class="step-links">
-                                            {% if pautas_terapeuticas_expiradas.has_previous %}
-                                                <a href="?page=1">&laquo; primero</a>
-                                                <a href="?page={{ pautas_terapeuticas_expiradas.previous_page_number }}">anterior</a>
-                                            {% endif %}
+                            <body class="fondo-negro">
+                                <div class="container">
+                                    <header class="row text-left titulo_header">
+                                        <div class="col-lg-8">
+                                            <h1 class="titulo_index">Bienvenid@ <span class="span_title">{{ user.primer_nombre }} {{ user.ap_paterno }}</span></h1>
+                                            <p class="texto_header">Recursos Terapéuticos para Fonoaudiólogos</p>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <h1 id="logo"><a class="w-50 float-right" href="{% url 'index' %}">RTDF</a></h1>
+                                        </div>
+                                    </header>
                                     
-                                            <span class="current-page">
-                                                Page {{ pautas_terapeuticas_expiradas.number }} de {{ pautas_terapeuticas_expiradas.paginator.num_pages }}.
-                                            </span>
-                                    
-                                            {% if pautas_terapeuticas_expiradas.has_next %}
-                                                <a href="?page={{ pautas_terapeuticas_expiradas.next_page_number }}">siguiente</a>
-                                                <a href="?page={{ pautas_terapeuticas_expiradas.paginator.num_pages }}">ultimo &raquo;</a>
-                                            {% endif %}
-                                        </span>
-                                    </div>
+
+
+                                        <section id="perfil">
+
+                                            <div class="row">
+                                                <div class="col-lg-8 col-xl-7 col-xxl-6 d-flex align-items-center texto_inicio">
+                                                    <div class="my-5 text-center text-xl-start">
+                                                        <h1 class="display-5 fw-bolder mb-3">Perfil <span class="span_title">{{user.id_tp_usuario}}</span></h1>
+                                                        <p class="lead fw-normal  mb-4 pr-mb-3">Gracias por utilizar nuestra plataforma de atención en línea. Estamos aquí para brindarte el mejor servicio y cuidado de tu salud vocal.
+                                                            En tu panel de usuario, podrás acceder a tus informes, pautas terapéuticas y más. </p>
+                                                        <p class="pr-mb-3">No dudes en contactar a tu 
+                                                            fonoaudiólogo si tienes alguna pregunta o necesitas asistencia adicional.¡Tu salud vocal es nuestra prioridad! 
+                                                            ¡Esperamos que tengas una experiencia positiva en nuestra plataforma!</p>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xl-5 col-xxl-6 d-none d-xl-block text-center"><img class="img-fluid rounded-3 my-5 float-right" src="https://dummyimage.com/600x400/343a40/6c757d" alt="..." /></div>
+                                            </div>
+
+                                        </section>
+
+
+                                        <section class="py-3" id="features">
+                                            <div class=" ">
+                                                <div class="col-lg-12 col-xl-12 col-xxl-12  align-items-center centrar">
+                                                    <h1 class=" display-5 fw-bolder">Pautas<span class="span_title"> Vigentes </span></h1>
+                                                    <p class="texto_pauta"> Pautas terapéuticas vigentes. Asegúrese de respetar las indicaciones por cada pauta terapéutica recetada.</p>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="table-responsive">
+                                                        <table class="table">
+                                                            <thead class="thead-dark">
+                                                                <tr>
+                                                                    <th>ID de pauta</th>
+                                                                    <th>Tipo de terapia</th>
+                                                                    <th>Descripción</th>
+                                                                    <th>Informe asociado</th>
+                                                                    <th>Tipo de informe</th>
+                                                                    <th>Fecha de Inicio</th>
+                                                                    <th>Fecha de Fin</th>
+                                                                    <th>Empezar pauta</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {% for pauta_terapeutica in pautas_terapeuticas %}
+                                                                <tr>
+                                                                    <td>{{ pauta_terapeutica.id_pauta_terapeutica }}</td>
+                                                                    <td>{{ pauta_terapeutica.fk_tp_terapia }}</td>
+                                                                    <td>{{ pauta_terapeutica.descripcion|truncatechars:150 }}</td>
+                                                                    <td>{{ pauta_terapeutica.fk_informe }}</td>
+                                                                    <td>{{ pauta_terapeutica.fk_informe.tp_informe }}</td>
+                                                                    <td>{{ pauta_terapeutica.fecha_inicio }}</td>
+                                                                    <td>{{ pauta_terapeutica.fecha_fin }}</td>
+                                                                    <td>
+                                                                            {% if pauta_terapeutica.vocalizacion %}
+                                                                                {% if pauta_terapeutica.vocalizacion %}
+                                                                                <a href="{% url 'vocalizacion_con_pauta' pauta_terapeutica.id_pauta_terapeutica %}" class="btn btn-primary btn-block mx-auto">Empezar</a>
+                                                                                {% endif %}
+                            
+                                                                            {% elif pauta_terapeutica.intensidad %}
+                                                                                {% if pauta_terapeutica.intensidad %}
+                                                                                <a href="{% url 'intensidad_con_pauta' pauta_terapeutica.id_pauta_terapeutica %}" class="btn btn-primary btn-block mx-auto">Empezar</a>
+                                                                                {% endif %}
+                        
+                                                                            {% elif pauta_terapeutica.escalavocales %}
+                                                                                {% if pauta_terapeutica.escalavocales %}
+                                                                                    <a href="{% url 'escalas_vocales_con_pauta' pauta_terapeutica.id_pauta_terapeutica %}" class="btn btn-primary btn-block mx-auto">Empezar</a>
+                                                                                {% endif %}
+                                                                            {% endif %}
+                                                                    </td>
+                                                                </tr>
+                                                                {% empty %}
+                                                                <tr>
+                                                                    <td colspan="2">No hay pautas terapéuticas para hoy o en la semana.</td>
+                                                                </tr>
+                                                                {% endfor %}
+                                                            </tbody>
+                                                        </table>
+                                                </div>
+
+                                            </div>
+
+                                        </section>
+
+                                        <section class="py-3" id="features">
+                                            <div class=" ">
+                                                <div class="col-lg-12 col-xl-12 col-xxl-12  align-items-center centrar">
+                                                    <h1 class=" display-5 fw-bolder">Pautas<span class="span_title"> Terminadas </span></h1>
+                                                    <p class="texto_pauta"> Pautas terapéuticas que ya superaron su fecha de termino indicado por su profesional.</p>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="table-responsive" id="tabla2">
+                                                        
+                                                        <table class="table">
+                                                            <thead class="thead-dark">
+                                                                <tr>
+                                                                    <th>ID de pauta</th>
+                                                                    <th>Tipo de terapia</th>
+                                                                    <th>Descripción</th>
+                                                                    <th>Informe asociado</th>
+                                                                    <th>Tipo de informe</th>
+                                                                    <th>Fecha de Inicio</th>
+                                                                    <th>Fecha de Fin</th>
+                                                                    <th>Empezar pauta</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody >
+                                                                {% for pauta_terapeutica in pautas_terapeuticas_expiradas %}
+                                                                <tr>
+                                                                    <td>{{ pauta_terapeutica.id_pauta_terapeutica }}</td>
+                                                                    <td>{{ pauta_terapeutica.fk_tp_terapia }}</td>
+                                                                    <td>{{ pauta_terapeutica.descripcion|truncatechars:150 }}</td>
+                                                                    <td>{{ pauta_terapeutica.fk_informe }}</td>
+                                                                    <td>{{ pauta_terapeutica.fk_informe.tp_informe }}</td>
+                                                                    <td>{{ pauta_terapeutica.fecha_inicio }}</td>
+                                                                    <td>{{ pauta_terapeutica.fecha_fin }}</td>
+                                                                    <td>Pauta terminada o expirada</td>
+                                                                </tr>
+                                                                {% empty %}
+                                                                <tr>
+                                                                    <td colspan="8">No hay pautas terapéuticas expiradas.</td>
+                                                                </tr>
+                                                                {% endfor %}
+                                                            </tbody>
+                                                        </table>
+                                                        <nav aria-label="Page navigation">
+                                                            <ul class="pagination">
+                                                                {% if pautas_terapeuticas_expiradas.has_previous %}
+                                                                    <li class="page-item">
+                                                                        <a class="page-link" href="?page=1#tabla2" aria-label="Primero">
+                                                                            <span aria-hidden="true">&laquo;&laquo;</span>
+                                                                        </a>
+                                                                    </li>
+                                                                    <li class="page-item">
+                                                                        <a class="page-link" href="?page={{ pautas_terapeuticas_expiradas.previous_page_number }}#tabla2" aria-label="Anterior">
+                                                                            <span aria-hidden="true">&laquo;</span>
+                                                                        </a>
+                                                                    </li>
+                                                                {% endif %}
+                                                        
+                                                                <li class="page-item disabled">
+                                                                    <span class="page-link">
+                                                                        Página {{ pautas_terapeuticas_expiradas.number }} de {{ pautas_terapeuticas_expiradas.paginator.num_pages }}.
+                                                                    </span>
+                                                                </li>
+                                                        
+                                                                {% if pautas_terapeuticas_expiradas.has_next %}
+                                                                    <li class="page-item">
+                                                                        <a class="page-link" href="?page={{ pautas_terapeuticas_expiradas.next_page_number }}#tabla2" aria-label="Siguiente">
+                                                                            <span aria-hidden="true">&raquo;</span>
+                                                                        </a>
+                                                                    </li>
+                                                                    <li class="page-item">
+                                                                        <a class="page-link" href="?page={{ pautas_terapeuticas_expiradas.paginator.num_pages }}#tabla2" aria-label="Último">
+                                                                            <span aria-hidden="true">&raquo;&raquo;</span>
+                                                                        </a>
+                                                                    </li>
+                                                                {% endif %}
+                                                            </ul>
+                                                        </nav>
+                                                        
+                                                </div>
+
+                                            </div>
+
+                                        </section>
                                 </div>
+                            </body>
 
-                            </div>
 
+
+
+                            
+
+
+                
 
                             {% elif tipo_usuario == 'Fonoaudiologo' %}
 
@@ -241,62 +316,161 @@
                                     nuestro equipo de soporte estará a tu disposición.
                                 </p>               
                                 {% elif tipo_usuario == 'Admin' %}
-                                <h2><p>Bienvenido, {{ user.primer_nombre }}.</p></h2>
-                                <p>
-                                    Como administrador de nuestra plataforma, tienes el control total sobre el sistema. 
-                                    Tu papel es esencial para garantizar que todo funcione sin problemas y para brindar soporte a otros usuarios.
-                                    Aquí puedes realizar tareas como la gestión de usuarios, la supervisión de la plataforma y la resolución de problemas.
-                                    Siempre estamos aquí para ayudarte en caso de que necesites asistencia. ¡Gracias por tu dedicación!
-                                </p>
+                                <body class="fondo-negro">
+                                    <div class="container">
+                                        <header class="row text-left titulo_header">
+                                            <div class="col-lg-8">
+                                                <h1 class="titulo_index">Bienvenid@ <span class="span_title">{{ user.primer_nombre }} {{ user.ap_paterno }}</span></h1>
+                                                <p class="texto_header">Recursos Terapéuticos para Fonoaudiólogos</p>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <h1 id="logo"><a class="w-50 float-right" href="{% url 'index' %}">RTDF</a></h1>
+                                            </div>
+                                        </header>
+                                        
 
-                            </br>
 
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead class="thead-dark">
-                                        <tr>
-                                            <th scope="col">ID</th>
-                                            <th scope="col">Nombre</th>
-                                            <th scope="col">Apellido</th>
-                                            <th scope="col">Numero de contacto</th>
-                                            <th scope="col">Tipo usuario</th>
-                                            <th scope="col">Correo electrónico</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr>
-                                            {% for usuario in usuario %}
-                                            <th scope="row">{{ usuario.id_usuario }}</th>
-                                            <td>{{ usuario.primer_nombre }}</td>
-                                            <td>{{ usuario.ap_paterno }}</td>
-                                            <td>{{ usuario.numero_telefonico }}</td>
-                                            <td>{{ usuario.id_tp_usuario }}</td>
-                                            <td>{{ usuario.email }}</td>
-                                        </tr>
-                                            {% endfor %}
+                                            <section class="py-3" id="perfil">
 
-                                        </tbody>
-                                    </table>
+                                                <div class="row">
+                                                    <div class="col-lg-8 col-xl-7 col-xxl-6 d-flex align-items-center texto_inicio">
+                                                        <div class="my-5 text-center text-xl-start">
+                                                            <h1 class="display-5 fw-bolder mb-3">Perfil <span class="span_title">{{user.id_tp_usuario}}</span></h1>
+                                                            <p class="lead fw-normal  mb-4 pr-mb-3">Como administrador de nuestra plataforma, tienes el control total sobre el sistema. 
+                                                                Tu papel es esencial para garantizar que todo funcione sin problemas y para brindar soporte a otros usuarios.
+                                                                Aquí puedes realizar tareas como la gestión de usuarios, la supervisión de la plataforma y la resolución de problemas.
+                                                                </p>
+                                                            <p class="pr-mb-3">Siempre estamos aquí para ayudarte en caso de que necesites asistencia. ¡Gracias por tu dedicación!</p>
+                                                        </div>
+                                                    </div>
 
-                                    <div class="pagination">
-                                        <span class="step-links">
-                                            {% if usuario.has_previous %}
-                                                <a href="?page=1">&laquo; primero</a>
-                                                <a href="?page={{ usuario.previous_page_number }}">anterior</a>
-                                            {% endif %}
-                                    
-                                            <span class="current-page">
-                                                Página {{ usuario.number }} de {{ usuario.paginator.num_pages }}.
-                                            </span>
-                                    
-                                            {% if usuario.has_next %}
-                                                <a href="?page={{ usuario.next_page_number }}">siguiente</a>
-                                                <a href="?page={{ usuario.paginator.num_pages }}">ultimo &raquo;</a>
-                                            {% endif %}
-                                        </span>
+                                                    <div class="col-xl-5 col-xxl-6 d-none d-xl-block text-center"><img class="img-fluid rounded-3 my-5 float-right" src="https://dummyimage.com/600x400/343a40/6c757d" alt="..." /></div>
+                                                </div>
+
+                                            </section>
+
+
+                                            <section class="py-3" id="features">
+                                                <div class=" ">
+                                                    <div class="col-lg-8 col-xl-7 col-xxl-6  align-items-center centrar">
+                                                        <h1 class=" display-5 fw-bolder mb-4">Accesos <span class="span_title">Directos</span></h1>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                          <div class="card card h-100">
+                                                            <img src="https://dummyimage.com/600x400/343a40/6c757d" class="card-img-top" alt="Imagen de la tarjeta">
+                                                            <div class="card-body">
+                                                              <h5 class="card-title display-6" >Listado de <span class="span_title">Fonoaudiólogos</span></h5>
+                                                              <p class="card-text">En este apartado puede revisar rápidamente la información esencial de cada fonoaudiólogo, como nombres, antecedentes profesionales y detalles de contacto.</p>
+                                                              <a href="#" class="btn btn-primary float-right w-50 mt-3">Ver →</a>
+                                                            </div>
+                                                          </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                          <div class="card card h-100">
+                                                            <img src="https://dummyimage.com/600x400/343a40/6c757d" class="card-img-top" alt="Imagen de la tarjeta">
+                                                            <div class="card-body">
+                                                              <h5 class="card-title display-6">Listado de <span class="span_title">Pacientes</span></h5>
+                                                              <p class="card-text">En este apartado puede revisar rápidamente la información esencial de cada paciente, como nombres, antecedentes medicos, profesional vinculado y detalles de contacto. </p>
+                                                              <a href="#" class="btn btn-primary float-right w-50 mt-3">Ver →</a>
+                                                            </div>
+                                                          </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                          <div class="card card h-100">
+                                                            <img src="https://dummyimage.com/600x400/343a40/6c757d" class="card-img-top" alt="Imagen de la tarjeta">
+                                                            <div class="card-body">
+                                                              <h5 class="card-title display-6">Gestión de <span class="span_title">Pre-registros</span></h5>
+                                                              <p class="card-text">Este apartado permite la gestión en cuanto a los pre-registros realizados por usuario que desean incorporarse a la plataforma RTDF.</p>
+                                                              <a href="#" class="btn btn-primary float-right w-50 mt-3">Ver →</a>
+                                                            </div>
+                                                          </div>
+                                                        </div>
+                                                      </div>
+
+                                                </div>
+
+                                            </section>
+
+                                            <section class="py-3" id="features">
+
+                                                <div class="col-lg-8 col-xl-7 col-xxl-6  align-items-center centrar">
+                                                    <h1 class=" display-5 fw-bolder mb-4">Lista de <span class="span_title">Usuarios</span></h1>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="table-responsive">
+                                                        <table class="table" id="lista_usuario">
+                                                            <thead class="thead-dark">
+                                                            <tr>
+                                                                <th scope="col">ID</th>
+                                                                <th scope="col">Nombre</th>
+                                                                <th scope="col">Apellido</th>
+                                                                <th scope="col">Numero de contacto</th>
+                                                                <th scope="col">Tipo de usuario</th>
+                                                                <th scope="col">Correo electrónico</th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            <tr>
+                                                                {% for usuario in usuario %}
+                                                                <th scope="row">{{ usuario.id_usuario }}</th>
+                                                                <td>{{ usuario.primer_nombre }}</td>
+                                                                <td>{{ usuario.ap_paterno }}</td>
+                                                                <td>{{ usuario.numero_telefonico }}</td>
+                                                                <td>{{ usuario.id_tp_usuario }}</td>
+                                                                <td>{{ usuario.email }}</td>
+                                                            </tr>
+                                                                {% endfor %}
+                    
+                                                            </tbody>
+                                                        </table>
+                    
+                                                        <nav aria-label="Page navigation">
+                                                            <ul class="pagination">
+                                                                {% if usuario.has_previous %}
+                                                                    <li class="page-item">
+                                                                        <a class="page-link" href="?page=1#lista_usuario" aria-label="Primero">
+                                                                            <span aria-hidden="true">&laquo;&laquo;</span>
+                                                                        </a>
+                                                                    </li>
+                                                                    <li class="page-item">
+                                                                        <a class="page-link" href="?page={{ usuario.previous_page_number }}#lista_usuario" aria-label="Anterior">
+                                                                            <span aria-hidden="true">&laquo;</span>
+                                                                        </a>
+                                                                    </li>
+                                                                {% endif %}
+                                                        
+                                                                <li class="page-item disabled">
+                                                                    <span class="page-link">
+                                                                        Página {{ usuario.number }} de {{ usuario.paginator.num_pages }}.
+                                                                    </span>
+                                                                </li>
+                                                        
+                                                                {% if usuario.has_next %}
+                                                                    <li class="page-item">
+                                                                        <a class="page-link" href="?page={{ usuario.next_page_number }}#lista_usuario" aria-label="Siguiente">
+                                                                            <span aria-hidden="true">&raquo;</span>
+                                                                        </a>
+                                                                    </li>
+                                                                    <li class="page-item">
+                                                                        <a class="page-link" href="?page={{ usuario.paginator.num_pages }}#lista_usuario" aria-label="Último">
+                                                                            <span aria-hidden="true">&raquo;&raquo;</span>
+                                                                        </a>
+                                                                    </li>
+                                                                {% endif %}
+                                                            </ul>
+                                                        </nav>
+                                                        
+                    
+                                                    </div>
+                                                </div>
+
+                                            </section>
                                     </div>
-
-                                </div>
+                                </body>
+                        
                             {% endif %}
                         {% else %}
 

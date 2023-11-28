@@ -4,6 +4,8 @@
 
 {% load static %}
 
+<link rel="stylesheet" href="{% static 'app/css/css_profesionales/detalle_prof_infor.css' %}"/>
+
 <div>
   <a href="{% url 'detalle_paciente' paciente_relacionado.id_usuario.id_usuario %}">Volver a la información del paciente</a>
 </div>
@@ -65,44 +67,48 @@
 </br>
 
 <div class="container">
-    <div id="formulario-pauta" style="display: none;">
+    <div id="formulario-pauta" class="general-form" style="display: none;">
         <form method="post">
             {% csrf_token %}
 
-            <h2>Ingresar pauta terapeutica de escala vocal</h2>
+            <h2 class="hh2 mt-3">Ingresar pauta terapeutica de escala vocal</h2>
+
+          </br>
 
             <div class="form-group">
-                <label for="cant_veces_dia">Cantidad de veces al día:</label>
+                <label for="cant_veces_dia"><i class="fa-solid fa-rotate-left"></i> Cantidad de veces al día:</label>
                 {{ pauta_terapeutica_form.cant_veces_dia }}
             </div>
 
             <div class="form-group">
-                <label for="descripcion">Descripción:</label>
+                <label for="descripcion"><i class="fa-solid fa-notes-medical"></i> Descripción:</label>
                 {{ pauta_terapeutica_form.descripcion }}
             </div>
 
-            <div class="form-group">
-                <label for="fecha_inicio">Fecha de inicio:</label></br>
-                <input type="datetime-local" id="fecha_inicio" name="fecha_inicio">
+            <div class="form-row">
+              <div class="form-group col-md-12 col-lg-6">
+                  <label for="fecha_inicio"><i class="fas fa-calendar"></i>Fecha de inicio:</label></br>
+                  <input type="datetime-local" class="campo_fecha" id="fecha_inicio" name="fecha_inicio">
+              </div>
+
+              <div class="form-group col-md-12 col-lg-6">
+                  <label for="fecha_fin"><i class="fas fa-calendar"></i> Fecha de fin</label></br>
+                  <input type="datetime-local" class="campo_fecha" id="fecha_fin" name="fecha_fin">
+              </div>
             </div>
 
             <div class="form-group">
-                <label for="fecha_fin">Fecha de fin:</label></br>
-                <input type="datetime-local" id="fecha_fin" name="fecha_fin">
-            </div>
-
-            <div class="form-group">
-                <label for="comentario">Comentarios:</label>
+                <label for="comentario"><i class="fa-solid fa-comment-medical"></i> Comentarios:</label>
                 {{ pauta_terapeutica_form.comentario }}
             </div>
 
-            <h2>Ingresar las palabras para las pautas terapeuticas</h2>
+            <h2 class="hh2 mt-3">Ingresar las palabras para las pautas terapeuticas</h2>
 
           </br>
 
-            <div class="form-row">
+            <div class="form-row" id="select-groups-container">
                 {% for select in selects %}
-                    <div class="col-md-5 select-separado">
+                    <div class="col-md-6 select-separado select-group">
                         <label for="palabra{{ select.id }}">Selecciona una palabra {{ select.id }}:</label>
                         <select name="palabra{{ select.id }}" id="palabra{{ select.id }}" class="form-control">
                             <option value="">Selecciona una palabra</option>
@@ -118,13 +124,14 @@
                 {% endfor %}
             </div>
 
+          </br>
 
             <div class="row">
               <div class="col-md-6">
-                  <button type="button" class="btn btn-secondary w-100" id="anterior-btn">Anterior</button>
+                  <button type="button" class="btn btn-secondary w-100" id="anterior-btn"><i class="fa-solid fa-arrow-left flecha-izquierda"></i> Anterior</button>
               </div>
               <div class="col-md-6">
-                  <button type="button" class="btn btn-primary w-100" id="siguiente-btn">Siguiente</button>
+                  <button type="button" class="btn btn-primary w-100" id="siguiente-btn">Siguiente <i class="fa-solid fa-arrow-right flecha-derecha"></i></button>
               </div>
             </div>
           

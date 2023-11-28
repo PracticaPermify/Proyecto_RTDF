@@ -1,7 +1,13 @@
+
+h1 {
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
 .metronome {
-    background-color: #f5f5f5; /* Fondo más claro */
-    width: 100%; /* Ancho del 100% para ser responsivo */
-    max-width: 400px; /* Ancho máximo para evitar que se extienda demasiado */
+    background-color: #f5f5f5;
+    width: 100%;
     max-width: 900px;
     padding: 20px;
     border-radius: 10px;
@@ -14,34 +20,33 @@
     justify-content: center;
 }
 
-.additional-text {
-    font-size: 14px;
-    margin-top: 10px;
-    color: #c94663; /* Color rojo especificado */
-}
-
 .metronome-info {
     margin-bottom: 20px;
-    color: #c94663; /* Color de texto rojo */
-    font-size: 16px;
+    color: #000000;
+    font-size: 20px;
     line-height: 1.4;
 }
 
+.importante {
+    color: #c94663;
+}
+
 .bpm-display {
-    font-size: 32px;
+    font-size: 36px;
     font-weight: bold;
     margin-bottom: 10px;
-    color: #c94663; /* Color de texto rojo */
+    color: #c94663;
 }
 
 .tempo-text {
-    color: #c94663; /* Color de texto rojo */
+    color: #c94663;
     font-weight: bold;
+    font-size: 20px;
 }
 
 .adjust-tempo-btn {
-    font-size: 24px;
-    color: #c94663; /* Color de texto rojo */
+    font-size: 28px;
+    color: #c94663;
     cursor: pointer;
 }
 
@@ -56,9 +61,9 @@
 .slider {
     -webkit-appearance: none;
     appearance: none;
-    width: 100%; /* Ancho ajustable */
-    height: 10px;
-    background: #f5f5f5; /* Fondo más claro */
+    width: 100%;
+    height: 12px;
+    background: #f5f5f5;
     outline: none;
     opacity: 0.7;
     -webkit-transition: .2s;
@@ -71,20 +76,21 @@
 .slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 30px; /* Tamaño del control deslizante circular (más ancho) */
-    height: 30px; /* Tamaño del control deslizante circular (más alto) */
-    background: #c94663; /* Color rojo especificado */
+    width: 30px;
+    height: 30px;
+    background: #c94663;
     cursor: pointer;
     border-radius: 50%;
     position: relative;
     z-index: 2;
 }
 
-.slider-container::before, .slider-container::after {
+.slider-container::before,
+.slider-container::after {
     content: "";
     width: 50%;
-    height: 4px; /* Altura de las líneas (más gruesas) */
-    background: #c94663; /* Color rojo especificado */
+    height: 4px;
+    background: #c94663;
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -100,7 +106,7 @@
 }
 
 .start-stop {
-    background-color: #c94663; /* Color de botón rojo */
+    background-color: #c94663;
     color: white;
     font-size: 18px;
     padding: 10px 20px;
@@ -111,7 +117,7 @@
 }
 
 .start-stop:hover {
-    background-color: #a93244; /* Cambia de color al pasar el mouse */
+    background-color: #a93244;
 }
 
 .measures {
@@ -124,11 +130,15 @@
 
 .stepper {
     font-size: 24px;
-    color: #c94663; /* Color de texto rojo */
+    color: #c94663;
     cursor: pointer;
 }
 
 .measure-count {
     font-size: 24px;
     margin: 0 20px;
+}
+
+.ocultar {
+    display: none;
 }

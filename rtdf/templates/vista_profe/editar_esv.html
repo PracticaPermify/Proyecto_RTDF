@@ -52,10 +52,10 @@
 
     <div class="form-row">
       <div class="form-group col-md-6">
-        <label for="fecha"><i class="fas fa-calendar"></i>Fecha</label><br>
-        <input type="datetime-local" class="campo_fecha" id="fecha" name="fecha" value="{{ form.fecha.value|date:'Y-m-d\TH:i' }}">
+          <label for="fecha"><i class="fas fa-calendar"></i>Fecha</label><br>
+          <input type="datetime-local" class="campo_fecha" id="fecha" name="fecha" value="{{ informe.fecha|date:'Y-m-d\TH:i' }}">
       </div>
-    </div>
+  </div>
 
     <div class="form-row">
       <div class="form-group col-md-12">

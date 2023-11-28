@@ -16,7 +16,7 @@
         <link rel="stylesheet" href="{% static 'app/css/metronomo.css' %}"/>
     </head>
     <body class="is-preload">
-            <h1 style="text-align: center;">Pauta terapéutica N°{{ pauta_seleccionada.id_pauta_terapeutica }} de Escalas vocales</h1>
+            <h1 style="text-align: center; font-size: 40px">Pauta terapéutica <b class="importante">Escala vocal N°{{ pauta_seleccionada.id_pauta_terapeutica }}</b></h1>
             <br/>
             {% if pauta_seleccionada %}
                     {% comment %} <table class="table" hidden>
@@ -49,20 +49,19 @@
         <div class="container">
             <div class="metronome">
                 <div class="metronome-info">
-                    <h1><strong>Buenos días</strong> {{ user.primer_nombre }} {{ user.ap_paterno }}</h1>
+                    <h1 style="text-align: center; font-size: 40px"><strong>Buenos días</strong> <p class="importante">{{ user.primer_nombre }} {{ user.ap_paterno }}</p></h1>
                     <br/>
 
-                    <p style="text-align: center;"></strong>Esta semana debes trabajar con las <b> Escalas vocales</b>.</p>
-                    <p style="text-align: center;">Deberas realizar el ejercicio <b>{{ pauta_seleccionada.cant_veces_dia }} </b> veces al día </p>
-                    <p>Al ejercitar, debes respirar por la nariz y tus ejercicios deben durar aproximadamente <b>50 segundos</b>.</p>
+                    <p style="text-align: center;"></strong>Esta semana debes trabajar con las <b class="importante"> Escalas vocales</b>.</p>
+                    <p style="text-align: center;">Deberas realizar el ejercicio <b class="importante">{{ pauta_seleccionada.cant_veces_dia }} veces al día </b> </p>
+                    <p>Al ejercitar, debes respirar por la nariz y tus ejercicios deben durar aproximadamente <b class="importante">50 segundos</b>.</p>
                     <p style="text-align: center;">Deberas repetir las palabras que se te mostraran a continuación:</p>
                     </br>
                     <h3 style="text-align: center;"><b>
                         <div id="palabras-container">
-                            {{ pauta_seleccionada.escalavocales.palabras }}
+                            <h3 style="text-align: center;"><b class="importante">{{ pauta_seleccionada.escalavocales.palabras }}
                         </div>
                     </b></h3>
-                   
                 <div class="controlador">
                     {% comment %} <div class="start-stop">Empezar</div> {% endcomment %}
                     <button onclick="clickAudio(true)" id="start_stop" class="start-stop">COMENZAR</button>
@@ -140,5 +139,24 @@
 
     </script>
     
+    <script>
+        var palabras = "{{ pauta_seleccionada.escalavocales.palabras }}";
+        var listaPalabras = palabras.split(',').map(palabra => (palabra.trim()));
+    
+        var resultadoHTML = '<h3 style="text-align: center;"><b class="importante">';
+        listaPalabras.forEach((palabra, index) => {
+            resultadoHTML += `${index + 1}-${palabra}`;
+            if ((index + 1) % 5 === 0 && index !== listaPalabras.length - 1) {
+                resultadoHTML += '</b></h3><h3 style="text-align: center;"><b class="importante">';
+            } else {
+                resultadoHTML += ', ';
+            }
+        });
+        resultadoHTML += '</b></h3>';
+    
+        document.getElementById('palabras-container').innerHTML = resultadoHTML;
+    </script>
+    
+
 {% endblock %}
 </html>

@@ -32,7 +32,7 @@
 
             <div class="form-group col-md-6">
                 <label for="fecha"><i class="fas fa-calendar"></i>Fecha Automática</label></br>
-                <input type="datetime-local" id="fecha" name="fecha" value="{{ form.fecha.value|date:'Y-m-d\TH:i' }}" readonly class="campo_fecha">
+                <input type="datetime-local" class="campo_fecha" id="fecha" name="fecha" value="{{ form.fecha.value|date:'Y-m-d\TH:i' }}" readonly>
             </div>
         </div>
 

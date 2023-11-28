@@ -1,8 +1,6 @@
 //funciones de Microfono
 
 
-
-
 var nombre;
 var cancelled=false;
 var grabando=false;
@@ -52,6 +50,11 @@ function stopRecordingCallback() {
                 .then(response => {
                     if (response.ok) {
                         console.log('Grabación de audio completada y enviada al servidor.');
+                        Swal.fire({
+                            "title": "Correcto",
+                            "text": "Grabación de audio completada y enviada al servidor. ¡Buen trabajo!",
+                            "icon": "success"
+                        });
                     } else {
                         console.error('Error al enviar el audio al servidor.');
                     }
@@ -81,6 +84,11 @@ function stopRecordingCallback() {
                 .then(response => {
                     if (response.ok) {
                         console.log('Grabación de audio completada y enviada al servidor.');
+                        Swal.fire({
+                            "title": "Correcto",
+                            "text": "Grabación de audio completada y enviada al servidor. ¡Buen trabajo!",
+                            "icon": "success"
+                        });
                     } else {
                         console.error('Error al enviar el audio al servidor.');
                     }
@@ -111,6 +119,11 @@ function stopRecordingCallback() {
                 .then(response => {
                     if (response.ok) {
                         console.log('Grabación de audio completada y enviada al servidor.');
+                        Swal.fire({
+                            "title": "Correcto",
+                            "text": "Grabación de audio completada y enviada al servidor. ¡Buen trabajo!",
+                            "icon": "success"
+                        });
                     } else {
                         console.error('Error al enviar el audio al servidor.');
                     }
@@ -254,6 +267,9 @@ clickAudio = (a) => {
         }
     }
 }
+
+
+
 
 
 

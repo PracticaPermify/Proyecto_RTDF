@@ -16,7 +16,7 @@
         <link rel="stylesheet" href="{% static 'app/css/metronomo.css' %}"/>
     </head>
     <body class="is-preload">
-            <h1 style="text-align: center;">Pauta terapéutica N°{{ pauta_seleccionada.id_pauta_terapeutica }} de Vocalización</h1>
+            <h1 style="text-align: center; font-size: 40px">Pauta terapéutica <b class="importante">Vocalización N°{{ pauta_seleccionada.id_pauta_terapeutica }}</b></h1>
             <br/>
             {% if pauta_seleccionada %}
                     {% comment %} <table class="table" hidden>
@@ -49,13 +49,12 @@
         <div class="container">
             <div class="metronome">
                 <div class="metronome-info">
-                    <h1><strong>Buenos días</strong> {{ user.primer_nombre }} {{ user.ap_paterno }}</h1>
+                    <h1 style="text-align: center; font-size: 40px"><strong>Buenos días</strong> <p class="importante">{{ user.primer_nombre }} {{ user.ap_paterno }}</p></h1>
                     <br/>
-                    <p>El numero de tu pauta es <strong>{{ pauta_seleccionada.id_pauta_terapeutica }}</strong>. 
-                        Esta semana debes trabajar con <b>{{ pauta_seleccionada.vocalizacion.bpm }} BPM</b>. Este sera ajustado automaticamente.</p>
-                    <p>Deberas realizar el ejercicio <b>{{ pauta_seleccionada.cant_veces_dia }} </b> veces al día </p>
-                    <p>Al ejercitar, debes respirar por la nariz y tus ejercicios deben durar aproximadamente <b>{{ pauta_seleccionada.vocalizacion.duracion_seg }} segundos</b>.</p>
-                    <p>El tempo de este ejercicio es de <b>{{ pauta_seleccionada.vocalizacion.tempo }} golpes por segundo</b>.</p>
+                        Esta semana debes trabajar con <b class="importante">{{ pauta_seleccionada.vocalizacion.bpm }} BPM</b>. Este sera ajustado automaticamente.</p>
+                    <p>Deberas realizar el ejercicio <b class="importante">{{ pauta_seleccionada.cant_veces_dia }} veces al día</b>.</p>
+                    <p>Al ejercitar, debes respirar por la nariz y tus ejercicios deben durar aproximadamente <b class="importante">{{ pauta_seleccionada.vocalizacion.duracion_seg }} segundos</b>.</p>
+                    <p>El tempo de este ejercicio es de <b class="importante">{{ pauta_seleccionada.vocalizacion.tempo }} golpes por segundo</b>.</p>
                 </div>
                 <div class="bpm-display">
                     <span class="tempo">{{ pauta_seleccionada.vocalizacion.bpm }}</span>
@@ -83,13 +82,14 @@
                                 <input type="hidden" name="csrfmiddlewaretoken" value="{{csrf_token}}">
                             </div>
                         </form>
-                        
-                <div class="measures">
-                    <div class="subtract-beats stepper">-</div>
-                    <div class="measure-count">{{pauta_seleccionada.vocalizacion.tempo}}</div>
-                    <div class="add-beats stepper">+</div>
-                </div>
-                <span class="beats-per-measure-text">Beats per measure</span>
+                    <div class="ocultar">
+                        <div class="measures">
+                            <div class="subtract-beats stepper">-</div>
+                            <div class="measure-count">{{pauta_seleccionada.vocalizacion.tempo}}</div>
+                            <div class="add-beats stepper">+</div>
+                        </div>
+                        <span class="beats-per-measure-text">Beats per measure</span>
+                    </div>
             </div>
         </div>
 
@@ -105,7 +105,10 @@
             <hr>
         </div>
 
+        {% comment %} Esto servira para declarar los valores del metronomo en el JS {% endcomment %}
         <div id="metronome" data-bpm="{{ pauta_seleccionada.vocalizacion.bpm }}" data-tempo="{{ pauta_seleccionada.vocalizacion.tempo }}"></div>
+
+
     {% else %}
         <div class="container">
             <div class="metronome">
@@ -137,13 +140,14 @@
                             <input type="hidden" name="csrfmiddlewaretoken" value="{{csrf_token}}">
                         </div>
                     </form>
-                    
-                <div class="measures">
-                    <div class="subtract-beats stepper">-</div>
-                    <div class="measure-count">4</div>
-                    <div class="add-beats stepper">+</div>
-                </div>
-                     <span class="beats-per-measure-text">Beats per measure</span>
+                <div class="ocultar">
+                    <div class="measures">
+                        <div class="subtract-beats stepper">-</div>
+                        <div class="measure-count">4</div>
+                        <div class="add-beats stepper">+</div>
+                    </div>
+                        <span class="beats-per-measure-text">Beats per measure</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -177,9 +181,7 @@
     <script src="https://unpkg.com/wavefile"></script>
     
     <script>
-        {% comment %} window.bpm = {{ pauta_seleccionada.vocalizacion.bpm }};
-        window.duracion_seg = {{ pauta_seleccionada.vocalizacion.duracion_seg }};
-        window.tempo = {{ pauta_seleccionada.vocalizacion.tempo }}; {% endcomment %}
+        window.tempo = {{ pauta_seleccionada.vocalizacion.tempo }};
         window.id = {{ pauta_seleccionada.id_pauta_terapeutica }};
 
         window.terapia = "{{ pauta_seleccionada.fk_tp_terapia.tipo_terapia}}"; //Vocalización o Intensidad
