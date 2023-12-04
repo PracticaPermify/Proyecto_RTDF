@@ -72,6 +72,23 @@ def obtener_instituciones(request):
     intituciones = Institucion.objects.filter(id_comuna=comuna_id).values('id_institucion', 'nombre_institucion')
     return JsonResponse(list(intituciones), safe=False)
 
+def tipo_usuario_required(allowed_types):
+    def decorator(view_func):
+        def wrapper(request, *args, **kwargs):
+            user_tipo = request.user.id_tp_usuario.tipo_usuario if request.user.is_authenticated else None
+
+            # Verifica si el tipo de usuario está permitido o no
+            if user_tipo in allowed_types:
+                # Si es permitido, permite el acceso a la vista original
+                return view_func(request, *args, **kwargs)
+            else:
+                return redirect('index')  
+
+        return wrapper
+
+    return decorator
+
+
 
 def require_no_session(view_func):
     def wrapped(request, *args, **kwargs):
@@ -138,7 +155,7 @@ def index(request):
     return render(request, 'rtdf/index.html', {'tipo_usuario': tipo_usuario, 
                                                'usuario': page})
 
-
+@user_passes_test(validate)
 def perfil(request, usuario_id):
 
     tipo_usuario = None 
@@ -642,6 +659,7 @@ def pre_registro(request):
 
 @never_cache
 @user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Paciente'])
 def vocalizacion(request, pauta_id=None, *args, **kwargs):
     tipo_usuario = None
     pauta_seleccionada = None
@@ -774,8 +792,9 @@ def vocalizacion(request, pauta_id=None, *args, **kwargs):
                                                                'pauta_seleccionada': pauta_seleccionada})
 
 
-
+@never_cache
 @user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Paciente'])
 def intensidad(request, pauta_id=None, *args, **kwargs):
 
     tipo_usuario = None
@@ -891,8 +910,9 @@ def intensidad(request, pauta_id=None, *args, **kwargs):
     return render(request,'vista_paciente/intensidad.html', {'tipo_usuario': tipo_usuario,
                                                             'pauta_seleccionada': pauta_seleccionada})
 
-
+@never_cache
 @user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Paciente'])
 def escalas_vocales(request, pauta_id=None, *args, **kwargs):
     tipo_usuario = None
     pauta_seleccionada = None
@@ -1013,6 +1033,7 @@ def escalas_vocales(request, pauta_id=None, *args, **kwargs):
 
 
 @user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Paciente'])
 def mi_fonoaudiologo(request):
 
     tipo_usuario = None 
@@ -1067,6 +1088,7 @@ def mi_fonoaudiologo(request):
 ##Listado para los familiares--------------------------------------
 
 @user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Familiar'])
 def lista_familiar(request):
 
     tipo_usuario = None
@@ -1113,6 +1135,7 @@ def lista_familiar(request):
 ## Detalles de los pacientes de un familiar
 
 @user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Familiar'])
 def detalle_familiar(request, paciente_id):
 
     tipo_usuario = None
@@ -1135,6 +1158,8 @@ def detalle_familiar(request, paciente_id):
 
 # VISTAS DE PROFESIONALES ------------------------------------------------------------------------------->
 
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Fonoaudiologo'])
 def esv(request):
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
@@ -1239,6 +1264,7 @@ def esv(request):
     })
 
 @user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Fonoaudiologo'])
 def listado_pacientes(request):
 
     tipo_usuario = None 
@@ -1290,6 +1316,7 @@ def listado_pacientes(request):
                                                                   'pacientes': pacientes,})
 
 @user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Fonoaudiologo'])
 def ingresar_informes(request):
     tipo_usuario = None
 
@@ -1344,7 +1371,8 @@ def ingresar_informes(request):
         return redirect('vista_profe/index.html')
     
 
-
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Fonoaudiologo'])
 def editar_informe(request, informe_id):
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
@@ -1407,6 +1435,7 @@ def editar_informe(request, informe_id):
 
 @never_cache
 @user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Fonoaudiologo'])
 def detalle_esv(request, informe_id):
     tipo_usuario = None
 
@@ -1472,6 +1501,7 @@ def detalle_esv(request, informe_id):
 
 @never_cache
 @user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Fonoaudiologo'])
 def detalle_pauta_esv(request, pauta_id):
 
     tipo_usuario = None
@@ -1503,7 +1533,8 @@ def detalle_pauta_esv(request, pauta_id):
     else:
         return render(request, 'vista_profe/error.html', {'message': 'La pauta no es del tipo "Escala Vocal."'})
     
-
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Fonoaudiologo'])
 def analisis_profe(request):
     tipo_usuario = None
 
@@ -1568,7 +1599,8 @@ def analisis_profe(request):
         'paginator': paginator,
     })
 
-
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Fonoaudiologo'])
 def editar_pauta_esv(request, pauta_id):
 
     tipo_usuario = None
@@ -1628,7 +1660,8 @@ def editar_pauta_esv(request, pauta_id):
         'tipo_usuario': tipo_usuario
     })
 
-
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Fonoaudiologo'])
 def eliminar_pauta_esv(request, pauta_id):
 
     pauta = get_object_or_404(PautaTerapeutica, pk=pauta_id)
@@ -1640,7 +1673,8 @@ def eliminar_pauta_esv(request, pauta_id):
     return redirect('detalle_esv', informe_id=pauta.fk_informe.id_informe)
 
 
-
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Fonoaudiologo'])
 def editar_esv(request, informe_id):
     tipo_usuario = None
     
@@ -1663,7 +1697,8 @@ def editar_esv(request, informe_id):
         return render(request, 'vista_profe/editar_esv.html', {'informe': informe, 
                                                                  'tipo_usuario': tipo_usuario})
 
-
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Fonoaudiologo'])
 def eliminar_informe_esv(request, informe_id):
     informe = get_object_or_404(Informe, id_informe=informe_id)
     esv_instance = Esv.objects.filter(id_informe=informe)
@@ -1675,6 +1710,9 @@ def eliminar_informe_esv(request, informe_id):
     messages.success(request, "Informe ESV eliminado correctamente")
     return redirect('listado_informes')
 
+
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Fonoaudiologo'])
 def eliminar_informe(request, informe_id):
     informe = get_object_or_404(Informe, id_informe=informe_id)
     tipo_informe = informe.tp_informe
@@ -1690,6 +1728,8 @@ def eliminar_informe(request, informe_id):
 
     return redirect('listado_informes')
 
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Fonoaudiologo'])
 def analisis_estadistico_profe(request, informe_id):
 
     tipo_usuario = None
@@ -1714,6 +1754,7 @@ def analisis_estadistico_profe(request, informe_id):
 
 ##Detalles por paciente de los fonoaudiologos
 @user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Fonoaudiologo'])
 def detalle_prof_paci(request, paciente_id):
 
     paciente = get_object_or_404(Usuario, id_usuario=paciente_id, id_tp_usuario__tipo_usuario='Paciente')
@@ -1787,7 +1828,10 @@ def desvincular_paciente(request, paciente_id):
     else:
         return redirect('listado_pacientes')
     
+
 @never_cache
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Fonoaudiologo'])
 def detalle_prof_pauta(request, id_pauta_terapeutica_id):
 
     if request.user.is_authenticated:
@@ -1828,6 +1872,8 @@ def detalle_prof_pauta(request, id_pauta_terapeutica_id):
 
     })
 
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Fonoaudiologo'])
 def detalle_audio_profe(request, audio_id):
     tipo_usuario = None
     graph_html =None
@@ -1898,6 +1944,7 @@ def detalle_audio_profe(request, audio_id):
 
 @user_passes_test(validate)
 @never_cache
+@tipo_usuario_required(allowed_types=['Fonoaudiologo'])
 def ingresar_coef_profe(request, audio_id):
 
     tipo_usuario = None
@@ -1972,7 +2019,8 @@ def reproducir_audio(request, audio_id):
     #Despliegue del audio
     return FileResponse(open(audio_path, 'rb'), content_type='audio/wav')
 
-
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Fonoaudiologo'])
 def eliminar_coef_manual(request, audiocoeficientes_id):
 
     coef_manual = get_object_or_404(Audioscoeficientes, id_audiocoeficientes=audiocoeficientes_id)
@@ -1985,6 +2033,8 @@ def eliminar_coef_manual(request, audiocoeficientes_id):
     return redirect('detalle_audio_profe', audio_id=id_audio)
 
 @never_cache
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Fonoaudiologo'])
 def editar_coef_manual(request, audiocoeficientes_id):
     tipo_usuario = None
     
@@ -2019,6 +2069,8 @@ def editar_coef_manual(request, audiocoeficientes_id):
                      'id_audio': id_audio})
 
 
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Fonoaudiologo'])
 def eliminar_audio_prof(request, audio_id):
 
     audio_registro = get_object_or_404(Audio, id_audio=audio_id)
@@ -2034,6 +2086,8 @@ def eliminar_audio_prof(request, audio_id):
 
 
 @never_cache
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Fonoaudiologo'])
 def editar_prof_pauta(request, id_pauta_terapeutica_id):
  
     if request.user.is_authenticated:
@@ -2104,6 +2158,8 @@ def editar_prof_pauta(request, id_pauta_terapeutica_id):
     })
 
 @never_cache
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Fonoaudiologo'])
 def eliminar_prof_pauta(request, id_pauta_terapeutica_id):
 
     pauta = get_object_or_404(PautaTerapeutica, id_pauta_terapeutica=id_pauta_terapeutica_id)
@@ -2120,6 +2176,8 @@ def eliminar_prof_pauta(request, id_pauta_terapeutica_id):
     return redirect('detalle_prof_infor', informe_id=pauta.fk_informe.id_informe)
 
 @never_cache
+@tipo_usuario_required(allowed_types=['Fonoaudiologo'])
+@user_passes_test(validate)
 def listado_informes(request):
     # Fonoaudiologo de la sesion
     profesional_medico = request.user.profesionalsalud
@@ -2145,7 +2203,9 @@ def listado_informes(request):
                                                                  'page': page})
     
 
-@never_cache    
+@never_cache 
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Fonoaudiologo'])   
 def pacientes_disponibles(request):
     tipo_usuario = None 
 
@@ -2158,6 +2218,8 @@ def pacientes_disponibles(request):
                                                                           'pacientes_disponibles': pacientes_disponibles})
 
 @never_cache
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Fonoaudiologo'])
 def agregar_paciente(request, paciente_id):
     if request.user.is_authenticated and request.user.id_tp_usuario.tipo_usuario == 'Fonoaudiologo':
         profesional_salud = request.user.profesionalsalud
@@ -2183,6 +2245,7 @@ def agregar_paciente(request, paciente_id):
 
 @user_passes_test(validate)
 @never_cache
+@tipo_usuario_required(allowed_types=['Fonoaudiologo'])
 def detalle_prof_infor(request, informe_id):
 
     source = request.GET.get('source')
@@ -2290,6 +2353,8 @@ def detalle_prof_infor(request, informe_id):
 # FIN DE VISTAS DE PROFESIONALES ------------------------------------------------------------------------------->
 
 # VISTAS DE ADMINISTRADOR ------------------------------------------------------------------------------->
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Admin'])
 def listado_preregistros(request):
 
     tipo_usuario = None 
@@ -2337,6 +2402,8 @@ def listado_preregistros(request):
                      })
 
 @never_cache
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Admin'])
 def detalle_preregistro(request, preregistro_id):
 
     tipo_usuario = None 
@@ -2472,6 +2539,7 @@ def detalle_preregistro(request, preregistro_id):
 
 @user_passes_test(validate)
 @never_cache
+@tipo_usuario_required(allowed_types=['Admin'])
 def list_paci_admin(request):
     pacientes = Usuario.objects.filter(id_tp_usuario__tipo_usuario='Paciente')
     tipo_usuario = None
@@ -2482,6 +2550,7 @@ def list_paci_admin(request):
 
 @never_cache
 @user_passes_test(validate)  
+@tipo_usuario_required(allowed_types=['Admin'])
 def detalle_paciente(request, paciente_id):
     paciente = get_object_or_404(Usuario, id_usuario=paciente_id, id_tp_usuario__tipo_usuario='Paciente')
     traer_paciente = paciente.paciente
@@ -2522,6 +2591,7 @@ def detalle_paciente(request, paciente_id):
 ##LISTADO DE LOS FONOAUDIOLOGOS PARA ADMINSITRADOR
 
 @user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Admin'])
 def list_fono_admin(request):
     fonoaudiologos = Usuario.objects.filter(id_tp_usuario__tipo_usuario='Fonoaudiologo')
     tipo_usuario = None
@@ -2530,6 +2600,7 @@ def list_fono_admin(request):
     return render(request, 'vista_admin/list_fono_admin.html', {'tipo_usuario': tipo_usuario, 'fonoaudiologos': fonoaudiologos})
 
 @user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Admin'])
 def detalle_fonoaudiologo(request, fonoaudiologo_id):
 
     fonoaudiologo = get_object_or_404(Usuario, id_usuario=fonoaudiologo_id, id_tp_usuario__tipo_usuario='Fonoaudiólogo')
@@ -2562,6 +2633,7 @@ def detalle_fonoaudiologo(request, fonoaudiologo_id):
 ##LISTADO PARA NEUROLOGOS PARA ADMINSITRADOR
 
 @user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Admin'])
 def list_neur_admin(request):
     neurologos = Usuario.objects.filter(id_tp_usuario__tipo_usuario='Neurologo')
     
@@ -2575,6 +2647,7 @@ def list_neur_admin(request):
                                                                 'neurologos': neurologos})
 
 @user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Admin'])
 def detalle_neurologo(request, neurologo_id):
 
     neurologo = get_object_or_404(Usuario, id_usuario=neurologo_id, id_tp_usuario__tipo_usuario='Neurologo')
@@ -2607,6 +2680,7 @@ def detalle_neurologo(request, neurologo_id):
 ##LISTADO PARA FAMILIARES PARA VISTA DE ADMINISTRADOR
 
 @user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Admin'])
 def list_fami_admin(request):
     familiar = Usuario.objects.filter(id_tp_usuario__tipo_usuario='Familiar')
     
@@ -2620,6 +2694,7 @@ def list_fami_admin(request):
                                                                 'familiar': familiar})
 
 @user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Admin'])
 def detalle_familiar_admin(request, familiar_id):
     familiar = get_object_or_404(Usuario, id_usuario=familiar_id, id_tp_usuario__tipo_usuario='Familiar')
 
@@ -2649,6 +2724,8 @@ def detalle_familiar_admin(request, familiar_id):
                                                                 'edad': edad
                                                             })
 
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Admin'])
 def eliminar_informe_admin(request, informe_id):
     informe = get_object_or_404(Informe, id_informe=informe_id)
     tipo_informe = informe.tp_informe
@@ -2664,6 +2741,7 @@ def eliminar_informe_admin(request, informe_id):
 
 @never_cache
 @user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Admin'])
 def detalle_informe(request, informe_id):
 
     if request.user.is_authenticated:
@@ -2750,6 +2828,8 @@ def detalle_informe(request, informe_id):
     })
 
 @never_cache
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Admin'])
 def editar_informe_admin(request, informe_id):
     if request.user.is_authenticated:
         tipo_usuario = request.user.id_tp_usuario.tipo_usuario
@@ -2804,6 +2884,8 @@ def editar_informe_admin(request, informe_id):
                                                                         'tipo_usuario': tipo_usuario})
 
 @never_cache
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Admin'])
 def detalle_pauta_admin(request, id_pauta_terapeutica_id):
 
     if request.user.is_authenticated:
@@ -2844,6 +2926,8 @@ def detalle_pauta_admin(request, id_pauta_terapeutica_id):
 
 
 @never_cache
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Admin'])
 def detalle_pauta_esv_admin(request, pauta_id):
 
     tipo_usuario = None
@@ -2873,7 +2957,8 @@ def detalle_pauta_esv_admin(request, pauta_id):
                                                                       'url_regreso': url_regreso,
                                                                       'tipo_usuario': tipo_usuario})
     
-
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Admin'])
 def editar_pauta_esv_admin(request, pauta_id):
     tipo_usuario = None
 
@@ -2932,6 +3017,8 @@ def editar_pauta_esv_admin(request, pauta_id):
         'tipo_usuario': tipo_usuario
     })
 
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Admin'])
 def eliminar_pauta_esv_admin(request, pauta_id):
     pauta = get_object_or_404(PautaTerapeutica, pk=pauta_id)
 
@@ -2944,6 +3031,8 @@ def eliminar_pauta_esv_admin(request, pauta_id):
 
 
 @never_cache
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Admin'])
 def editar_pauta_admin(request, id_pauta_terapeutica_id):
 
     if request.user.is_authenticated:
@@ -3026,6 +3115,8 @@ def editar_pauta_admin(request, id_pauta_terapeutica_id):
     })
 
 @never_cache
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Admin'])
 def eliminar_pauta_admin(request, id_pauta_terapeutica_id):
 
     pauta = get_object_or_404(PautaTerapeutica, id_pauta_terapeutica=id_pauta_terapeutica_id)
@@ -3043,6 +3134,7 @@ def eliminar_pauta_admin(request, id_pauta_terapeutica_id):
     return redirect('detalle_informe', informe_id=pauta.fk_informe.id_informe)
 
 @user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Admin'])
 def detalle_esv_admin(request, informe_id):
     tipo_usuario = None 
 
@@ -3106,7 +3198,8 @@ def detalle_esv_admin(request, informe_id):
             'pautas_terapeuticas': pautas_terapeuticas
         })
     
-
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Admin'])
 def editar_esv_admin(request, informe_id):
     tipo_usuario = None
 
@@ -3143,7 +3236,8 @@ def editar_esv_admin(request, informe_id):
 
     return redirect('index')
     
-
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Admin'])
 def eliminar_esv_admin(request, informe_id):
     if request.user.is_authenticated and request.user.id_tp_usuario.tipo_usuario == 'Admin':
         informe = get_object_or_404(Informe, id_informe=informe_id)
@@ -3159,6 +3253,8 @@ def eliminar_esv_admin(request, informe_id):
     return redirect('index')
 
 
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Admin'])
 def analisis_admin(request):
     tipo_usuario = None
 
@@ -3213,6 +3309,8 @@ def analisis_admin(request):
         'total_vocalizacion': total_vocalizacion,
     })
 
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Admin'])
 def detalle_audio_admin(request, audio_id):
     tipo_usuario = None
 
@@ -3256,6 +3354,8 @@ def detalle_audio_admin(request, audio_id):
 
     })
 
+@user_passes_test(validate)
+@tipo_usuario_required(allowed_types=['Admin'])
 def eliminar_audio_admin(request, audio_id):
 
     audio_registro = get_object_or_404(Audio, id_audio=audio_id)
