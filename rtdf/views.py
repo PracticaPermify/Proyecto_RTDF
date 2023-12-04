@@ -5,8 +5,6 @@ from .models import *
 from django.http import JsonResponse
 from django.contrib.auth.decorators import user_passes_test
 from django.views.decorators.cache import never_cache
-#from django.views.decorators.csrf import csrf_exempt
-#from django.core.files.storage import default_storage
 from django.utils import timezone
 from django.urls import reverse
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
@@ -14,6 +12,7 @@ from django.db.models import Count
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
 import os
+from functools import wraps
 from django.conf import settings
 from rtdf.audio_coef import audio_analysis
 from rtdf.analisis_estadistico import *
@@ -77,9 +76,7 @@ def tipo_usuario_required(allowed_types):
         def wrapper(request, *args, **kwargs):
             user_tipo = request.user.id_tp_usuario.tipo_usuario if request.user.is_authenticated else None
 
-            # Verifica si el tipo de usuario está permitido o no
             if user_tipo in allowed_types:
-                # Si es permitido, permite el acceso a la vista original
                 return view_func(request, *args, **kwargs)
             else:
                 return redirect('index')  
@@ -88,6 +85,20 @@ def tipo_usuario_required(allowed_types):
 
     return decorator
 
+def verificacion_perfil(func):
+    @wraps(func)
+    def wrapper(request, *args, **kwargs):
+
+        usuario_logeado_id = request.user.id_usuario
+
+        usuario_url_id = kwargs.get('usuario_id')
+
+        if usuario_logeado_id != usuario_url_id:
+            return redirect('index')
+
+        return func(request, *args, **kwargs)
+
+    return wrapper
 
 
 def require_no_session(view_func):
@@ -156,6 +167,7 @@ def index(request):
                                                'usuario': page})
 
 @user_passes_test(validate)
+@verificacion_perfil
 def perfil(request, usuario_id):
 
     tipo_usuario = None 
@@ -209,6 +221,7 @@ def perfil(request, usuario_id):
 
 @login_required
 @never_cache
+@verificacion_perfil
 def editar_perfil(request, usuario_id):
     regiones = Region.objects.all()
     admin = None
