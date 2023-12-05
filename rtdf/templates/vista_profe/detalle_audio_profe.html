@@ -1,35 +1,60 @@
 {% extends 'rtdf/base.html' %}
 
-{% block css %}
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'app/css/main.css' %}" />
-
-    
-{% endblock %}
-
 {% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'app/css/main.css' %}" />
 
+<style>
+
+.thead-dark th {
+    background-color: #c94663 !important;
+    border: none; 
+    color: white;
+  }
+
+  .table tbody tr {
+    background-color: #e9d7da; 
+    border: 1px solid #dee2e6;
+  }
+
+  .span_title{
+    color:#c94663 ;
+  }
+
+  .sub_titulo{
+    font-size: 35px;
+  }
+
+  .sub_titulo2{
+    font-size: 30px;
+  }
+
+  .texto_pauta{
+    font-size: 20px !important;
+    color: #252525 !important;
+  }
+</style>
 
 
 
 <div class="container">
 
     <div>
-        <a href="{% url 'analisis_profe' %}">Volver al listado de análisis de audios</a>
+        <a class="btn btn-outline-primary" href="{% url 'analisis_profe' %}"> <i class="fa-solid fa-arrow-left"></i> Volver al listado de análisis de audios</a>
     </div>
 
     </br>
+</br>
     
     
-        <h1>Detalles del análisis del audio N°{{ detalle_audio.id_audio }}</h1>
-    
+        <h1 class=" display-5 fw-bolder sub_titulo">Detalles del análisis del <span class="span_title"> Audio N°{{ detalle_audio.id_audio }}</span></h1>
         </br>
 
         <a href="#" onclick="eliminarAudio({{ detalle_audio.id_audio }})" class="btn btn-danger btn-derecha mb-3">
             Eliminar audio<i class="fas fa-trash-alt" style="margin-left: 5px;"></i>
         </a>
 
-        <div class="table-container">
+        <div class="table-responsive">
             <table class="table">
                 <tbody>
                   <tr>
@@ -77,8 +102,8 @@
 
 
         <br/>
-        <h2>Resultado del cálculo automático de coeficientes</h2>
-
+        <br/>
+        <h1 class=" display-5 fw-bolder sub_titulo2">Resultado del  <span class="span_title"> cálculo automático </span> de coeficientes</h1>
 
         <br/>
         <div class="table-responsive">
@@ -139,7 +164,8 @@
             </div>
 
             </br>
-            <h2>Resultado del cálculo manual de coeficientes</h2>
+            <br>
+            <h1 class=" display-5 fw-bolder sub_titulo2">Resultado del  <span class="span_title"> cálculo manual </span> de coeficientes</h1>
 
             {% if coef_manual %}
                 
@@ -222,7 +248,10 @@
 
             {% if graph_frecuencias %}
             <br>
-            <h2>Comparación gráfica de coeficientes</h2>
+            <br>
+            <h1 class=" display-5 fw-bolder sub_titulo2">Comparación  <span class="span_title"> gráfica de coeficientes </span></h1>
+            <p class="texto_pauta">Gráficos de líneas que muestran la comparación entre los coeficientes calculados por el algoritmo y los obtenidos de forma manual por el fonoaudiólogo.</p>
+    
 
             <div class="row">
                 <div class="form-group col-md-12 col-lg-6">
@@ -243,7 +272,8 @@
             
             {% else %}
             <br>
-            <h2>Comparación gráfica de coeficientes</h2>
+            <br>
+            <h1 class=" display-5 fw-bolder sub_titulo2">Comparación  <span class="span_title"> gráfica de coeficientes </span></h1>
             <br>
             <p>No disponible.</p>
             {% endif %}

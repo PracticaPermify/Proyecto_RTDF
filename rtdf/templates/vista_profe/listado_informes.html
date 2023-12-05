@@ -46,8 +46,8 @@
                         {% for informe in page %}
                             {% if informe.tp_informe.tipo_informe == "GRBAS" or informe.tp_informe.tipo_informe == "RASATI" %}
                                 <tr>
-                                    <td><a href="{% url 'detalle_prof_infor' informe.id_informe %}">
-                                        Informe {{ informe.id_informe }}</a></td>
+                                    <th><a href="{% url 'detalle_prof_infor' informe.id_informe %}">
+                                        Informe {{ informe.id_informe }}</a></th>
                                     <td>{{ informe.fk_relacion_pa_pro.id_paciente.id_usuario.primer_nombre }} 
                                         {{ informe.fk_relacion_pa_pro.id_paciente.id_usuario.ap_paterno }}</td>
                                     <td>{{ informe.tp_informe.tipo_informe }}</td>
@@ -137,8 +137,8 @@
                             {% for informe in page %}
                                 {% if informe.tp_informe.tipo_informe == "ESV" %}
                                     <tr>
-                                        <td><a href="{% url 'detalle_esv' informe.id_informe %}">
-                                            ESV {{ informe.id_informe }}</a></td>
+                                        <th><a href="{% url 'detalle_esv' informe.id_informe %}">
+                                            ESV {{ informe.id_informe }}</a></th>
                                         <td>{{ informe.fk_relacion_pa_pro.id_paciente.id_usuario.primer_nombre }} 
                                             {{ informe.fk_relacion_pa_pro.id_paciente.id_usuario.ap_paterno }}</td>
                                         <td>{{ informe.fecha }}</td>

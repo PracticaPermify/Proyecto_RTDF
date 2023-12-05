@@ -49,10 +49,10 @@
                                 {% for paciente in pacientes %}
                                 <tr>
                                     <td>{{ paciente.id_paciente }}</td>
-                                    <td><a href="{% url 'detalle_prof_paci' paciente.id_usuario %}">
+                                    <th><a href="{% url 'detalle_prof_paci' paciente.id_usuario %}">
                                         {{ paciente.primer_nombre }} {{ paciente.segundo_nombre }}
                                         {{ paciente.ap_paterno }} {{ paciente.ap_materno }}
-                                        </a></td>
+                                        </a></th>
                                     <td>{{ paciente.email }}</td>
                                     <td>{{ paciente.numero_telefonico }}</td>
                                     <td>{{ paciente.telegram }}</td>
