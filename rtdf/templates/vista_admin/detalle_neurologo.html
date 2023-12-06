@@ -1,15 +1,22 @@
 {% extends 'rtdf/base.html' %}
 
 {% block content %}
+
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'app/css/css_profesionales/detalle_prof_infor.css' %}"/>
+<link rel="stylesheet" href="{% static 'app/css/tablas_titulo.css' %}"/>
+
+<div class="container">
     <div>
-        <a href="{% url 'list_neur_admin' %}">Volver a la lista de neurologos</a>
+        <a class="btn btn-outline-primary" href="{% url 'list_neur_admin' %}"><i class="fa-solid fa-arrow-left"></i> Volver a la lista de neurologos</a>
     </div>
     </br>
-        <div class="container">
             <h1>Detalles del neurologo {{ neurologo.primer_nombre }} {{ neurologo.ap_paterno }}</h1>
         </br>
         </div>
 
+    <div class="container">
       <div class="table-responsive">
         <table class="table">
               <tr>
@@ -38,9 +45,11 @@
               </tr>
           </table>
         </div>
+      </div>
 
         </br>
-      </br>
+
+    <div class="container">
       <h2><strong>Pacientes asignados</strong></h2>
       </br>
   
@@ -75,7 +84,9 @@
           </tbody>
         </table>
       </div>
-        
+    </div>
+
+</div>
 </div>
 
 {% endblock %}

@@ -3277,7 +3277,7 @@ def analisis_admin(request):
         datos_audiocoeficientes = Audioscoeficientes.objects.select_related(
             'id_audio__fk_pauta_terapeutica__fk_informe__fk_relacion_pa_pro__id_paciente__id_usuario',
             'id_audio__fk_pauta_terapeutica__fk_informe__fk_relacion_pa_pro__fk_profesional_salud'
-        )
+        ).order_by('-fecha_coeficiente')
 
         relaciones = RelacionPaPro.objects.all()
 

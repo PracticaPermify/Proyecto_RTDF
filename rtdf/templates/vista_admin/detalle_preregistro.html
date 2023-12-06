@@ -1,20 +1,24 @@
 {% extends 'rtdf/base.html' %}
 
-{% block css %}
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'app/css/main.css' %}" />
-{% endblock %}
-
 {% block content %}
+
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'app/css/tablas_titulo.css' %}"/>
 
 <div class="container">
 
     <div>
-        <a href="{% url 'listado_preregistros'%}">Volver al listado de pre-registros</a>
+      <header class="row text-left titulo_header">
+        <div class="col-lg-8">
+        <a class="btn btn-outline-primary" href="{% url 'listado_preregistros'%}"><i class="fa-solid fa-arrow-left"></i> Volver al listado de pre-registros</a>
+        </div>
+      </header>
     </div>
 
     </br>
     
+    <div class="container">
     
         <h1>Detalles del pre-registro N°{{ pre_registro.id_preregistro }}</h1>
     
@@ -130,7 +134,7 @@
                 </tbody>
                 </table>
             </div>
-
+          </div>
             
 
 </div>

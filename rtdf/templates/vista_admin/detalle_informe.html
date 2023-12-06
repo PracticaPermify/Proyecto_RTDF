@@ -4,8 +4,9 @@
 
 {% block content %}
 
-{% load static%}
+{% load static %}
 
+<link rel="stylesheet" href="{% static 'app/css/tablas_titulo.css' %}"/>
 <link rel="stylesheet" href="{% static 'app/css/css_profesionales/detalle_prof_infor.css' %}"/>
 
 
@@ -13,12 +14,14 @@
 <div class="container">
 
 <div>
-    <a href="{% url 'detalle_paciente' paciente_relacionado.id_usuario.id_usuario %}">Volver a la información del paciente</a>
+    <header class="row text-left titulo_header">
+        <div class="col-lg-8">
+        <a class="btn btn-outline-primary" href="{% url 'detalle_paciente' paciente_relacionado.id_usuario.id_usuario %}"><i class="fa-solid fa-arrow-left"></i> Volver a la información del paciente</a>
+        </div>
+    </header>
 </div>
 
-</br>
-</br>
-
+<div class="container">
 
     <h1>Detalles del informe {{ informe.id_informe }}</h1>
 
@@ -34,6 +37,7 @@
     </a>
     
     </br>
+
     <div class="table-responsive">
         <table class="table">
             <tbody>
@@ -41,45 +45,45 @@
 
                 {% if paciente_relacionado %}</p>
                 <tr>
-                    <th>Rut del paciente:</th>
+                    <th>Rut del paciente</th>
                     <td>{{ paciente_relacionado.id_usuario.numero_identificacion }}</td>
                 </tr>
                 <tr>
-                    <th>Paciente:</th>
+                    <th>Paciente</th>
                     <td>{{ paciente_relacionado.id_usuario.primer_nombre }} {{ paciente_relacionado.id_usuario.ap_paterno }}</td>
                 </tr>
                 {% endif %}
                 <tr>
-                    <th>Titulo:</th>
+                    <th>Titulo</th>
                     <td>{{ informe.titulo }}</td>
                 </tr>
                 <tr>
-                    <th>Descripción:</th>
+                    <th>Descripción</th>
                     <td>{{ informe.descripcion }}</td>
                 </tr>
                 <tr>
-                    <th>Observación:</th>
+                    <th>Observación</th>
                     <td>{{ informe.observacion }}</td>
                 </tr>
                 <tr>
-                    <th>Fecha:</th>
+                    <th>Fecha</th>
                     <td>{{ informe.fecha }}</td>
                 </tr>
 
                 <tr>
-                    <th>Tipo de informe:</th>
+                    <th>Tipo de informe</th>
                     <td>GRBAS</td>
                 </tr>
                 <tr>
-                    <th>Grado disfonía:</th>
+                    <th>Grado disfonía</th>
                     <td class="valor-traducir">{{ grbas.g_grado_disfonia }}</td>
                 </tr>
                 <tr>
-                    <th>Rugosidad de voz: </th>
+                    <th>Rugosidad de voz</th>
                     <td class="valor-traducir">{{ grbas.r_aspereza }}</td>
                 </tr>
                 <tr>
-                    <th>B (Respiración dificultosa):</th>
+                    <th>B (Respiración dificultosa)</th>
                     <td class="valor-traducir"> {{ grbas.b_soplo }}</td>
                 </tr>
                 <tr>
@@ -87,63 +91,63 @@
                     <td class="valor-traducir">{{ grbas.a_debilidad }}</td>
                 </tr>
                 <tr>
-                    <th>S (Grado de tensión vocal): </th>
+                    <th>S (Grado de tensión vocal) </th>
                     <td class="valor-traducir">{{ grbas.s_tension  }}</td>
                 </tr>
                 {% endif %}
                 {% if rasati %}
                 {% if paciente_relacionado %}</p>
                 <tr>
-                    <th>Rut del paciente:</th>
+                    <th>Rut del paciente</th>
                     <td>{{ paciente_relacionado.id_usuario.numero_identificacion }}</td>
                 </tr>
                 <tr>
-                    <th>Paciente:</th>
+                    <th>Paciente</th>
                     <td>{{ paciente_relacionado.id_usuario.primer_nombre }} {{ paciente_relacionado.id_usuario.ap_paterno }}</td>
                 </tr>
                 {% endif %}
                 <tr>
-                    <th>Tipo de informe:</th>
+                    <th>Tipo de informe</th>
                     <td>RASATI</td>
                 </tr>
                 <tr>
-                    <th>Titulo:</th>
+                    <th>Titulo</th>
                     <td>{{ informe.titulo }}</td>
                 </tr>
                 <tr>
-                    <th>Descripción:</th>
+                    <th>Descripción</th>
                     <td>{{ informe.descripcion }}</td>
                 </tr>
                 <tr>
-                    <th>Observación:</th>
+                    <th>Observación</th>
                     <td>{{ informe.observacion }}</td>
                 </tr>
                 <tr>
-                    <th>Fecha:</th>
+                    <th>Fecha</th>
                     <td>{{ informe.fecha }}</td>
                 </tr>
                 <tr>
-                    <th>Ronquera:</th>
+                    <th>Ronquera</th>
                     <td class="valor-traducir">{{ rasati.r_ronquedad }}</td>
                 </tr>
                 <tr>
-                    <th>Aspereza: </th>
+                    <th>Aspereza</th>
                     <td class="valor-traducir">{{ rasati.a_aspereza }}</td>
                 </tr>
                 <tr>
-                    <th>Soplosidad:</th>
+                    <th>Soplosidad</th>
                     <td class="valor-traducir"> {{ rasati.s_soplo }}</td>
                 </tr>
                 <tr>
-                    <th>Astenia:</th>
+                    <th>Astenia</th>
                     <td class="valor-traducir">{{ rasati.a_astenia }}</td>
                 </tr>
                 <tr>
-                    <th>Tensión: </th>
+                    <th>Tensión</th>
                     <td class="valor-traducir">{{ rasati.t_tension }}</td>
                 </tr>
                 <tr>
-                    <th>Inestabilidad: </th>
+                    <th>Inestabilidad</th>
                     <td class="valor-traducir">{{ rasati.i_inestabilidad }}</td>
                 </tr>
                 {% endif %}
@@ -277,6 +281,9 @@
     </div>
 
     <h2><strong>Pauta Terapéutica: Vocalización</strong></h2>
+
+    <p class="texto_pauta">Aquí se enumeran todos las pautas terapéuticas de vocalización. Para obtener más información, haz clic en el id en azul de la pauta terapéutica:</p>
+
   </br>
 
   <div class="table-responsive">
@@ -295,8 +302,8 @@
         <tbody>
           {% for vocalizacion in datos_vocalizacion %}
           <tr>
-            <td><a href="{% url 'detalle_pauta_admin' vocalizacion.id_pauta_terapeutica_id %}">
-                Pauta {{ vocalizacion.id_pauta_terapeutica_id}}</a></td>
+            <th><a href="{% url 'detalle_pauta_admin' vocalizacion.id_pauta_terapeutica_id %}">
+                Pauta {{ vocalizacion.id_pauta_terapeutica_id}}</a></th>
             <td>{{ vocalizacion.id_pauta_terapeutica.cant_veces_dia}}</td>
             <td>{{ vocalizacion.id_pauta_terapeutica.fecha_inicio }}</td>
             <td>{{ vocalizacion.id_pauta_terapeutica.fecha_fin }}</td>
@@ -314,6 +321,9 @@
 
     </br>
     <h2><strong>Pauta Terapéutica: Intensidad</strong></h2>
+
+    <p class="texto_pauta">Aquí se enumeran todos las pautas terapéuticas de intensidad. Para obtener más información, haz clic en el id en azul de la pauta terapéutica:</p>
+
     </br>
 
     <div class="table-responsive">
@@ -332,8 +342,8 @@
         <tbody>
             {% for intensidad in datos_intensidad %}
             <tr>
-                <td><a href="{% url 'detalle_pauta_admin' intensidad.id_pauta_terapeutica_id %}">
-                    Pauta {{ intensidad.id_pauta_terapeutica_id}}</a></td>
+                <th><a href="{% url 'detalle_pauta_admin' intensidad.id_pauta_terapeutica_id %}">
+                    Pauta {{ intensidad.id_pauta_terapeutica_id}}</a></th>
               <td>{{ intensidad.id_pauta_terapeutica.cant_veces_dia}}</td>
               <td>{{ intensidad.id_pauta_terapeutica.fecha_inicio }}</td>
               <td>{{ intensidad.id_pauta_terapeutica.fecha_fin }}</td>
@@ -350,6 +360,7 @@
         </tbody>
         </table>
     </div>
+</div>
 
 </div>
 </body>    

@@ -14,7 +14,11 @@
             <div class="card-body">
                     
                 <div class="mb-4 mt-3">
-                    <a href="{% url 'detalle_informe' informe.id_informe %}">Volver al detalle del informe</a>
+                    <header class="row text-left titulo_header">
+                        <div class="col-lg-8">
+                            <a class="btn btn-outline-primary" href="{% url 'detalle_informe' informe.id_informe %}"><i class="fa-solid fa-arrow-left"></i> Volver al detalle del informe</a>
+                        </div>
+                    </header>
                 </div>
 
                 <h1 class="card-title text-center">Editar Informe {{ informe.id_informe }} de 

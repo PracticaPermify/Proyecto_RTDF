@@ -1,6 +1,8 @@
 {% extends "rtdf/base.html" %}
 
 {% block content%}
+{% load static %}
+<link rel="stylesheet" href="{% static 'app/css/tablas_titulo.css' %}"/>
 
 <style>
     .table-container {
@@ -22,10 +24,10 @@
     .table thead {
       background-color: #f2f2f2; /* Establece un color de fondo para el encabezado de la tabla */
     }
-    </style>
+</style>
 
 <div class="container">
-    <h1>Tabla de Análisis de audio</h1>
+    <h1 class=" display-5 fw-bolder sub_titulo">Tabla de <span class="span_title"> Análisis de audio</h1>
     <br>
     <div class="table-responsive">
       <table class="table custom-table">
@@ -60,7 +62,6 @@
             <th>APQ5 Shimmer</th>
             <th>APQ11 Shimmer</th>
             <th>Tipo de llenado</th>
-            <!-- Agrega aquí más columnas según tus campos -->
           </tr>
         </thead>
         <tbody>
@@ -70,16 +71,16 @@
               <tr>
                 <td>{{ audio_coef.id_audiocoeficientes }}</td>
                 <td>{{ usuario.numero_identificacion }}</td>
-                <td><a href="{% url 'detalle_paciente' usuario.id_usuario %}"> Paciente {{ usuario.id_usuario }}</a></td>
+                <th><a href="{% url 'detalle_paciente' usuario.id_usuario %}"> Paciente {{ usuario.id_usuario }}</a></th>
                 <td>{{ usuario.primer_nombre }} {{ usuario.ap_paterno }} {{ usuario.ap_materno }}</td>
                 <td>{{ audio_coef.id_audio_id }}</td>
-                <td><a href="{% url 'detalle_audio_admin' audio_coef.id_audio_id %}">
+                <th><a href="{% url 'detalle_audio_admin' audio_coef.id_audio_id %}">
                   {{ audio_coef.nombre_archivo }}
-              </a></td>
-                <td>
+              </a></th>
+                <th>
                   <a href="{% url 'detalle_pauta_admin' audio_coef.id_audio.fk_pauta_terapeutica.id_pauta_terapeutica  %}">
                   Pauta {{ audio_coef.id_audio.fk_pauta_terapeutica.id_pauta_terapeutica }}</a>
-                </td>
+                </th>
                 <td>{{ audio_coef.id_audio.fk_origen_audio }}</td>
                 <td>{{ audio_coef.id_audio.fk_pauta_terapeutica.fk_informe.fk_relacion_pa_pro.fk_profesional_salud.id_usuario.id_usuario }}</td>
                 <td>
@@ -111,23 +112,34 @@
         </tbody>
       </table>
 
-      <div class="pagination">
-        <span class="step-links">
+      <nav aria-label="Page navigation">
+      <ul class="pagination">
           {% if datos_audiocoeficientes.has_previous %}
-            <a href="?page_audios=1">&laquo; Primero</a>
-            <a href="?page_audios={{ datos_audiocoeficientes.previous_page_number }}">Anterior</a>
+            <li class="page-item">
+              <a class="page-link" href="?page_audios=1">&laquo; Primero</a>
+            </li>
+            <li>
+              <a class="page-link" href="?page_audios={{ datos_audiocoeficientes.previous_page_number }}">Anterior</a>
+            </li>
           {% endif %}
     
-          <span class="current-page">
-            Página {{ datos_audiocoeficientes.number }} de {{ datos_audiocoeficientes.paginator.num_pages }}.
-          </span>
+          <li class="page-item disabled">
+            <span class="page-link">
+              Página {{ datos_audiocoeficientes.number }} de {{ datos_audiocoeficientes.paginator.num_pages }}.
+            </span>
+          </li>
     
           {% if datos_audiocoeficientes.has_next %}
-            <a href="?page_audios={{ datos_audiocoeficientes.next_page_number }}">Siguiente</a>
-            <a href="?page_audios={{ datos_audiocoeficientes.paginator.num_pages }}">Ultimo &raquo;</a>
+          <li class="page-item">
+            <a class="page-link" href="?page_audios={{ datos_audiocoeficientes.next_page_number }}">Siguiente</a>
+          </li>
+
+          <li class="page-item">
+            <a class="page-link" href="?page_audios={{ datos_audiocoeficientes.paginator.num_pages }}">Ultimo &raquo;</a>
+          </li>
           {% endif %}
-        </span>
-      </div>
+      </ul>
+    </nav>
 
     </br>
     </br>
@@ -174,24 +186,34 @@
                           </tfoot>
                           </table> 
                           
-                          <div class="pagination">
-                            <span class="step-links">
+                          
+                          <nav aria-label="Page navigation">
+                            <ul class="pagination">
                                 {% if conteo_audios.has_previous %}
-                                    <a href="?page=1#conteo-audios">&laquo; Inicio</a>
-                                    <a href="?page={{ conteo_audios.previous_page_number }}#conteo-audios">Anterior</a>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page_conteo=1#conteo-audios">&laquo; Inicio</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page_conteo={{ conteo_audios.previous_page_number }}#conteo-audios">Anterior</a>
+                                    </li>
                                 {% endif %}
-                                
-                                <span class="current-page">
-                                  Página {{ conteo_audios.number }} de {{ conteo_audios.paginator.num_pages }}.
-                                </span>
-                                
+                        
+                                <li class="page-item disabled">
+                                    <span class="page-link">
+                                        Página {{ conteo_audios.number }} de {{ conteo_audios.paginator.num_pages }}.
+                                    </span>
+                                </li>
+                        
                                 {% if conteo_audios.has_next %}
-                                    <a href="?page={{ conteo_audios.next_page_number }}#conteo-audios">Siguiente</a>
-                                    <a href="?page={{ conteo_audios.paginator.num_pages }}#conteo-audios">Ultimo &raquo;</a>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page_conteo={{ conteo_audios.next_page_number }}#conteo-audios">Siguiente</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page_conteo={{ conteo_audios.paginator.num_pages }}#conteo-audios">Ultimo &raquo;</a>
+                                    </li>
                                 {% endif %}
-                            </span>
-                        </div>
-
+                            </ul>
+                        </nav>
                     </div>
 
   </div>

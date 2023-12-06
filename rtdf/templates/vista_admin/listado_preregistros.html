@@ -1,11 +1,9 @@
 {% extends 'rtdf/base.html' %}
 
-{% block css %}
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'app/css/main.css' %}" />
-{% endblock %}
-
 {% block content %}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'app/css/tablas_titulo.css' %}"/>
 
 <body class="is-preload">
     <div class="global-container">
@@ -33,12 +31,12 @@
                           <tr>
                             {% for pre_registrado in pre_registrados %}
                             <th scope="row">{{ pre_registrado.id_pre_registro }}</th>
-                            <td>
+                            <th>
                             <a href="">
                             {{ pre_registrado.primer_nombre }} {{ pre_registrado.segundo_nombre }} 
                             {{ pre_registrado.ap_paterno }} {{ pre_registrado.ap_materno }}
                             </a>
-                            </td>
+                            </th>
                             <td>{{ pre_registrado.id_tp_usuario }}</td>
                             <td>{{ pre_registrado.fecha_nacimiento }}</td>
                             <td>{{ pre_registrado.id_institucion }}</td>
@@ -61,7 +59,7 @@
                             {% endif %}
                             
                             <span class="current-page">
-                                Page {{ pre_registrados.number }} de {{ pre_registrados.paginator.num_pages }}.
+                                Pagina {{ pre_registrados.number }} de {{ pre_registrados.paginator.num_pages }}.
                             </span>
                             
                             {% if pre_registrados.has_next %}
@@ -96,12 +94,12 @@
                               <tr>
                                 {% for validado in validados %}
                                 <th scope="row">{{ validado.id_pre_registro }}</th>
-                                <td>
+                                <th>
                                 <a href="">
                                 {{ validado.primer_nombre }} {{ validado.segundo_nombre }} 
                                 {{ validado.ap_paterno }} {{ validado.ap_materno }}
                                 </a>
-                                </td>
+                                </th>
                                 <td>{{ validado.id_tp_usuario }}</td>
                                 <td>{{ validado.fecha_nacimiento }}</td>
                                 <td>{{ validado.id_institucion }}</td>
@@ -124,7 +122,7 @@
                             {% endif %}
                             
                             <span class="current-page">
-                                Page {{ validados.number }} de {{ validados.paginator.num_pages }}.
+                              Pagina {{ validados.number }} de {{ validados.paginator.num_pages }}.
                             </span>
                             
                             {% if validados.has_next %}

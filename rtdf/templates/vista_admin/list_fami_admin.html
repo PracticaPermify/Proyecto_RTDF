@@ -1,11 +1,12 @@
 {% extends 'rtdf/base.html' %}
 
-{% block css %}
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'app/css/main.css' %}" />
-{% endblock %}
-
 {% block content %}
+
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'app/css/css_profesionales/detalle_prof_infor.css' %}"/>
+<link rel="stylesheet" href="{% static 'app/css/tablas_titulo.css' %}"/>
+
     <body class="is-preload">
         <div class="global-container">
             <div class="card login-form">
@@ -24,13 +25,13 @@
                               <tr>
                             {% for familiar in familiar %}
                                 <th scope="row">{{ familiar.id_usuario }}</th>
-                                <td>
+                                <th>
                                 <a href="{% url 'detalle_familiar_admin' familiar.id_usuario %}">
                                 {{ familiar.primer_nombre }} {{ familiar.segundo_nombre }} 
                                 {{ familiar.ap_paterno }} {{ familiar.ap_materno }}
                                 </a>
-                                </td>
-                                <td>{{ familiar.id_tp_usuario }}</td>
+                                </th>
+                                <th>{{ familiar.id_tp_usuario }}</th>
                               </tr>
                             {% endfor %}
                             </tbody>

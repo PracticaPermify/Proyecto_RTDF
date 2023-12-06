@@ -41,7 +41,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="col-xl-5 col-xxl-6 d-none d-xl-block text-center"><img class="img-fluid rounded-3 my-5 float-right" src="https://dummyimage.com/600x400/343a40/6c757d" alt="..." /></div>
+                                                 <div class="col-xl-5 col-xxl-6 d-none d-xl-block text-center"><img class="img-fluid rounded-3 my-5 float-right" src="https://dummyimage.com/600x400/343a40/6c757d" alt="..." /></div>
                                             </div>
 
                                         </section>
@@ -235,7 +235,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-xl-5 col-xxl-6 d-none d-xl-block text-center"><img class="img-fluid rounded-3 my-5 float-right" src="https://dummyimage.com/600x400/343a40/6c757d" alt="..." /></div>
+                                                    <div class="col-xl-5 col-xxl-6 d-none d-xl-block text-center"><img class="img-fluid rounded-3 my-5 float-right" src="{% static 'app\recursos\img\fonoaudiologia_perfil.jpg' %}" alt="..." /></div>
                                                 </div>
 
                                             </section>
@@ -250,31 +250,31 @@
                                                     <div class="row">
                                                         <div class="col-md-4">
                                                           <div class="card card h-100">
-                                                            <img src="https://dummyimage.com/600x400/343a40/6c757d" class="card-img-top" alt="Imagen de la tarjeta">
+                                                            <img src="{% static 'app\recursos\img\listado_pacientes.jpg' %}" height="220" width="600" class="card-img-top" alt="Imagen de la tarjeta">
                                                             <div class="card-body">
                                                               <h5 class="card-title display-6" >Listado de <span class="span_title">pacientes</span></h5>
                                                               <p class="card-text">En este apartado puede revisar rápidamente la información esencial de cada paciente, como nombres, antecedentes medicos y detalles de contacto.</p>
-                                                              <a href="#" class="btn btn-primary float-right w-50 mt-3">Ver →</a>
+                                                              <a href="{% url 'listado_pacientes' %}" class="btn btn-primary float-right w-50 mt-3">Ver →</a>
                                                             </div>
                                                           </div>
                                                         </div>
                                                         <div class="col-md-4">
                                                           <div class="card card h-100">
-                                                            <img src="https://dummyimage.com/600x400/343a40/6c757d" class="card-img-top" alt="Imagen de la tarjeta">
+                                                            <img src="{% static 'app\recursos\img\imagen_informes.png' %}" height="220" width="600" class="card-img-top" alt="Imagen de la tarjeta">
                                                             <div class="card-body">
                                                               <h5 class="card-title display-6">Listado de <span class="span_title">informes</span></h5>
                                                               <p class="card-text">Este apartado proporciona una visión general de los informes disponibles, permitiendo una rápida identificación y acceso a la información necesitada. </p>
-                                                              <a href="#" class="btn btn-primary float-right w-50 mt-3">Ver →</a>
+                                                              <a href="{% url 'listado_informes' %}" class="btn btn-primary float-right w-50 mt-3">Ver →</a>
                                                             </div>
                                                           </div>
                                                         </div>
                                                         <div class="col-md-4">
                                                           <div class="card card h-100">
-                                                            <img src="https://dummyimage.com/600x400/343a40/6c757d" class="card-img-top" alt="Imagen de la tarjeta">
+                                                            <img src="{% static 'app\recursos\img\audios.png' %}" height="220" width="600" class="card-img-top" alt="Imagen de la tarjeta">
                                                             <div class="card-body">
                                                               <h5 class="card-title display-6">Análisis de <span class="span_title">audio</span></h5>
                                                               <p class="card-text">Este apartado proporciona información relacionada al análisis de los audios generados por los pacientes, respecto a sus ejercicios terapéuticos realizados.</p>
-                                                              <a href="#" class="btn btn-primary float-right w-50 mt-3">Ver →</a>
+                                                              <a href="{% url 'analisis_profe' %}" class="btn btn-primary float-right w-50 mt-3">Ver →</a>
                                                             </div>
                                                           </div>
                                                         </div>
@@ -344,7 +344,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-xl-5 col-xxl-6 d-none d-xl-block text-center"><img class="img-fluid rounded-3 my-5 float-right" src="https://dummyimage.com/600x400/343a40/6c757d" alt="..." /></div>
+                                                    <div class="col-xl-5 col-xxl-6 d-none d-xl-block text-center"><img class="img-fluid rounded-3 my-5 float-right" src="{% static 'app\recursos\img\imagen_perfil_admin.png' %}" height="400" width="600" alt="..." /></div>
                                                 </div>
 
                                             </section>
@@ -359,31 +359,31 @@
                                                     <div class="row">
                                                         <div class="col-md-4">
                                                           <div class="card card h-100">
-                                                            <img src="https://dummyimage.com/600x400/343a40/6c757d" class="card-img-top" alt="Imagen de la tarjeta">
+                                                            <img src="{% static 'app\recursos\img\fonoaudiologia_perfil.jpg' %}" height="225" width="600" class="card-img-top" alt="Imagen de la tarjeta">
                                                             <div class="card-body">
                                                               <h5 class="card-title display-6" >Listado de <span class="span_title">Fonoaudiólogos</span></h5>
                                                               <p class="card-text">En este apartado puede revisar rápidamente la información esencial de cada fonoaudiólogo, como nombres, antecedentes profesionales y detalles de contacto.</p>
-                                                              <a href="#" class="btn btn-primary float-right w-50 mt-3">Ver →</a>
+                                                              <a href="{% url 'list_fono_admin' %}" class="btn btn-primary float-right w-50 mt-3">Ver →</a>
                                                             </div>
                                                           </div>
                                                         </div>
                                                         <div class="col-md-4">
                                                           <div class="card card h-100">
-                                                            <img src="https://dummyimage.com/600x400/343a40/6c757d" class="card-img-top" alt="Imagen de la tarjeta">
+                                                            <img src="{% static 'app\recursos\img\imagen_generica.jpg' %}" height="225" width="600" class="card-img-top" alt="Imagen de la tarjeta">
                                                             <div class="card-body">
                                                               <h5 class="card-title display-6">Listado de <span class="span_title">Pacientes</span></h5>
                                                               <p class="card-text">En este apartado puede revisar rápidamente la información esencial de cada paciente, como nombres, antecedentes medicos, profesional vinculado y detalles de contacto. </p>
-                                                              <a href="#" class="btn btn-primary float-right w-50 mt-3">Ver →</a>
+                                                              <a href="{% url 'list_paci_admin' %}" class="btn btn-primary float-right w-50 mt-3">Ver →</a>
                                                             </div>
                                                           </div>
                                                         </div>
                                                         <div class="col-md-4">
                                                           <div class="card card h-100">
-                                                            <img src="https://dummyimage.com/600x400/343a40/6c757d" class="card-img-top" alt="Imagen de la tarjeta">
+                                                            <img src="{% static 'app\recursos\img\imagen_preregistro.png' %}" height="220" width="600" class="card-img-top" alt="Imagen de la tarjeta">
                                                             <div class="card-body">
                                                               <h5 class="card-title display-6">Gestión de <span class="span_title">Pre-registros</span></h5>
                                                               <p class="card-text">Este apartado permite la gestión en cuanto a los pre-registros realizados por usuario que desean incorporarse a la plataforma RTDF.</p>
-                                                              <a href="#" class="btn btn-primary float-right w-50 mt-3">Ver →</a>
+                                                              <a href="{% url 'listado_preregistros' %}" class="btn btn-primary float-right w-50 mt-3">Ver →</a>
                                                             </div>
                                                           </div>
                                                         </div>

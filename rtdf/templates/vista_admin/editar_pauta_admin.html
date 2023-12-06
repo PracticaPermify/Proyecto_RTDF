@@ -4,6 +4,7 @@
 
 {% load static %}
 <link rel="stylesheet" href="{% static 'app/css/css_admin/editar_pauta_admin.css' %}"/>
+<link rel="stylesheet" href="{% static 'app/css/tablas_titulo.css' %}"/>
 
 <body class="is-preload">
     <div class="global-container">
@@ -11,7 +12,11 @@
             <div class="card-body">
 
                 <div class="mb-4 mt-3">
-                    <a href="{% url 'detalle_pauta_admin' pauta.id_pauta_terapeutica %}">Volver al detalle del informe</a>
+                    <header class="row text-left titulo_header">
+                        <div class="col-lg-8">
+                        <a class="btn btn-outline-primary" href="{% url 'detalle_pauta_admin' pauta.id_pauta_terapeutica %}"> <i class="fa-solid fa-arrow-left"></i> Volver al detalle del informe</a>
+                        </div>
+                    </header>   
                 </div>
 
                 <h1 class="card-title text-center">Editar Pauta Terapeutica {{ pauta.id_pauta_terapeutica }} de 
