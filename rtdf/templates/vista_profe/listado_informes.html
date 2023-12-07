@@ -8,7 +8,16 @@
 <body class="fondo-negro">
     <header class="row text-left titulo_header">
         <div class="col-lg-8">
-            <h1 class="titulo_index">{{user.id_tp_usuario}} <span class="span_title">{{ user.primer_nombre }} {{ user.ap_paterno }}</span></h1>
+            <h1 class="titulo_index">
+                
+            {% if tipo_usuario == 'Fonoaudiologo' %}   
+                Fonoaudiólogo
+            {% else %}
+                {{user.id_tp_usuario}} 
+            {% endif %}    
+
+                
+                <span class="span_title">{{ user.primer_nombre }} {{ user.ap_paterno }}</span></h1>
             <p class="texto_header">Recursos Terapéuticos para Fonoaudiólogos</p>
         </div>
         <div class="col-lg-4">

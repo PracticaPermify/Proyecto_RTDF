@@ -226,7 +226,7 @@
                                                 <div class="row">
                                                     <div class="col-lg-8 col-xl-7 col-xxl-6 d-flex align-items-center texto_inicio">
                                                         <div class="my-5 text-center text-xl-start">
-                                                            <h1 class="display-5 fw-bolder mb-3">Perfil <span class="span_title">{{user.id_tp_usuario}}</span></h1>
+                                                            <h1 class="display-5 fw-bolder mb-3">Perfil <span class="span_title">Fonoaudiólogo</span></h1>
                                                             <p class="lead fw-normal  mb-4 pr-mb-3">Bienvenida a nuestra plataforma de atención en línea diseñada para mejorar la salud vocal de tus pacientes.
                                                                 En tu panel de usuario, encontrarás herramientas y recursos para llevar a cabo evaluaciones vocales, crear pautas terapéuticas personalizadas 
                                                                 y dar seguimiento a los progresos de tus pacientes.</p>
@@ -361,7 +361,7 @@
                                                           <div class="card card h-100">
                                                             <img src="{% static 'app\recursos\img\fonoaudiologia_perfil.jpg' %}" height="225" width="600" class="card-img-top" alt="Imagen de la tarjeta">
                                                             <div class="card-body">
-                                                              <h5 class="card-title display-6" >Listado de <span class="span_title">Fonoaudiólogos</span></h5>
+                                                              <h5 class="card-title display-6" >Listado de <span class="span_title">Fonoaudiólogo</span></h5>
                                                               <p class="card-text">En este apartado puede revisar rápidamente la información esencial de cada fonoaudiólogo, como nombres, antecedentes profesionales y detalles de contacto.</p>
                                                               <a href="{% url 'list_fono_admin' %}" class="btn btn-primary float-right w-50 mt-3">Ver →</a>
                                                             </div>
@@ -522,6 +522,17 @@
                     {% endif %}
                     </article>
 
+
+<script>
+
+    let id_tp_usuario = 'Fonoaudiologo';
+
+    // Reemplaza la 'o' en fonoaudiologo con 'ó'
+    id_tp_usuario = id_tp_usuario.replace('o', '\u00F3');
+    
+    console.log(id_tp_usuario); // Resultado: fonoaudiól
+
+</script>
 
                     
         {% endblock %}
